@@ -5,6 +5,8 @@ services:
     build:
       context: ./app
       dockerfile: Dockerfile
+    volumes:
+      - './app:/app'
 
   mongo-express:
     image: mongo-express:0.54

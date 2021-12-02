@@ -1,5 +1,5 @@
 # --- reactjs ---
-FROM node:16.13.1-alpine
+FROM node:16.13.1
 
 # set working directory
 WORKDIR /app
@@ -11,5 +11,5 @@ RUN npm install
 COPY . .
  
 EXPOSE 3000
- 
+
 CMD [ "npm", "start" ]

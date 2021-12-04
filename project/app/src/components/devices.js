@@ -1,9 +1,9 @@
 import React from 'react';
 
-import { MiniPanel } from './mini_panel'
+import { MiniPanel } from './mini_panel';
 import { Navbar } from "./navbar";
 import Search from './searchbar';
-import {FaPlusSquare} from 'react-icons/fa'
+import {FaAlignCenter, FaPlusSquare} from 'react-icons/fa';
 import IconButton from '@mui/material/IconButton';
 
 import Container from "react-bootstrap/Container";
@@ -55,11 +55,16 @@ export class Devices extends React.Component{
 
                 </Row>
                 
-                <Row>
-                    <IconButton>
-                        <FaPlusSquare size={70} color='red'/>
-                    </IconButton>
+                <Row xs="auto">
+                    <Col>
+                        <IconButton>
+                            <FaPlusSquare size={60} color='red'/>
+                        </IconButton>
+                    </Col>
+                    <Col className="searchbar">
                         <Search/>
+                    </Col>
+                       
                 </Row>
 
                 <Row>

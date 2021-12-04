@@ -57,21 +57,21 @@ export class Dashboard extends React.Component {
                         <Row>
                             <TabContainer>
                                 <MiniPanel
-                                    room_name={'Overall'}
-                                    power_consumption={'700 kWh'}
+                                    room_name={'Water'}
+                                    power_consumption={'10 L'}
                                 />
                             </TabContainer>
                         </Row>
                         <Row>
                             <MiniPanel
-                                room_name={'Overall'}
-                                power_consumption={'700 kWh'}
+                                room_name={'Temperature'}
+                                power_consumption={'20 ºC'}
                             />
                         </Row>
                         <Row>
                             <MiniPanel
-                                room_name={'Overall'}
-                                power_consumption={'700 kWh'}
+                                room_name={'Light'}
+                                power_consumption={'60 %'}
                             />
                         </Row>
                     </Col>

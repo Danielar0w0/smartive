@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 
 import { createBrowserHistory } from "history";
+import {ControlDevice} from "./components/control_device";
 import {Devices} from "./components/devices";
 
 import { AddDevice } from "./components/add_devices/add_device";
@@ -19,6 +20,7 @@ export default function AppRouting () {
     return (
         <Router history={ customHistory }>
             <Routes>
+                {<Route path="/control_device" element={<ControlDevice/>} />}
                 {<Route path="/devices" element={<Devices/>} />}
                 <Route path="/add_device" element={<AddDevice/>} />
                 <Route path="/dashboard" element={<Dashboard/>} />

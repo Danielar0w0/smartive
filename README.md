@@ -14,3 +14,17 @@ DevOps: [José Trigo](https://github.com/zepedrotrigo)
 * Project Management board
 * Reports
 * API documentation
+
+# Run the app
+
+To run the Smartive application, follow these steps:
+
+* Enter the directory project/app
+* Do the command:
+        npm install
+* To start the app, use:
+        npm start
+* If you are using wsl, use:
+        npm run startwsl
+* Open the browser in the following url:
+        http://localhost:3000/dashboard

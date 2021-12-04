@@ -27,4 +27,4 @@ To run the Smartive application, follow these steps:
 * If you are using wsl, use:
         npm run startwsl
 * Open the browser in the following url:
-        http://localhost:3000/dashboard
+        http://localhost:3000/

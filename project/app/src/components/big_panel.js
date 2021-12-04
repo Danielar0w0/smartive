@@ -27,7 +27,7 @@ export class BigPanel extends React.Component {
                         <p className="fs-6 fw-bold">Expenses</p>
                     </Row>
                     <Row>
-                        <span style={{height: "43vh", width: "100%", display: "block"}}/>
+                        <span style={{height: "18rem", width: "100%", display: "block"}}/>
                     </Row>
                 </Container>
 

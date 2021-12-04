@@ -49,7 +49,7 @@ export class Dashboard extends React.Component {
 
                 </Row>
 
-                <Row className="mt-4">
+                <Row className="mt-5">
                     <Col className="col-3 px-0">
                         <MediumPanel/>
                     </Col>

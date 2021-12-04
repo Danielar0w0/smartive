@@ -3,8 +3,14 @@
 }
 
 .App-logo {
-  height: 40vmin;
+  height: 40px;
+  width: 40px;
   pointer-events: none;
+}
+
+.plusButton {
+  height: 40px;
+  width: 40px;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -35,4 +41,14 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.visually-hidden {
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
 }

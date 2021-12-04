@@ -23,7 +23,7 @@ export default function AppRouting () {
                 {<Route path="/control_device" element={<ControlDevice/>} />}
                 {<Route path="/devices" element={<Devices/>} />}
                 <Route path="/add_device" element={<AddDevice/>} />
-                <Route path="/dashboard" element={<Dashboard/>} />
+                <Route path="/" element={<Dashboard/>} />
             </Routes>
         </Router>
     )

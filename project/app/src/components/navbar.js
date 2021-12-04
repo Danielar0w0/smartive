@@ -14,7 +14,7 @@ export class Navbar extends React.Component {
                 <div className="d-flex collapse navbar-collapse" id="navbarsExample09">
                     <ul className="navbar-nav mx-3 fs-7 my-auto justify-content-start">
                         <li className="nav-item active mx-3">
-                            <a className="nav-link fw-bolder text-black" href="/dashboard">DASHBOARD</a>
+                            <a className="nav-link fw-bolder text-black" href="/">DASHBOARD</a>
                         </li>
                         <li className="nav-item mx-3">
                             <a className="nav-link fw-bolder text-black" href="/devices">YOUR DEVICES</a>

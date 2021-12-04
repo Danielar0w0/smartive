@@ -54,7 +54,7 @@ export class Devices extends React.Component{
                 
                 <Row className="my-5">
                     <Col className="col-1">
-                        <FaPlusSquare size={50} color='#f76540' style={{borderRadius: "15px"}}/>
+                        <FaPlusSquare size={50} color='#f76540' style={{borderRadius: "15px"}} onClick={() => window.location.replace("/add_device")}/>
                     </Col>
                     <Col className="col-3 mt-2">
                         <Search/>

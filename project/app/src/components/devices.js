@@ -3,23 +3,20 @@ import React from 'react';
 import { MiniPanel } from './mini_panel'
 import { Navbar } from "./navbar";
 import Search from './searchbar';
-import {FaPlusSquare} from 'react-icons/fa'
-import IconButton from '@mui/material/IconButton';
+import { FaPlusSquare } from 'react-icons/fa'
 
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import {MediumPanel} from "./medium_panel";
-import {BigPanel} from "./big_panel";
 import {LargePanel} from "./large_panel";
-import {TabContainer} from "react-bootstrap";
 
 export class Devices extends React.Component{
 
     render(){
-        let plusStyle = {color:"red"};
+
         return (
-            <Container className="container_fluid">
+            <Container>
+
                 <div className="mb-4">
                     <Navbar/>
                 </div>
@@ -55,54 +52,56 @@ export class Devices extends React.Component{
 
                 </Row>
                 
-                <Row>
-                    <IconButton>
-                        <FaPlusSquare size={70} color='red'/>
-                    </IconButton>
+                <Row className="my-5">
+                    <Col className="col-1">
+                        <FaPlusSquare size={50} color='#f76540' style={{borderRadius: "15px"}}/>
+                    </Col>
+                    <Col className="col-3 mt-2">
                         <Search/>
+                    </Col>
                 </Row>
 
-                <Row>
-                    <Col className="col-6 px-0">
+                <Row className="mt-5">
+                    <Col>
                         <LargePanel
-                            device_name={'Device 1'}
+                            device_name={'Philips Smart Bulb'}
                             power_consumption={'80 kWh'}
                         />
                     </Col>
 
-                    <Col className="col-6 px-0">
+                    <Col>
                         <LargePanel
-                            device_name={'Device 2'}
+                            device_name={'Philips Smart Bulb (2)'}
                             power_consumption={'90 kWh'}
                         />
                     </Col>
                 </Row>
                 <Row>
-                    <Col className="col-6 px-0">
+                    <Col>
                         <LargePanel
-                            device_name={'Device 1'}
+                            device_name={'Samsung Smart TV'}
                             power_consumption={'80 kWh'}
                         />
                     </Col>
 
-                    <Col className="col-6 px-0">
+                    <Col>
                         <LargePanel
-                            device_name={'Device 2'}
+                            device_name={'Xiaomi Humidity Sensor'}
                             power_consumption={'90 kWh'}
                         />
                     </Col>
                 </Row>
                 <Row>
-                    <Col className="col-6 px-0">
+                    <Col>
                         <LargePanel
-                            device_name={'Device 1'}
+                            device_name={'Xiaomi Temperature Sensor'}
                             power_consumption={'80 kWh'}
                         />
                     </Col>
 
-                    <Col className="col-6 px-0">
+                    <Col>
                         <LargePanel
-                            device_name={'Device 2'}
+                            device_name={'Xiaomi Smart IP Camera'}
                             power_consumption={'90 kWh'}
                         />
                     </Col>

@@ -1,17 +1,8 @@
 import React from 'react';
  
 const SearchBar = () => (
-    <form action="/" method="get">
-        <label htmlFor="header-search">
-            <span className="visually-hidden">Search blog posts</span>
-        </label>
-        <input
-            type="text"
-            id="header-search"
-            placeholder="Search blog posts"
-            name="s" 
-        />
-        <button type="submit">Search</button>
+    <form className="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3">
+        <input type="search" className="form-control" placeholder="Search..." aria-label="Search"/>
     </form>
 );
 

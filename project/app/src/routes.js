@@ -6,7 +6,6 @@ import {
     Route
 } from "react-router-dom";
 
-import { Dashboard } from './components/dashboard'
 import { createBrowserHistory } from "history";
 
 export default function AppRouting () {
@@ -16,7 +15,7 @@ export default function AppRouting () {
     return (
         <Router history={ customHistory }>
             <Routes>
-                <Route path="/dashboard" element={<Dashboard/>} />
+                {/*<Route path="/dashboard" element={<Dashboard/>} />*/}
             </Routes>
         </Router>
     )

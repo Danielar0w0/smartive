@@ -11,8 +11,8 @@ export class Navbar extends React.Component {
                     <span className="navbar-toggler-icon"/>
                 </button>
 
-                <div className="collapse navbar-collapse" id="navbarsExample09">
-                    <ul className="navbar-nav mx-3 fs-8 my-auto">
+                <div className="d-flex collapse navbar-collapse" id="navbarsExample09">
+                    <ul className="navbar-nav mx-3 fs-7 my-auto justify-content-start">
                         <li className="nav-item active mx-3">
                             <a className="nav-link fw-bolder text-black" href="/dashboard">DASHBOARD</a>
                         </li>
@@ -24,6 +24,11 @@ export class Navbar extends React.Component {
                         </li>
                         <li className="nav-item mx-3">
                             <a className="nav-link fw-bolder text-black" href="/users">USERS</a>
+                        </li>
+                    </ul>
+                    <ul className="navbar-nav fs-7 ms-auto my-auto">
+                        <li className="nav-item mx-3">
+                            <a className="nav-link fw-bolder" href="/profile" style={{color: "#f76540"}}>PROFILE</a>
                         </li>
                     </ul>
                 </div>

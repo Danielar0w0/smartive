@@ -5,8 +5,8 @@ services:
     build:
       context: ./app
       dockerfile: Dockerfile
-    volumes:
-      - './app:/app'
+    #volumes:
+    #  - './app/src:/app/src'
     stdin_open: true
 
   mongo-express:

@@ -18,4 +18,8 @@ public class Room {
     private String name;
     private List<String> users;
 
+    public boolean isValid() {
+        return name != null;
+    }
+
 }

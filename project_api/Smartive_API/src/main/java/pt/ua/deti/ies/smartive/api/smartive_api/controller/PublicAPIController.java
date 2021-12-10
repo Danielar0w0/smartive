@@ -8,9 +8,11 @@ import pt.ua.deti.ies.smartive.api.smartive_api.model.MessageResponse;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.Room;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.User;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.Sensor;
+import pt.ua.deti.ies.smartive.api.smartive_api.services.RoomService;
 import pt.ua.deti.ies.smartive.api.smartive_api.services.SensorService;
 import pt.ua.deti.ies.smartive.api.smartive_api.services.UserService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,11 +22,13 @@ public class PublicAPIController {
 
     private final SensorService sensorService;
     private final UserService userService;
+    private final RoomService roomService;
 
     @Autowired
-    public PublicAPIController(SensorService sensorService, UserService userService) {
+    public PublicAPIController(SensorService sensorService, UserService userService, RoomService roomService) {
         this.sensorService = sensorService;
         this.userService = userService;
+        this.roomService = roomService;
     }
 
     @PostMapping("/user/register")
@@ -34,8 +38,21 @@ public class PublicAPIController {
             throw new InvalidUserException("Invalid user. Please provide all the mandatory fields.");
 
         userService.registerUser(user);
-
         return new MessageResponse("The user was successfully registered.");
+
+    }
+
+    @PostMapping("/room/register")
+    public MessageResponse registerRoom(@RequestBody Room room) {
+
+        if (!room.isValid())
+            throw new InvalidUserException("Invalid Room. Please provide all the mandatory fields.");
+
+        if (room.getUsers() == null)
+            room.setUsers(new ArrayList<>());
+
+        roomService.registerRoom(room);
+        return new MessageResponse("The room was successfully registered.");
 
     }
 

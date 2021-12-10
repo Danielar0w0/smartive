@@ -7,6 +7,8 @@ import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.InvalidDeviceExceptio
 import pt.ua.deti.ies.smartive.api.smartive_api.model.MessageResponse;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.Device;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.Sensor;
+import pt.ua.deti.ies.smartive.api.smartive_api.redis.ISensorDAO;
+import pt.ua.deti.ies.smartive.api.smartive_api.redis.RSensor;
 import pt.ua.deti.ies.smartive.api.smartive_api.services.SensorService;
 
 import java.util.Optional;
@@ -16,6 +18,9 @@ import java.util.Optional;
 public class MiddlewareController {
 
     private final SensorService sensorService;
+
+    @Autowired
+    private ISensorDAO sensorDAO;
 
     @Autowired
     public MiddlewareController(SensorService sensorService) {
@@ -32,6 +37,12 @@ public class MiddlewareController {
             throw new InvalidDeviceException("Please provide a valid sensor state.");
 
         sensorService.updateSensorState(sensor);
+
+        RSensor rSensor = new RSensor(sensor.getDeviceId(), sensor.getName(), sensor.getRoomId(), sensor.getCategory(), sensor.getState().getValue());
+
+        sensorDAO.save(rSensor);
+
+
         return new MessageResponse("Successfully updated sensor state.");
 
     }

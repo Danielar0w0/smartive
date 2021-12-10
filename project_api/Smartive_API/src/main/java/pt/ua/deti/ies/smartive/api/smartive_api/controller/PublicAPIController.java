@@ -1,9 +1,11 @@
 package pt.ua.deti.ies.smartive.api.smartive_api.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.web.bind.annotation.*;
 import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.InvalidUserException;
 import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.RoomNotFoundException;
+import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.UserAlreadyExistsException;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.MessageResponse;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.Room;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.User;
@@ -12,7 +14,7 @@ import pt.ua.deti.ies.smartive.api.smartive_api.services.RoomService;
 import pt.ua.deti.ies.smartive.api.smartive_api.services.SensorService;
 import pt.ua.deti.ies.smartive.api.smartive_api.services.UserService;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,7 +39,12 @@ public class PublicAPIController {
         if (!user.isValid())
             throw new InvalidUserException("Invalid user. Please provide all the mandatory fields.");
 
-        userService.registerUser(user);
+        try {
+            userService.registerUser(user);
+        } catch (DuplicateKeyException keyException) {
+            throw new UserAlreadyExistsException(String.format("A user with the email %s is already registered.", user.getEmail()));
+        }
+
         return new MessageResponse("The user was successfully registered.");
 
     }
@@ -49,7 +56,7 @@ public class PublicAPIController {
             throw new InvalidUserException("Invalid Room. Please provide all the mandatory fields.");
 
         if (room.getUsers() == null)
-            room.setUsers(new ArrayList<>());
+            room.setUsers(Collections.emptyList());
 
         roomService.registerRoom(room);
         return new MessageResponse("The room was successfully registered.");

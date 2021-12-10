@@ -33,7 +33,7 @@ public class PublicAPIController {
         return sensorService.getAllSensors();
     }
 
-    @GetMapping(value = "/device/sensors")
+    @GetMapping(value = "/device/sensors_by_room")
     public List<Sensor> getRegisteredSensorsByRoom(@RequestBody Room room) {
 
         if (room.getRoomId() == null)

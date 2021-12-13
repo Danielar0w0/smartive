@@ -1,7 +1,7 @@
 # A Work Queue used to distribute all the different data among multiple workers (processors)
 # Advantages: Easily parallelize work and scale
 
-# By default, RabbitMQ will send each message to the next consumer, in sequence-
+# By default, RabbitMQ will send each message to the next consumer, in sequence.
 # On average every consumer will get the same number of messages.
 # This way of distributing messages is called round-robin.
 
@@ -9,26 +9,35 @@
 
 import pika
 import json
+import requests
 
 connection = pika.BlockingConnection(
     pika.ConnectionParameters(host='localhost'))
 channel = connection.channel()
 
+# REST API
+api_url = "{{api}}/middleware/device/sensor"
+
 # When RabbitMQ quits or crashes, it won't forget the queue
 channel.queue_declare(queue='humidity_queue', durable=True)
-print('[*] Waiting for messages. To exit press CTRL+C')
+print(' [*] Waiting for messages. To exit press CTRL+C')
 
 def callback(ch, method, properties, body):
-    print("[x] Received %r" % body.decode())
 
-    jsonObj = json.loads(body.decode())
-    
-    if "value" in jsonObj:
-        print(jsonObj["value"])
-    else:
-        print("Invalid format!")
+    print(" [x] Received %r" % body.decode())
 
-    print("[x] Done")
+    data = json.loads(body.decode())
+    sensor = {}
+
+    # Obtain deviceId and deviceState
+    if "id" in data and "value" in data:
+        sensor = {"deviceId": data["id"], "state": {"value": data["value"], "unit": "%"}
+
+    # The keyword json automatically sets the request’s HTTP header Content-Type to application/json
+    response = requests.put(api_url, json=sensor)
+    print(response)
+
+    print(" [x] Done")
 
     # An ack() is sent back to tell RabbitMQ that the message has been received, processed and that RabbitMQ is free to delete it
     ch.basic_ack(delivery_tag=method.delivery_tag)

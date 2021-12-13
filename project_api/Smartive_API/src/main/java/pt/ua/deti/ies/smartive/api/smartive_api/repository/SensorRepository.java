@@ -10,5 +10,6 @@ public interface SensorRepository extends MongoRepository<Sensor, Long> {
 
     List<Sensor> findByDeviceId(ObjectId deviceId);
     void deleteByDeviceId(ObjectId deviceId);
+    boolean existsSensorByDeviceId(ObjectId deviceId);
 
 }

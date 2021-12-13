@@ -3,8 +3,6 @@ package pt.ua.deti.ies.smartive.api.smartive_api.services;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.DeviceNotFoundException;
-import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.InvalidDeviceException;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.Sensor;
 import pt.ua.deti.ies.smartive.api.smartive_api.repository.SensorRepository;
 
@@ -33,22 +31,8 @@ public class SensorService {
         return sensorRepository.findAll();
     }
 
-    public void updateSensorState(Sensor sensor) {
-
-        if (sensor.getDeviceId() == null || sensor.getState() == null)
-            throw new InvalidDeviceException("Please provide a valid sensor entity.");
-
-        Optional<Sensor> registeredSensorOptional = findByObjectId(sensor.getDeviceId().toString());
-
-        if (registeredSensorOptional.isEmpty())
-            throw new DeviceNotFoundException(String.format("Unable to found a sensor with id %s.", sensor.getDeviceId().toString()));
-
-        Sensor registeredSensor = registeredSensorOptional.get();
-        registeredSensor.setState(sensor.getState());
-
-        sensorRepository.deleteByDeviceId(registeredSensor.getDeviceId());
-        sensorRepository.save(registeredSensor);
-
+    public boolean sensorExists(ObjectId objectId) {
+        return sensorRepository.existsSensorByDeviceId(objectId);
     }
 
 }

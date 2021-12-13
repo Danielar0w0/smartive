@@ -2,9 +2,7 @@ package pt.ua.deti.ies.smartive.api.smartive_api.model.devices;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.apache.tomcat.util.net.SendfileState;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
 import pt.ua.deti.ies.smartive.api.smartive_api.redis.entities.RSensor;

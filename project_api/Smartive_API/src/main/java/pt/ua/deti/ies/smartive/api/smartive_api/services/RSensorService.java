@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.SensorState;
 import pt.ua.deti.ies.smartive.api.smartive_api.redis.RedisHandler;
+import pt.ua.deti.ies.smartive.api.smartive_api.redis.entities.NullRSensor;
 import pt.ua.deti.ies.smartive.api.smartive_api.redis.entities.RSensor;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Pipeline;
@@ -58,6 +59,8 @@ public class RSensorService {
             pipeline.sync();
             jedisRes.resetState();
 
+            if (sensorValue.get() == null || sensorUnit.get() == null)
+                return new NullRSensor();
             return new RSensor(sensorId, new SensorState(Double.parseDouble(sensorValue.get()), sensorUnit.get()));
 
         };

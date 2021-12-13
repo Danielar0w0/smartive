@@ -33,7 +33,7 @@ public class PublicAPIController {
         this.roomService = roomService;
     }
 
-    @PostMapping("/user/register")
+    @PostMapping("/users/register")
     public MessageResponse registerUser(@RequestBody User user) {
 
         if (!user.isValid())
@@ -49,7 +49,7 @@ public class PublicAPIController {
 
     }
 
-    @PostMapping("/room/register")
+    @PostMapping("/rooms/register")
     public MessageResponse registerRoom(@RequestBody Room room) {
 
         if (!room.isValid())
@@ -63,18 +63,18 @@ public class PublicAPIController {
 
     }
 
-    @PostMapping("/device/sensor/register")
+    @PostMapping("/devices/sensors/register")
     public MessageResponse registerDevice(@RequestBody Sensor sensor) {
         sensorService.registerSensor(sensor);
         return new MessageResponse("The sensor was successfully registered.");
     }
 
-    @GetMapping(value = "/device/sensors")
+    @GetMapping(value = "/devices/sensors")
     public List<Sensor> getAllRegisteredSensors() {
         return sensorService.getAllSensors();
     }
 
-    @GetMapping(value = "/device/sensors_by_room")
+    @GetMapping(value = "/devices/sensors_by_room")
     public List<Sensor> getRegisteredSensorsByRoom(@RequestBody Room room) {
 
         if (room.getRoomId() == null)

@@ -7,6 +7,7 @@ import lombok.ToString;
 import org.apache.tomcat.util.net.SendfileState;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
+import pt.ua.deti.ies.smartive.api.smartive_api.redis.entities.RSensor;
 
 @EqualsAndHashCode(callSuper = true)
 @Document(collection = "devices")
@@ -19,6 +20,10 @@ public class Sensor extends Device {
     public Sensor(ObjectId deviceId, String name, ObjectId roomId, DeviceCategory category, SensorState state) {
         super(deviceId, name, roomId, category);
         this.state = state;
+    }
+
+    public RSensor toRSensor() {
+        return new RSensor(super.getDeviceId(), this.state);
     }
 
 }

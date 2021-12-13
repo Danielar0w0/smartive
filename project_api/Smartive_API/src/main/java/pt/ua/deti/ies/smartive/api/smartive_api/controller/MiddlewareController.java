@@ -7,6 +7,7 @@ import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.InvalidDeviceExceptio
 import pt.ua.deti.ies.smartive.api.smartive_api.model.MessageResponse;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.Device;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.Sensor;
+import pt.ua.deti.ies.smartive.api.smartive_api.services.RSensorService;
 import pt.ua.deti.ies.smartive.api.smartive_api.services.SensorService;
 
 import java.util.Optional;
@@ -16,10 +17,12 @@ import java.util.Optional;
 public class MiddlewareController {
 
     private final SensorService sensorService;
+    private final RSensorService rSensorService;
 
     @Autowired
-    public MiddlewareController(SensorService sensorService) {
+    public MiddlewareController(SensorService sensorService, RSensorService rSensorService) {
         this.sensorService = sensorService;
+        this.rSensorService = rSensorService;
     }
 
     @PutMapping("/device/sensor")
@@ -31,7 +34,8 @@ public class MiddlewareController {
         if (sensor.getState() == null)
             throw new InvalidDeviceException("Please provide a valid sensor state.");
 
-        sensorService.updateSensorState(sensor);
+        rSensorService.save(sensor.toRSensor());
+
         return new MessageResponse("Successfully updated sensor state.");
 
     }

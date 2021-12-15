@@ -17,6 +17,9 @@ public class Room {
     private ObjectId roomId;
     private String name;
     private List<String> users;
+    private double humidity;
+    private double temperature;
+    private double powerConsumption;
 
     public boolean isValid() {
         return name != null;

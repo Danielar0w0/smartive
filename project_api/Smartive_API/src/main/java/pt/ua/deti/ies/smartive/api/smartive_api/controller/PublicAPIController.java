@@ -63,6 +63,11 @@ public class PublicAPIController {
 
     }
 
+    @GetMapping("/rooms")
+    public List<Room> getAllRooms() {
+        return roomService.getAllRooms();
+    }
+
     @PostMapping("/devices/sensors/register")
     public MessageResponse registerDevice(@RequestBody Sensor sensor) {
         sensorService.registerSensor(sensor);

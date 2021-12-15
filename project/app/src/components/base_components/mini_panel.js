@@ -26,7 +26,7 @@ export class MiniPanel extends React.Component {
 
         return (
 
-            <Card className={this.state.isActive ? '' + normalClasses : normalClasses} style={{borderRadius: "15px", width: "90%"}} onClick={this.handleClick.bind(this)}>
+            <Card className={this.state.isActive ? '' + normalClasses : normalClasses} style={{borderRadius: "15px", width: "17vw"}} onClick={this.handleClick.bind(this)}>
                 <Row>
                     <Col className="col mx-3" >
                         <p className="fs-8 fw-bolder mt-3 mb-0">Room</p>

@@ -1,13 +1,13 @@
 import React from 'react';
 
-import { MiniPanel } from './mini_panel'
-import { Navbar } from "./navbar";
+import { MiniPanel } from './base_components/mini_panel'
+import { Navbar } from "./base_components/navbar";
 
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import {MediumPanel} from "./medium_panel";
-import {BigPanel} from "./big_panel";
+import {MediumPanel} from "./base_components/medium_panel";
+import {BigPanel} from "./base_components/big_panel";
 import {TabContainer} from "react-bootstrap";
 
 export class Dashboard extends React.Component {

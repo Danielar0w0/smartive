@@ -1,4 +1,3 @@
-
 import pika
 
 connection = pika.BlockingConnection(

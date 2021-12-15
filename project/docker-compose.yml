@@ -5,8 +5,8 @@ services:
     build:
       context: ./app
       dockerfile: Dockerfile
-    volumes:
-      - './app:/app'
+    #volumes:
+    #  - './app/src:/app/src'
     stdin_open: true
 
   mongo-express:
@@ -37,6 +37,16 @@ services:
       - ./mongo-data:/data/db
     networks:
       - mongo-compose-network
+
+  rabbitmq:
+    image: rabbitmq:3.9.11
+    volumes:
+      - ./.docker/rabbitmq/etc/:/etc/rabbitmq/
+      - ./.docker/rabbitmq/data/:/var/lib/rabbitmq/mnesia
+      - ./.docker/rabbitmq/logs/:/var/log/rabbitmq/mnesia
+    ports:
+      - 5672:5672
+      - 15672:15672
 
 networks: 
   mongo-compose-network:

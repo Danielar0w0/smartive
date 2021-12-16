@@ -3,28 +3,42 @@ package pt.ua.deti.ies.smartive.api.smartive_api.services;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import pt.ua.deti.ies.smartive.api.smartive_api.model.Room;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.Sensor;
 import pt.ua.deti.ies.smartive.api.smartive_api.repository.SensorRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class SensorService {
 
     private final SensorRepository sensorRepository;
+    private final RoomService roomService;
 
     @Autowired
-    public SensorService(SensorRepository sensorRepository) {
+    public SensorService(SensorRepository sensorRepository, RoomService roomService) {
         this.sensorRepository = sensorRepository;
+        this.roomService = roomService;
     }
 
     public void registerSensor(Sensor sensor) {
-        sensorRepository.save(sensor);
-    }
 
-    public Optional<Sensor> findByObjectId(String id) {
-        return sensorRepository.findByDeviceId(new ObjectId(id)).stream().findFirst();
+        sensor.setDeviceId(new ObjectId());
+
+        if (sensor.getRoomId() != null) {
+
+            if (roomService.exists(sensor.getRoomId())) {
+
+                Room room = roomService.getRoom(sensor.getRoomId());
+                room.getDevices().add(sensor);
+                roomService.updateRoom(room);
+
+            }
+
+        }
+
+        sensorRepository.save(sensor);
+
     }
 
     public List<Sensor> getAllSensors() {

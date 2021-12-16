@@ -1,5 +1,8 @@
 import time
+import sys
+import pika
 import random
+import json
 
 #fazer ligaçao com rabbitmq
 
@@ -13,6 +16,10 @@ class TempSensor:
         self.type = "Temperature"
         self.id = id
         self.value = self.base_temp
+        self.connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
+        self.channel = self.connection.channel()
+        self.queue = 'temperature_queue'
+        self.channel.queue_declare(queue=self.queue, durable=True)
 
     def run(self):
         temp = self.base_temp
@@ -37,9 +44,20 @@ class TempSensor:
             
             self.value = temp
             #print(self.value)
-            #Aqui seria ligaçao com rabbitmq penso
+            message = {"id":self.id, "value":self.value}
+            self.channel.basic_publish(
+                exchange = '',
+                routing_key = self.queue, 
+                body = json.dumps(message),
+                properties=pika.BasicProperties(delivery_mode=pika.spec.PERSISTENT_DELIVERY_MODE),
+            )
             time.sleep(self.sleep_time)
     
 #temp = TempSensor(1,None,1)
 #temp.run()
+
+if __name__ == '__main__':
+    id = sys.argv[0]
+    temp = TempSensor(id)
+    temp.run()
     

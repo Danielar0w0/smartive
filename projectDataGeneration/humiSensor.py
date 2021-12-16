@@ -1,5 +1,8 @@
+import sys
 import time
 import random
+import pika
+import json
 
 #fazer ligaçao com rabbitmq
 
@@ -13,6 +16,10 @@ class humiSensor:
         self.type = "Humidity"
         self.id = id
         self.value = self.base_humi
+        self.connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
+        self.channel = self.connection.channel()
+        self.queue = 'humidity_queue'
+        self.channel.queue_declare(queue=self.queue, durable=True)
 
     def run(self):
         humi = self.base_humi
@@ -37,9 +44,20 @@ class humiSensor:
             
             self.value = humi
             #print(self.value)
-            #Aqui seria ligaçao com rabbitmq penso
+            message = {"id":self.id, "value":self.value}
+            self.channel.basic_publish(
+                exchange = '',
+                routing_key = self.queue, 
+                body = json.dumps(message),
+                properties=pika.BasicProperties(delivery_mode=pika.spec.PERSISTENT_DELIVERY_MODE),
+            )
             time.sleep(self.sleep_time)
     
 #humi = humiSensor(1,None,1)
 #humi.run()
+
+if __name__ == '__main__':
+    id = sys.argv[0]
+    temp = humiSensor(id)
+    temp.run()
     

@@ -3,38 +3,23 @@ import { MiniPanel } from "../mini_panel";
 import axios from 'axios'
 
 import React, { useState, useEffect }  from 'react';
+import { RestAPIHandler } from "../../../utils/RestAPIHandler";
 
 export class RoomList extends React.Component {
 
     constructor(props) {
 
         super(props);
+        this.apiHandler = new RestAPIHandler();
         this.state = {
             isActive: false,
         };
 
-        this.test();
-
     }
 
-    test() {
-
-        console.log("HEEEY");
-        console.log("Hello");
-
-        this.setState({ loading: true });
-
-        const apiUrl = 'http://localhost:8080/api/rooms';
-        axios.get(apiUrl, {
-            headers: {'Origin': 'http://localhost:3000'}
-        }).then((repos) => {
-            const allRepos = repos.data;
-            console.log(allRepos);
-            this.setState({ loading: false, repos: allRepos });
-        })
-        .catch(error => console.log(error));
-
-    };
+    componentDidMount() {
+        this.apiHandler.getAllRooms();
+    }
 
 
     render() {

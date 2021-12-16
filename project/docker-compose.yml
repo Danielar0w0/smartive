@@ -19,7 +19,7 @@ services:
       ME_CONFIG_MONGODB_ADMINPASSWORD: password
       ME_CONFIG_MONGODB_URL: mongo://root:example@mongo:27017/
     volumes:
-      - ./mongo-data:/data/db
+      - ./.docker/mongo-data:/data/db
     depends_on:
       - mongo
     links:
@@ -34,9 +34,18 @@ services:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: password
     volumes:
-      - ./mongo-data:/data/db
+      - ./.docker/mongo-data:/data/db
     networks:
       - mongo-compose-network
+
+  redis:
+    image: redis:6.2.6
+    command: redis-server
+    ports:
+     - "6379:6379"
+    volumes:
+      - ./.docker/redis-data:/var/lib/redis
+      - ./.docker/redis.conf:/usr/local/etc/redis/redis.conf
 
   rabbitmq:
     image: rabbitmq:3.9.11

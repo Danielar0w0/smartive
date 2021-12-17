@@ -4,7 +4,7 @@ import Card from 'react-bootstrap/Card'
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
-import {Navbar} from "../navbar";
+import {Navbar} from "../base_components/navbar";
 import {ProgressBar} from "react-bootstrap";
 import {DeviceList} from "./device_list";
 import {DeviceName} from "./device_name";

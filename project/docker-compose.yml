@@ -9,6 +9,17 @@ services:
     #  - './app/src:/app/src'
     stdin_open: true
 
+  api:
+    build:
+      context: ../project_api/Smartive_API
+      dockerfile: Dockerfile
+    depends_on:
+      - mongo
+      - mongo-express
+      - redis
+    networks:
+      - mongo-compose-network
+
   mongo-express:
     image: mongo-express:0.54
     restart: always

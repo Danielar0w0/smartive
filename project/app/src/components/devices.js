@@ -11,6 +11,8 @@ import Col from "react-bootstrap/Col";
 import {faBed, faHome, faTv, faUtensilSpoon} from "@fortawesome/free-solid-svg-icons";
 import {LargePanel} from "./base_components/large_panel";
 import {RoomList} from "./base_components/room_list";
+import {DeviceList} from "./add_devices/device_list";
+import {DevicesList} from "./base_components/devices_list";
 
 export class Devices extends React.Component{
 
@@ -34,51 +36,7 @@ export class Devices extends React.Component{
                     </Col>
                 </Row>
 
-                <Row className="mt-5">
-                    <Col>
-                        <LargePanel
-                            device_name={'Philips Smart Bulb'}
-                            power_consumption={'80 kWh'}
-                        />
-                    </Col>
-
-                    <Col>
-                        <LargePanel
-                            device_name={'Philips Smart Bulb (2)'}
-                            power_consumption={'90 kWh'}
-                        />
-                    </Col>
-                </Row>
-                <Row>
-                    <Col>
-                        <LargePanel
-                            device_name={'Samsung Smart TV'}
-                            power_consumption={'80 kWh'}
-                        />
-                    </Col>
-
-                    <Col>
-                        <LargePanel
-                            device_name={'Xiaomi Humidity Sensor'}
-                            power_consumption={'90 kWh'}
-                        />
-                    </Col>
-                </Row>
-                <Row>
-                    <Col>
-                        <LargePanel
-                            device_name={'Xiaomi Temperature Sensor'}
-                            power_consumption={'80 kWh'}
-                        />
-                    </Col>
-
-                    <Col>
-                        <LargePanel
-                            device_name={'Xiaomi Smart IP Camera'}
-                            power_consumption={'90 kWh'}
-                        />
-                    </Col>
-                </Row>
+                <DevicesList/>
 
             </Container>
         );

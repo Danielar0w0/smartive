@@ -3,7 +3,6 @@ import { MiniPanel } from "./mini_panel";
 
 import React from 'react';
 import { RestAPIHandler } from "../../utils/RestAPIHandler";
-import {clearInterval} from "timers";
 
 export class RoomList extends React.Component {
 

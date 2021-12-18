@@ -1,5 +1,8 @@
 import axios from "axios";
 import {Room} from "./entities/Room";
+import {Device} from "./entities/Device";
+import {SensorStat} from "./entities/SensorStat";
+import {Sensor} from "./entities/Sensor";
 
 export class RestAPIHandler {
 
@@ -20,11 +23,45 @@ export class RestAPIHandler {
             .then((response) => {
 
                 const rooms: Room[] = response.data;
-
                 return rooms
 
             })
             .catch(error => {
+                console.log("Error on API request (getAllRooms()): " + error.message)
+                return []
+            });
+
+    }
+
+    getAllSensors(): Promise<Sensor[]> {
+
+        const endpointURI = '/devices/sensors'
+        const requestURI = this._publicAPIBaseURI + endpointURI;
+
+        return axios.get(requestURI)
+            .then((response) => {
+                const sensors: Sensor[] = response.data;
+                return sensors
+            })
+            .catch(error => {
+                console.log("Error on API request (getAllSensors()): " + error.message)
+                return []
+            });
+
+    }
+
+    getSensorStats(sensorId: String): Promise<SensorStat | any[]> {
+
+        const endpointURI = '/device/sensor'
+        const requestURI = this._middlewareBaseURI + endpointURI;
+
+        return axios.get(requestURI, {data: {"deviceId": sensorId}})
+            .then((response) => {
+                const sensorsStats: SensorStat = response.data;
+                return sensorsStats
+            })
+            .catch(error => {
+                console.log("Error on API request (getSensorsStats()): " + error.message)
                 return []
             });
 

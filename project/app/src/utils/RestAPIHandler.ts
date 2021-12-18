@@ -52,7 +52,7 @@ export class RestAPIHandler {
 
     getSensorStats(sensorId: String): Promise<SensorStat | any[]> {
 
-        const endpointURI = '/device/sensor'
+        const endpointURI = `/devices/sensor/${sensorId}`
         const requestURI = this._middlewareBaseURI + endpointURI;
 
         return axios.get(requestURI, {data: {"deviceId": sensorId}})

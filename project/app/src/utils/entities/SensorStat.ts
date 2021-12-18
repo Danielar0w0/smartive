@@ -1,6 +1,7 @@
 export interface SensorStat {
 
-    value: number;
-    powerConsumption: number;
+    sensorId: String;
+    sensorState: {value: number, unit: String}
+    //powerConsumption: number;
 
 }

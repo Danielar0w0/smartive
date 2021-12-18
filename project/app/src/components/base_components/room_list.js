@@ -19,14 +19,23 @@ export class RoomList extends React.Component {
 
     componentDidMount() {
 
+        this.refreshData();
+
         setInterval(() => {
-            this.apiHandler.getAllRooms()
-                .then(r => {
-                    this.setState({isLoading: false, rooms: r})
-                });
+            this.refreshData();
         }, 5000);
 
     }
+
+    refreshData() {
+
+        this.apiHandler.getAllRooms()
+            .then(allRooms => {
+                this.setState({isLoading: false, rooms: allRooms});
+            });
+
+    }
+
 
     render() {
 

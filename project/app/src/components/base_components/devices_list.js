@@ -14,91 +14,88 @@ export class DevicesList extends React.Component {
         this.apiHandler = new RestAPIHandler();
         this.state = {
             isLoading: true,
-            sensors: Array.of(0)
+            sensors: []
         };
 
     }
 
     componentDidMount() {
 
+        this.refreshData();
+
         setInterval(() => {
-            this.apiHandler.getAllSensors()
-                .then(sensorsList => {
-
-                    for (let sensorIdx in sensorsList) {
-                        let sensor = sensorsList[sensorIdx];
-                        this.apiHandler.getSensorStats(sensor.deviceId)
-                            .then(sensorStats => {
-                                console.log(sensorStats)
-                                sensor.sensorStats = sensorStats;
-                            });
-                    }
-
-                    this.setState({isLoading: false, sensors: sensorsList})
-
-                });
+            this.refreshData();
         }, 5000);
+
+    }
+
+    refreshData() {
+
+        this.apiHandler.getAllSensors()
+            .then(sensorsList => {
+
+                let clonedSensorsList = [];
+
+                for (let sensorIdx in sensorsList) {
+
+                    let sensor = sensorsList[sensorIdx];
+
+                    this.apiHandler.getSensorStats(sensor.deviceId)
+                        .then(sensorStats => {
+
+                            sensor.sensorStats = sensorStats.sensorState !== undefined ? sensorStats.sensorState : {};
+                            clonedSensorsList.push(sensor);
+
+                            this.setState({ isLoading: false, sensors: clonedSensorsList});
+
+                        });
+
+                }
+
+            });
+
 
     }
 
     render() {
 
+        let firstColumnSensors = [], secondColumnSensors = [];
+        let allSensors = this.state.sensors;
+
+        for (let sensorIdx = 0; sensorIdx < allSensors.length; sensorIdx+=2) {
+
+            firstColumnSensors.push(allSensors[sensorIdx]);
+
+            if (sensorIdx+1 < allSensors.length) {
+                secondColumnSensors.push(allSensors[sensorIdx+1])
+            }
+
+        }
+
         return (
 
             <Container>
 
-                {this.state.sensors.map(device => (
-                    <MiniPanel
-                        room_name={device.name}
-                        power_consumption={device.sensorStats !== null && device.sensorStats !== undefined ? device.sensorStats.value : '0 kWh'}
-                    />
-                ))}
-
-                <Row className="mt-5">
-                    <Col>
-                        <LargePanel
-                            device_name={'Philips Smart Bulb'}
-                            power_consumption={'80 kWh'}
-                        />
-                    </Col>
-
-                    <Col>
-                        <LargePanel
-                            device_name={'Philips Smart Bulb (2)'}
-                            power_consumption={'90 kWh'}
-                        />
-                    </Col>
-                </Row>
                 <Row>
-                    <Col>
-                        <LargePanel
-                            device_name={'Samsung Smart TV'}
-                            power_consumption={'80 kWh'}
-                        />
+                    <Col lg={6} md={6} sm={12}>
+                        {firstColumnSensors.map(sensor => (
+                            <LargePanel
+                                device_name={sensor.name}
+                                power_consumption={(sensor.sensorStats.value + " " + sensor.sensorStats.unit) || 'No Data'}
+                            />
+                        ))}
+                    </Col>
+                    <Col lg={6} md={6} sm={12}>
+                        {secondColumnSensors.map(sensor => (
+                            <LargePanel
+                                device_name={sensor.name}
+                                power_consumption={sensor.sensorStats.value || 'No Data'}
+                            />
+                        ))}
                     </Col>
 
-                    <Col>
-                        <LargePanel
-                            device_name={'Xiaomi Humidity Sensor'}
-                            power_consumption={'90 kWh'}
-                        />
-                    </Col>
                 </Row>
-                <Row>
-                    <Col>
-                        <LargePanel
-                            device_name={'Xiaomi Temperature Sensor'}
-                            power_consumption={'80 kWh'}
-                        />
-                    </Col>
 
-                    <Col>
-                        <LargePanel
-                            device_name={'Xiaomi Smart IP Camera'}
-                            power_consumption={'90 kWh'}
-                        />
-                    </Col>
-                </Row>
             </Container>
 
         );

@@ -4,8 +4,6 @@ import random
 import pika
 import json
 
-#fazer ligaçao com rabbitmq
-
 class humiSensor:
     def __init__(self, id, start_humi = None, sleep_time = 10):
         if start_humi != None:

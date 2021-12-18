@@ -1,11 +1,13 @@
 import pika
 from multiprocessing import Process
 import os
+import time
 import requests
 
-list = []
+process_list = []
+id_list = []
 
-def first_setup():
+def main_func():
     request = requests.get("http://localhost:8080/api/devices/sensors")
     
     for item in request.json():
@@ -16,12 +18,26 @@ def first_setup():
             sensor = "humi"
             p = Process(target=createProcessor, args=(item["deviceId"], sensor))
         p.start()
-        list.append(p)
+        process_list.append(p)
+        id_list.append(item["deviceId"])
+
     while(True):
-        continue #de x em x tempo, ver se a sensores novos e caso haja adicionar
-                                #temp/humi
+        time.sleep(60)
+        request = requests.get("http://localhost:8080/api/devices/sensors")
+        for item in request.json():
+            if item["deviceId"] not in id_list:
+                if item["category"] == "TEMPERATURE":
+                    sensor = "temp"
+                    p = Process(target=createProcessor, args=(item["deviceId"], sensor))
+                elif item["category"] == "HUMIDITY":
+                    sensor = "humi"
+                    p = Process(target=createProcessor, args=(item["deviceId"], sensor))
+                p.start()
+                process_list.append(p)
+                id_list.append(item["deviceId"])
+
 def createProcessor(processorID, sensor):
     os.system('python3 ' + sensor +  'Sensor.py ' + str(processorID))
 
 if __name__ == "__main__":
-    first_setup()
+    main_func()

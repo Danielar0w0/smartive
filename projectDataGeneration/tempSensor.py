@@ -4,8 +4,6 @@ import pika
 import random
 import json
 
-#fazer ligaçao com rabbitmq
-
 class TempSensor:
     def __init__(self, id, start_temp = None, sleep_time = 10):
         if start_temp != None:

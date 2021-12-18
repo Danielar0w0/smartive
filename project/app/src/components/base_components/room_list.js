@@ -3,6 +3,7 @@ import { MiniPanel } from "./mini_panel";
 
 import React from 'react';
 import { RestAPIHandler } from "../../utils/RestAPIHandler";
+import {clearInterval} from "timers";
 
 export class RoomList extends React.Component {
 
@@ -18,18 +19,19 @@ export class RoomList extends React.Component {
     }
 
     componentDidMount() {
-        this.apiHandler.getAllRooms()
-            .then(r => {
-                this.setState({isLoading: false, rooms: r})
-            });
+
+        setInterval(() => {
+            this.apiHandler.getAllRooms()
+                .then(r => {
+                    this.setState({isLoading: false, rooms: r})
+                });
+        }, 5000);
+
     }
 
     render() {
 
         const items = this.state.rooms;
-
-        console.log(this.state.rooms)
-        console.log(items)
 
         return (
 
@@ -38,7 +40,7 @@ export class RoomList extends React.Component {
                 {items.map(room => (
                     <MiniPanel
                         room_name={room.name}
-                        power_consumption={room.stats !== undefined ? room.stats.powerConsumption : '0 kWh'}
+                        power_consumption={room.stats !== null && room.stats !== undefined ? room.stats.powerConsumption : '0 kWh'}
                     />
                 ))}
 

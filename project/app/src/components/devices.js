@@ -10,6 +10,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import {faBed, faHome, faTv, faUtensilSpoon} from "@fortawesome/free-solid-svg-icons";
 import {LargePanel} from "./base_components/large_panel";
+import {RoomList} from "./base_components/room_list";
 
 export class Devices extends React.Component{
 
@@ -22,40 +23,7 @@ export class Devices extends React.Component{
                     <Navbar/>
                 </div>
                 
-                <Row>
-                    <Col className="col-3 px-0">
-                        <MiniPanel
-                            icon={faTv}
-                            room_name={'Living Room'}
-                            power_consumption={'700 kWh'}
-                        />
-                    </Col>
-
-                    <Col className="col-3 px-0">
-                        <MiniPanel
-                            icon={faBed}
-                            room_name={'Bedroom'}
-                            power_consumption={'700 kWh'}
-                        />
-                    </Col>
-
-                    <Col className="col-3 px-0">
-                        <MiniPanel
-                            icon={faUtensilSpoon}
-                            room_name={'Kitchen'}
-                            power_consumption={'700 kWh'}
-                        />
-                    </Col>
-
-                    <Col className="col-3 px-0">
-                        <MiniPanel
-                            icon={faHome}
-                            room_name={'Overall'}
-                            power_consumption={'700 kWh'}
-                        />
-                    </Col>
-
-                </Row>
+                <RoomList/>
                 
                 <Row className="my-5">
                     <Col className="col-1">

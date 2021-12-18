@@ -19,16 +19,12 @@ export class RestAPIHandler {
         return axios.get(requestURI)
             .then((response) => {
 
-                const responseData = response.data;
-                const rooms: Room[] = responseData;
-
-                console.log(responseData);
+                const rooms: Room[] = response.data;
 
                 return rooms
 
             })
             .catch(error => {
-                console.log(error);
                 return []
             });
 

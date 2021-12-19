@@ -25,7 +25,7 @@ class humiSensor:
             humi_change = random.random() / 4    #variação de humidade
             chance = random.random()             
             humi_dif = humi-self.base_humi      #diferença entre humidade inicial e humidade atual
-            up_or_down = (0.5 + (0.5 * (humi/3)))     #regra dos 3 simples para ter uma diferença máxima de 3 da base_humi
+            up_or_down = (0.5 + (0.5 * (humi_dif/3)))     #regra dos 3 simples para ter uma diferença máxima de 3 da base_humi
 
             #Exemplo:
             #           base_humi = 13  humi = 14.5 humi_dif = -1.5 max_dif = 3
@@ -41,7 +41,7 @@ class humiSensor:
                 humi = humi - humi_change
             
             self.value = humi
-            #print(self.value)
+            print(self.value)
             message = {"id":self.id, "value":self.value}
             self.channel.basic_publish(
                 exchange = '',
@@ -51,11 +51,13 @@ class humiSensor:
             )
             time.sleep(self.sleep_time)
     
-#humi = humiSensor(1,None,1)
-#humi.run()
+
 
 if __name__ == '__main__':
     id = sys.argv[0]
     temp = humiSensor(id)
     temp.run()
+
+    #humi = humiSensor(1,None,1)
+    #humi.run() 
     

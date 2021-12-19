@@ -41,7 +41,7 @@ class TempSensor:
                 temp = temp - temp_change
             
             self.value = temp
-            #print(self.value)
+            print(self.value)
             message = {"id":self.id, "value":self.value}
             self.channel.basic_publish(
                 exchange = '',
@@ -50,12 +50,12 @@ class TempSensor:
                 properties=pika.BasicProperties(delivery_mode=pika.spec.PERSISTENT_DELIVERY_MODE),
             )
             time.sleep(self.sleep_time)
-    
-#temp = TempSensor(1,None,1)
-#temp.run()
 
 if __name__ == '__main__':
     id = sys.argv[0]
     temp = TempSensor(id)
     temp.run()
+
+    """temp = TempSensor(1,None,1)
+    temp.run()"""
     

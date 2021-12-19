@@ -20,9 +20,10 @@ def main_func():
         p.start()
         process_list.append(p)
         id_list.append(item["deviceId"])
+        print(item["deviceId"])
 
     while(True):
-        time.sleep(60)
+        time.sleep(30)
         request = requests.get("http://localhost:8080/api/devices/sensors")
         for item in request.json():
             if item["deviceId"] not in id_list:
@@ -35,6 +36,7 @@ def main_func():
                 p.start()
                 process_list.append(p)
                 id_list.append(item["deviceId"])
+                print(item["deviceId"])
 
 def createProcessor(processorID, sensor):
     os.system('python3 ' + sensor +  'Sensor.py ' + str(processorID))

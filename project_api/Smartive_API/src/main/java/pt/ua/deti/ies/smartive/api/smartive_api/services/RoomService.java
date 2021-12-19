@@ -23,7 +23,7 @@ public class RoomService {
     public void registerRoom(Room room) {
         if (!room.isValid())
             throw new InvalidRoomException("Invalid Room - invalid room.");
-        if (room.getDevices() == null) room.setDevices(new ArrayList<>());
+        if (room.getAbstractDevices() == null) room.setAbstractDevices(new ArrayList<>());
         if (room.getUsers() == null) room.setUsers(new ArrayList<>());
         roomRepository.save(room);
     }

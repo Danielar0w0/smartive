@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "devices")
 @Data
 @ToString(callSuper = true)
-public class Sensor extends Device {
+public class Sensor extends AbstractDevice {
 
     private SensorState state;
 

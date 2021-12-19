@@ -30,7 +30,7 @@ public class SensorService {
             if (roomService.exists(sensor.getRoomId())) {
 
                 Room room = roomService.getRoom(sensor.getRoomId());
-                room.getDevices().add(sensor);
+                room.getAbstractDevices().add(sensor);
                 roomService.updateRoom(room);
 
             }

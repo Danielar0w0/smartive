@@ -1,6 +1,5 @@
 package pt.ua.deti.ies.smartive.api.smartive_api.controller;
 
-import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.web.bind.annotation.*;
@@ -11,9 +10,10 @@ import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.UserAlreadyExistsExce
 import pt.ua.deti.ies.smartive.api.smartive_api.middleware.MiddlewareHandler;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.MessageResponse;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.Room;
-import pt.ua.deti.ies.smartive.api.smartive_api.model.RoomStats;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.User;
+import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.Device;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.Sensor;
+import pt.ua.deti.ies.smartive.api.smartive_api.services.DeviceService;
 import pt.ua.deti.ies.smartive.api.smartive_api.services.RoomService;
 import pt.ua.deti.ies.smartive.api.smartive_api.services.SensorService;
 import pt.ua.deti.ies.smartive.api.smartive_api.services.UserService;
@@ -30,13 +30,15 @@ public class PublicAPIController {
     private final SensorService sensorService;
     private final UserService userService;
     private final RoomService roomService;
+    private final DeviceService deviceService;
 
     @Autowired
-    public PublicAPIController(MiddlewareHandler middlewareHandler, SensorService sensorService, UserService userService, RoomService roomService) {
+    public PublicAPIController(MiddlewareHandler middlewareHandler, SensorService sensorService, UserService userService, RoomService roomService, DeviceService deviceService) {
         this.middlewareHandler = middlewareHandler;
         this.sensorService = sensorService;
         this.userService = userService;
         this.roomService = roomService;
+        this.deviceService = deviceService;
     }
 
     @PostMapping("/users/register")
@@ -84,6 +86,13 @@ public class PublicAPIController {
     public List<Sensor> getAllRegisteredSensors() {
         return sensorService.getAllSensors();
     }
+
+    @GetMapping(value = "/devices")
+    public List<Device> getAllDevices() {
+        return deviceService.getAllDevices();
+    }
+
+
 
     @GetMapping(value = "/devices/sensors_by_room")
     public List<Sensor> getRegisteredSensorsByRoom(@RequestBody Room room) {

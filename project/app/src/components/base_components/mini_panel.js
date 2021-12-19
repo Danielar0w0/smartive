@@ -31,9 +31,9 @@ export class MiniPanel extends React.Component {
 
             <Card className={this.state.isActive ? '' + normalClasses : normalClasses} style={{borderRadius: "15px", width: "16vw"}} onClick={this.handleClick.bind(this)}>
                 <Row className="my-2">
-                    <Col className="col-md col-lg-3 offset-lg-1 text-center">
+                    <Col className="col-md-3 col-lg-3 offset-lg-1 text-center">
                         <IconButton className="my-3 p-4" style={{borderRadius: "15px", backgroundColor: "#f76540"}}>
-                            <FontAwesomeIcon icon={this.props.icon || faHome} style={{fontSize: "115%", color: "white"}}/>
+                            <FontAwesomeIcon icon={this.props.icon || faHome} style={{fontSize: "110%", color: "white"}}/>
                         </IconButton>
                     </Col>
                     <Col className="col-md col-lg mx-4" >

@@ -19,7 +19,7 @@ import {
     faLightbulb,
     faTemperatureHigh
 } from "@fortawesome/free-solid-svg-icons";
-import {RoomList} from "./base_components/room_list";
+import {RoomPanelsList} from "./base_components/room_panels_list";
 
 export class Dashboard extends React.Component {
 
@@ -30,7 +30,7 @@ export class Dashboard extends React.Component {
                     <Navbar/>
                 </div>
 
-                <RoomList/>
+                <RoomPanelsList/>
 
                 <Row className="mt-5">
                     <Col className="col-3 px-0">

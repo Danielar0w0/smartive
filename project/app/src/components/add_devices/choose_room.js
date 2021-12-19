@@ -2,16 +2,10 @@ import React from 'react';
 
 import Button from "react-bootstrap/Button";
 
-export class DeviceName extends React.Component {
+export class ChooseRoom extends React.Component {
 
     constructor(props) {
-
         super(props);
-
-        this.state = {
-            isActive: false,
-        };
-
     }
 
     render() {

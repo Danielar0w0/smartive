@@ -10,7 +10,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import {faBed, faHome, faTv, faUtensilSpoon} from "@fortawesome/free-solid-svg-icons";
 import {LargePanel} from "./base_components/large_panel";
-import {RoomList} from "./base_components/room_list";
+import {RoomPanelsList} from "./base_components/room_panels_list";
 import {DeviceList} from "./add_devices/device_list";
 import {DevicesList} from "./base_components/devices_list";
 
@@ -25,7 +25,7 @@ export class Devices extends React.Component{
                     <Navbar/>
                 </div>
                 
-                <RoomList/>
+                <RoomPanelsList/>
                 
                 <Row className="my-5">
                     <Col className="col-1">

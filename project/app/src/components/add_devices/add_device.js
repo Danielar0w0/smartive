@@ -8,6 +8,8 @@ import {Navbar} from "../base_components/navbar";
 import {ProgressBar} from "react-bootstrap";
 import {DeviceList} from "./device_list";
 import {DeviceName} from "./device_name";
+import {ConfigurationStep} from "./configuration_step";
+import {RoomItemsList} from "../base_components/room_items_list";
 
 export class AddDevice extends React.Component {
 
@@ -29,9 +31,9 @@ export class AddDevice extends React.Component {
             case 1:
                 return (<DeviceList title={"Select a device from nearby devices:"} elements={ ["Samsung SmartTV", "Philips Bulb", "Xiaomi Temperature Sensor"] } btn_text={"Next"} on_next_click={this.handleChildNextClick.bind(this)} />)
             case 2:
-                return (<DeviceList title={"Select the device category:"} elements={ ["Smart Bulbs", "Environment Sensors", "TVs & Monitors"] } btn_text={"Next"} on_next_click={this.handleChildNextClick.bind(this)} />)
+                return (<DeviceList title={"Select the device category:"} elements={ ["Temperature Sensor", "Humidity Sensor"] } btn_text={"Next"} on_next_click={this.handleChildNextClick.bind(this)} />)
             case 3:
-                return (<DeviceList title={"Select Room:"} elements={ ["Bedroom", "Living Room", "Kitchen"] } btn_text={"Finish"} on_next_click={this.handleChildNextClick.bind(this)} />)
+                return (<ConfigurationStep  title={"Select Room:"} childComponent={<RoomItemsList/>} btn_text={"Finish"} on_next_click={this.handleChildNextClick.bind(this)} />)
 
         }
 
@@ -54,7 +56,7 @@ export class AddDevice extends React.Component {
                         <Card className="m-3 mx-0 my-2 shadow-sm px-0 boxShadow border-light" style={{borderRadius: "15px"}}>
                             <Container className="my-3">
                                 <Row>
-                                    <img src={process.env.PUBLIC_URL + '/Router.png'} className="my-3" style={{height: "28rem", width: "100%", display: "block"}}/>
+                                    <img src={process.env.PUBLIC_URL + '/Router.png'} className="my-3" style={{height: "28rem", width: "100%", display: "block"}} alt="Device"/>
                                 </Row>
                             </Container>
                         </Card>

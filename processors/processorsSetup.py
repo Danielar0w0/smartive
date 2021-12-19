@@ -2,8 +2,8 @@ import pika
 from multiprocessing import Process
 import os
 
-# queues = ['humidity_queue', 'temperature_queue']
-queues = ['humidity_queue']
+queues = ['humidity_queue', 'temperature_queue']
+#queues = ['humidity_queue']
 
 connection = pika.BlockingConnection(
     pika.ConnectionParameters(host='localhost'))

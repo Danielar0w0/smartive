@@ -1,13 +1,17 @@
 package pt.ua.deti.ies.smartive.api.smartive_api.controller;
 
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.web.bind.annotation.*;
+import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.InvalidRoomException;
 import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.InvalidUserException;
 import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.RoomNotFoundException;
 import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.UserAlreadyExistsException;
+import pt.ua.deti.ies.smartive.api.smartive_api.middleware.MiddlewareHandler;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.MessageResponse;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.Room;
+import pt.ua.deti.ies.smartive.api.smartive_api.model.RoomStats;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.User;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.Sensor;
 import pt.ua.deti.ies.smartive.api.smartive_api.services.RoomService;
@@ -22,12 +26,14 @@ import java.util.stream.Collectors;
 @RequestMapping("/api")
 public class PublicAPIController {
 
+    private final MiddlewareHandler middlewareHandler;
     private final SensorService sensorService;
     private final UserService userService;
     private final RoomService roomService;
 
     @Autowired
-    public PublicAPIController(SensorService sensorService, UserService userService, RoomService roomService) {
+    public PublicAPIController(MiddlewareHandler middlewareHandler, SensorService sensorService, UserService userService, RoomService roomService) {
+        this.middlewareHandler = middlewareHandler;
         this.sensorService = sensorService;
         this.userService = userService;
         this.roomService = roomService;
@@ -53,7 +59,7 @@ public class PublicAPIController {
     public MessageResponse registerRoom(@RequestBody Room room) {
 
         if (!room.isValid())
-            throw new InvalidUserException("Invalid Room. Please provide all the mandatory fields.");
+            throw new InvalidRoomException("Invalid Room. Please provide all the mandatory fields.");
 
         if (room.getUsers() == null)
             room.setUsers(Collections.emptyList());
@@ -63,8 +69,13 @@ public class PublicAPIController {
 
     }
 
+    @GetMapping("/rooms")
+    public List<Room> getAllRooms() {
+        return roomService.getAllRooms();
+    }
+
     @PostMapping("/devices/sensors/register")
-    public MessageResponse registerDevice(@RequestBody Sensor sensor) {
+    public MessageResponse registerSensor(@RequestBody Sensor sensor) {
         sensorService.registerSensor(sensor);
         return new MessageResponse("The sensor was successfully registered.");
     }

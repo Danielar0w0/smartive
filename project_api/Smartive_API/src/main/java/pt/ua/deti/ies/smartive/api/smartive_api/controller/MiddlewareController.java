@@ -33,7 +33,7 @@ public class MiddlewareController {
         this.middlewareHandler = middlewareHandler;
     }
 
-    @PutMapping("/device/sensor")
+    @PutMapping("/devices/sensor")
     public MessageResponse updateState(@RequestBody Sensor sensor) {
 
         if (sensor.getDeviceId() == null)
@@ -51,21 +51,21 @@ public class MiddlewareController {
 
     }
 
-    @GetMapping("/device/sensor")
-    public RSensor getSensorState(@RequestBody ObjectId id) {
+    @GetMapping("/devices/sensor/{sensorId}")
+    public RSensor getSensorState(@PathVariable ObjectId sensorId) {
 
-        if (id == null)
+        if (sensorId == null)
             throw new InvalidDeviceException("Please provide a valid sensor id.");
 
-        if (!sensorService.sensorExists(id))
+        if (!sensorService.sensorExists(sensorId))
             throw new DeviceNotFoundException("Unable to find a device with that ID.");
 
-        SensorState sensorState = middlewareHandler.getSensorState(id);
+        SensorState sensorState = middlewareHandler.getSensorState(sensorId);
 
         if (sensorState == null)
             throw new DeviceNotFoundException("Unable to load the device from Redis cache.");
 
-        return new RSensor(id, sensorState);
+        return new RSensor(sensorId, sensorState);
 
     }
 

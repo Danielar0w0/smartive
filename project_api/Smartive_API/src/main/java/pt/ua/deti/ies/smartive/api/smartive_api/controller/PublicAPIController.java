@@ -11,12 +11,10 @@ import pt.ua.deti.ies.smartive.api.smartive_api.middleware.MiddlewareHandler;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.MessageResponse;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.Room;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.User;
+import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.AvailableDevice;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.Device;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.Sensor;
-import pt.ua.deti.ies.smartive.api.smartive_api.services.DeviceService;
-import pt.ua.deti.ies.smartive.api.smartive_api.services.RoomService;
-import pt.ua.deti.ies.smartive.api.smartive_api.services.SensorService;
-import pt.ua.deti.ies.smartive.api.smartive_api.services.UserService;
+import pt.ua.deti.ies.smartive.api.smartive_api.services.*;
 
 import java.util.Collections;
 import java.util.List;
@@ -31,14 +29,16 @@ public class PublicAPIController {
     private final UserService userService;
     private final RoomService roomService;
     private final DeviceService deviceService;
+    private final AvailableDeviceService availableDeviceService;
 
     @Autowired
-    public PublicAPIController(MiddlewareHandler middlewareHandler, SensorService sensorService, UserService userService, RoomService roomService, DeviceService deviceService) {
+    public PublicAPIController(MiddlewareHandler middlewareHandler, SensorService sensorService, UserService userService, RoomService roomService, DeviceService deviceService, AvailableDeviceService availableDeviceService) {
         this.middlewareHandler = middlewareHandler;
         this.sensorService = sensorService;
         this.userService = userService;
         this.roomService = roomService;
         this.deviceService = deviceService;
+        this.availableDeviceService = availableDeviceService;
     }
 
     @PostMapping("/users/register")
@@ -92,7 +92,16 @@ public class PublicAPIController {
         return deviceService.getAllDevices();
     }
 
+    @GetMapping(value = "/devices/available")
+    public List<AvailableDevice> getAllAvailableDevices() {
+        return availableDeviceService.getAllAvailableDevices();
+    }
 
+    @PostMapping(value = "/devices/available")
+    public MessageResponse getAllAvailableDevices(@RequestBody AvailableDevice availableDevice) {
+        availableDeviceService.save(availableDevice);
+        return new MessageResponse("Successfully registered available device.");
+    }
 
     @GetMapping(value = "/devices/sensors_by_room")
     public List<Sensor> getRegisteredSensorsByRoom(@RequestBody Room room) {

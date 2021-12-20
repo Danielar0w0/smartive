@@ -69,6 +69,7 @@ export class RestAPIHandler {
     }
 
     getAvailableDevices(): Promise<Device[]> {
+
         const endpointURI = '/devices/available'
         const requestURI = this._publicAPIBaseURI + endpointURI;
 
@@ -78,8 +79,25 @@ export class RestAPIHandler {
                 return availableDevices
             })
             .catch(error => {
-                console.log("Error on API request (getSensorsStats()): " + error.message)
+                console.log("Error on API request (getAvailableDevices()): " + error.message)
                 return []
+            });
+
+    }
+
+    registerNewDevice(device: Device): Promise<boolean> {
+
+        const endpointURI = '/devices/sensors/register'
+        const requestURI = this._publicAPIBaseURI + endpointURI;
+
+        return axios.post(requestURI, device)
+            .then((response) => {
+                console.log(response);
+                return response.status == 200;
+            })
+            .catch(error => {
+                console.log("Error on API request (registerNewDevice()): " + error.message)
+                return false
             });
 
     }

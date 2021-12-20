@@ -11,6 +11,8 @@ import {DeviceName} from "./device_name";
 import {ConfigurationStep} from "./configuration_step";
 import {RoomItemsList} from "../base_components/room_items_list";
 import {AvailableDevicesList} from "../base_components/available_devices_list";
+import {AvailableTypesList} from "../base_components/available_types_list";
+import {RestAPIHandler} from "../../utils/RestAPIHandler";
 
 export class AddDevice extends React.Component {
 
@@ -18,8 +20,10 @@ export class AddDevice extends React.Component {
 
         super(props);
 
+        this.apiHandler = new RestAPIHandler();
         this.state = {
             currentStep: 0,
+            currentDevice: {}
         };
 
     }
@@ -28,20 +32,77 @@ export class AddDevice extends React.Component {
 
         switch (configStepIdx) {
             case 0:
-                return (<DeviceName on_next_click={this.handleChildNextClick.bind(this)} />);
+                return (<DeviceName on_next_click={this.setDeviceName.bind(this)} />);
             case 1:
-                return (<ConfigurationStep  title={"Select a device from nearby devices:"} childComponent={<AvailableDevicesList/>} btn_text={"Next"} on_next_click={this.handleChildNextClick.bind(this)} />)
+                return (<ConfigurationStep title={"Select a device from nearby devices:"} childComponent={<AvailableDevicesList on_select={this.setDeviceId.bind(this)}/>} btn_text={"Next"} on_next_click={this.handleChildNextClick.bind(this)} />)
             case 2:
-                return (<DeviceList title={"Select the device category:"} elements={ ["Temperature Sensor", "Humidity Sensor"] } btn_text={"Next"} on_next_click={this.handleChildNextClick.bind(this)} />)
+                return (<ConfigurationStep title={"Select the device category:"} childComponent={<AvailableTypesList on_select={this.setDeviceType.bind(this)}/>} btn_text={"Next"} on_next_click={this.handleChildNextClick.bind(this)} />)
             case 3:
-                return (<ConfigurationStep  title={"Select Room:"} childComponent={<RoomItemsList/>} btn_text={"Finish"} on_next_click={this.handleChildNextClick.bind(this)} />)
-
+                return (<ConfigurationStep title={"Select Room:"} childComponent={<RoomItemsList on_select={this.setDeviceRoom.bind(this)} />} btn_text={"Finish"} on_next_click={this.registerDevice.bind(this)} />)
+            case 4:
+                return (<ConfigurationStep title={"Successfully registered new device."} btn_text={"Go Back"} />)
         }
 
     }
 
-    handleChildNextClick() {
-        this.setState({currentStep: this.state.currentStep+1})
+    setDeviceName(deviceName) {
+
+        let currentState = this.state;
+        currentState.currentDevice['name'] = deviceName;
+        this.setState(currentState);
+
+        this.handleChildNextClick();
+
+    }
+
+    setDeviceType(deviceType) {
+
+        let currentState = this.state;
+        currentState.currentDevice['category'] = deviceType;
+        this.setState(currentState);
+
+    }
+
+    setDeviceId(deviceId) {
+
+        let currentState = this.state;
+        currentState.currentDevice['deviceId'] = deviceId;
+        this.setState(currentState);
+
+    }
+
+    setDeviceRoom(deviceRoom) {
+
+        let currentState = this.state;
+        currentState.currentDevice['roomId'] = deviceRoom;
+        this.setState(currentState);
+
+        console.log(this.state.currentDevice);
+
+    }
+
+    registerDevice() {
+
+        this.apiHandler.registerNewDevice(this.state.currentDevice)
+            .then(result => {
+                if (result)
+                    this.handleChildNextClick();
+                else
+                    this.handleChildNextClick(0);
+            });
+
+    }
+
+    printDevice() {
+        console.log(this.state.currentDevice);
+        this.handleChildNextClick();
+    }
+
+    handleChildNextClick(success) {
+        if (success === undefined)
+            this.setState({currentStep: this.state.currentStep+1});
+        else
+            this.setState({currentStep: undefined});
     }
 
     render() {

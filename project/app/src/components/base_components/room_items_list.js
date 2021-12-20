@@ -1,7 +1,5 @@
 import React from "react";
 import {RestAPIHandler} from "../../utils/RestAPIHandler";
-import {ScrollMenu} from "react-horizontal-scrolling-menu";
-import {MiniPanel} from "./mini_panel";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 
@@ -46,7 +44,7 @@ export class RoomItemsList extends React.Component {
         for (let elementIdx in this.state.rooms) {
             roomsList.push(
                 <Row className="my-3" key={elementUUIDCounter}>
-                    <input type="radio" className="btn-check" name="options" id={"option" + elementUUIDCounter} autoComplete="off"/>
+                    <input type="radio" className="btn-check" name="options" id={"option" + elementUUIDCounter} value={this.state.rooms[elementIdx].roomId} autoComplete="off" onClick={() => this.props.on_select(document.querySelector('input[name="options"]:checked').value)}/>
                     <label className="btn text-start p-3 text-secondary fw-light fs-7 boxShadow" htmlFor={"option" + elementUUIDCounter}>{this.state.rooms[elementIdx].name}</label>
                 </Row>
             );

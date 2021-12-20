@@ -43,7 +43,7 @@ export class AvailableDevicesList extends React.Component {
         for (let elementIdx in this.state.availableDevices) {
             availableDevicesItems.push(
                 <Row className="my-3" key={elementUUIDCounter}>
-                    <input type="radio" className="btn-check" name="options" id={"option" + elementUUIDCounter} autoComplete="off"/>
+                    <input type="radio" className="btn-check" name="options" id={"option" + elementUUIDCounter} value={this.state.availableDevices[elementIdx].deviceId} autoComplete="off" onClick={() => this.props.on_select(document.querySelector('input[name="options"]:checked').value)}/>
                     <label className="btn text-start p-3 text-secondary fw-light fs-7 boxShadow" htmlFor={"option" + elementUUIDCounter}>{this.state.availableDevices[elementIdx].name}</label>
                 </Row>
             );

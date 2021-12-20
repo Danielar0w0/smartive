@@ -29,7 +29,7 @@ export class ControlDevice extends React.Component {
                                 </Row>
                                 <Row>
                                     <Col>
-                                        <p class="text-center fw-bolder">Device</p>
+                                        <p className="text-center fw-bolder">Device</p>
                                     </Col>
                                 </Row>
                                 <Row>

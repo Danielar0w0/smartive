@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.Room;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.RoomStats;
-import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.AbstractDevice;
+import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.Device;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.DeviceCategory;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.SensorState;
 import pt.ua.deti.ies.smartive.api.smartive_api.redis.entities.RSensor;
@@ -41,13 +41,13 @@ public final class MiddlewareHandler {
 
         Room room = roomService.getRoom(roomId);
 
-        for (AbstractDevice abstractDevice : room.getAbstractDevices()) {
+        for (Device device : room.getDevices()) {
 
-            SensorState sensorState = getSensorState(abstractDevice.getDeviceId());
+            SensorState sensorState = getSensorState(device.getDeviceId());
 
             if (sensorState == null) continue;
 
-            switch (abstractDevice.getCategory()) {
+            switch (device.getCategory()) {
 
                 case TEMPERATURE:
                     roomTemperatureSum += sensorState.getValue();
@@ -59,8 +59,8 @@ public final class MiddlewareHandler {
 
         }
 
-        temperatureSensorsCount = (int) room.getAbstractDevices().stream().filter(abstractDevice -> abstractDevice.getCategory() == DeviceCategory.TEMPERATURE).count();
-        humiditySensorsCount = (int) room.getAbstractDevices().stream().filter(abstractDevice -> abstractDevice.getCategory() == DeviceCategory.HUMIDITY).count();
+        temperatureSensorsCount = (int) room.getDevices().stream().filter(abstractDevice -> abstractDevice.getCategory() == DeviceCategory.TEMPERATURE).count();
+        humiditySensorsCount = (int) room.getDevices().stream().filter(abstractDevice -> abstractDevice.getCategory() == DeviceCategory.HUMIDITY).count();
 
         double roomTemperature = temperatureSensorsCount > 0 ? roomTemperatureSum/temperatureSensorsCount : roomTemperatureSum;
         double roomHumidity = humiditySensorsCount > 0 ? roomHumiditySum/humiditySensorsCount : roomHumiditySum;

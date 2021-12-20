@@ -26,6 +26,7 @@ export class RestAPIHandler {
                 return rooms
 
             })
+
             .catch(error => {
                 console.log("Error on API request (getAllRooms()): " + error.message)
                 return []
@@ -55,10 +56,26 @@ export class RestAPIHandler {
         const endpointURI = `/devices/sensor/${sensorId}`
         const requestURI = this._middlewareBaseURI + endpointURI;
 
-        return axios.get(requestURI, {data: {"deviceId": sensorId}})
+        return axios.get(requestURI)
             .then((response) => {
                 const sensorsStats: SensorStat = response.data;
                 return sensorsStats
+            })
+            .catch(error => {
+                console.log("Error on API request (getSensorsStats()): " + error.message)
+                return []
+            });
+
+    }
+
+    getAvailableDevices(): Promise<Device[]> {
+        const endpointURI = '/devices/available'
+        const requestURI = this._publicAPIBaseURI + endpointURI;
+
+        return axios.get(requestURI)
+            .then((response) => {
+                const availableDevices: Device[] = response.data;
+                return availableDevices
             })
             .catch(error => {
                 console.log("Error on API request (getSensorsStats()): " + error.message)

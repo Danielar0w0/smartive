@@ -10,6 +10,7 @@ import {DeviceList} from "./device_list";
 import {DeviceName} from "./device_name";
 import {ConfigurationStep} from "./configuration_step";
 import {RoomItemsList} from "../base_components/room_items_list";
+import {AvailableDevicesList} from "../base_components/available_devices_list";
 
 export class AddDevice extends React.Component {
 
@@ -29,7 +30,7 @@ export class AddDevice extends React.Component {
             case 0:
                 return (<DeviceName on_next_click={this.handleChildNextClick.bind(this)} />);
             case 1:
-                return (<DeviceList title={"Select a device from nearby devices:"} elements={ ["Samsung SmartTV", "Philips Bulb", "Xiaomi Temperature Sensor"] } btn_text={"Next"} on_next_click={this.handleChildNextClick.bind(this)} />)
+                return (<ConfigurationStep  title={"Select a device from nearby devices:"} childComponent={<AvailableDevicesList/>} btn_text={"Next"} on_next_click={this.handleChildNextClick.bind(this)} />)
             case 2:
                 return (<DeviceList title={"Select the device category:"} elements={ ["Temperature Sensor", "Humidity Sensor"] } btn_text={"Next"} on_next_click={this.handleChildNextClick.bind(this)} />)
             case 3:

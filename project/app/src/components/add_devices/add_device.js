@@ -6,13 +6,13 @@ import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import {Navbar} from "../base_components/navbar";
 import {ProgressBar} from "react-bootstrap";
-import {DeviceList} from "./device_list";
 import {DeviceName} from "./device_name";
 import {ConfigurationStep} from "./configuration_step";
 import {RoomItemsList} from "../base_components/room_items_list";
 import {AvailableDevicesList} from "../base_components/available_devices_list";
 import {AvailableTypesList} from "../base_components/available_types_list";
 import {RestAPIHandler} from "../../utils/RestAPIHandler";
+import { useNavigate } from 'react-router-dom';
 
 export class AddDevice extends React.Component {
 
@@ -40,7 +40,7 @@ export class AddDevice extends React.Component {
             case 3:
                 return (<ConfigurationStep title={"Select Room:"} childComponent={<RoomItemsList on_select={this.setDeviceRoom.bind(this)} />} btn_text={"Finish"} on_next_click={this.registerDevice.bind(this)} />)
             case 4:
-                return (<ConfigurationStep title={"Successfully registered new device."} btn_text={"Go Back"} />)
+                return (<ConfigurationStep title={"Successfully registered new device."} btn_text={"Go Back"} on_next_click={this.goBack.bind(this)} />)
         }
 
     }
@@ -93,9 +93,8 @@ export class AddDevice extends React.Component {
 
     }
 
-    printDevice() {
-        console.log(this.state.currentDevice);
-        this.handleChildNextClick();
+    goBack() {
+        window.location.replace('/devices');
     }
 
     handleChildNextClick(success) {

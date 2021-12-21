@@ -67,6 +67,16 @@ services:
       - 5672:5672
       - 15672:15672
 
+  processors:
+    build:
+    context: ../processors
+    dockerfile: Dockerfile
+
+  data_generators:
+    build:
+    context: ../projectDataGeneration
+    dockerfile: Dockerfile
+
 networks: 
   mongo-compose-network:
     driver: bridge

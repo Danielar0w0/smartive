@@ -16,7 +16,7 @@ export class MiniPanel extends React.Component {
 
     render() {
 
-        const selected = this.props.selected ? true : false;
+        const selected = this.props.selected !== undefined;
 
         if (selected) {
 
@@ -41,7 +41,7 @@ export class MiniPanel extends React.Component {
 
         }
 
-        const coloredIcon = this.props.coloredIcon ? true : false;
+        const coloredIcon = this.props.coloredIcon !== undefined;
         let icon; 
 
         if (coloredIcon) {

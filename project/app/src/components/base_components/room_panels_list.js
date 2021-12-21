@@ -47,8 +47,9 @@ export class RoomPanelsList extends React.Component {
 
                 {items.map(room => (
                     <MiniPanel
-                        room_name={room.name}
-                        power_consumption={room.stats !== null && room.stats !== undefined ? room.stats.powerConsumption + ' kWh' : '0 kWh'}
+                        title={"Room"}
+                        subtitle={room.name}
+                        info={room.stats !== null && room.stats !== undefined ? room.stats.powerConsumption + ' kWh' : '0 kWh'}
                     />
                 ))}
 

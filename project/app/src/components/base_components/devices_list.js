@@ -3,7 +3,6 @@ import { RestAPIHandler } from "../../utils/RestAPIHandler";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import {LargePanel} from "./large_panel";
-import {MiniPanel} from "./mini_panel";
 import Container from "react-bootstrap/Container";
 
 export class DevicesList extends React.Component {
@@ -14,7 +13,8 @@ export class DevicesList extends React.Component {
         this.apiHandler = new RestAPIHandler();
         this.state = {
             isLoading: true,
-            sensors: []
+            sensors: [],
+            childComponents: {}
         };
 
     }
@@ -46,7 +46,9 @@ export class DevicesList extends React.Component {
                             sensor.sensorStats = sensorStats.sensorState !== undefined ? sensorStats.sensorState : {};
                             clonedSensorsList.push(sensor);
 
-                            this.setState({ isLoading: false, sensors: clonedSensorsList});
+                            let currentState = this.state;
+                            currentState.sensors = clonedSensorsList;
+                            this.setState(currentState);
 
                         });
 
@@ -54,23 +56,50 @@ export class DevicesList extends React.Component {
 
             });
 
+        this.updateChildComponents();
+
+    }
+
+    updateChildComponents() {
+
+        let allSensors = this.state.sensors;
+        let componentState = this.state;
+
+        let childComponents = {
+            firstCol: [],
+            secondCol: []
+        };
+
+        for (let sensorIdx = 0; sensorIdx < allSensors.length; sensorIdx+=2) {
+
+            let currentSensor = allSensors[sensorIdx];
+            let nextSensor = allSensors[sensorIdx+1];
+
+            childComponents.firstCol.push(
+                <LargePanel
+                    device_name={currentSensor.name}
+                    power_consumption={(currentSensor.sensorStats.value + currentSensor.sensorStats.unit) || 'No Data'}
+                />
+            );
+
+            if (sensorIdx+1 < allSensors.length) {
+                childComponents.secondCol.push(
+                    <LargePanel
+                        device_name={nextSensor.name}
+                        power_consumption={(nextSensor.sensorStats.value + nextSensor.sensorStats.unit) || 'No Data'}
+                    />
+                );
+            }
+
+        }
+
+        componentState.childComponents = childComponents;
+
+        this.setState(componentState);
 
     }
 
     render() {
-
-        let firstColumnSensors = [], secondColumnSensors = [];
-        let allSensors = this.state.sensors;
-
-        for (let sensorIdx = 0; sensorIdx < allSensors.length; sensorIdx+=2) {
-
-            firstColumnSensors.push(allSensors[sensorIdx]);
-
-            if (sensorIdx+1 < allSensors.length) {
-                secondColumnSensors.push(allSensors[sensorIdx+1])
-            }
-
-        }
 
         return (
 
@@ -78,20 +107,10 @@ export class DevicesList extends React.Component {
 
                 <Row>
                     <Col lg={6} md={6} sm={12}>
-                        {firstColumnSensors.map(sensor => (
-                            <LargePanel
-                                device_name={sensor.name}
-                                power_consumption={(sensor.sensorStats.value + " " + sensor.sensorStats.unit) || 'No Data'}
-                            />
-                        ))}
+                        {this.state.childComponents.firstCol}
                     </Col>
                     <Col lg={6} md={6} sm={12}>
-                        {secondColumnSensors.map(sensor => (
-                            <LargePanel
-                                device_name={sensor.name}
-                                power_consumption={sensor.sensorStats.value || 'No Data'}
-                            />
-                        ))}
+                        {this.state.childComponents.secondCol}
                     </Col>
 
                 </Row>

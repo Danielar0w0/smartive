@@ -10,10 +10,6 @@ import {MediumPanel} from "./base_components/medium_panel";
 import {BigPanel} from "./base_components/big_panel";
 import {TabContainer} from "react-bootstrap";
 import {
-    faHome,
-    faTv,
-    faBed,
-    faUtensilSpoon,
     faWater,
     faPlug,
     faLightbulb,
@@ -34,30 +30,38 @@ export class Dashboard extends React.Component {
 
                 <Row className="mt-5">
                     <Col className="col-3 px-0">
-                        <MediumPanel icon={faPlug}/>
+                        <MediumPanel 
+                            icon={faPlug}
+                            title={'Devices'}
+                            subtitle={'Energy'}
+                            info={'800 kwh'}
+                        />
                     </Col>
                     <Col className="col-3">
                         <Row>
                             <TabContainer>
                                 <MiniPanel
                                     icon={faWater}
-                                    room_name={'Water'}
-                                    power_consumption={'10 L'}
+                                    title={'Devices'}
+                                    subtitle={'Water'}
+                                    info={'10 L'}
                                 />
                             </TabContainer>
                         </Row>
                         <Row>
                             <MiniPanel
                                 icon={faTemperatureHigh}
-                                room_name={'Temperature'}
-                                power_consumption={'20 ºC'}
+                                title={'Devices'}
+                                subtitle={'Temperature'}
+                                info={'20 ºC'}
                             />
                         </Row>
                         <Row>
                             <MiniPanel
                                 icon={faLightbulb}
-                                room_name={'Light'}
-                                power_consumption={'60 %'}
+                                title={'Devices'}
+                                subtitle={'Light'}
+                                info={'60 %'}
                             />
                         </Row>
                     </Col>

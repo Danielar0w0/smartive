@@ -16,6 +16,7 @@ import {Profile} from "./components/profile/profile";
 import { Users } from './components/users/users';
 import { ViewUsers } from './components/users/view_user';
 import { AddUser } from './components/users/add_user';
+import { History } from './components/history';
 
 export default function AppRouting () {
 
@@ -32,6 +33,7 @@ export default function AppRouting () {
                 <Route path="/users" element={<Users/>} />
                 <Route path="/users/1" element={<ViewUsers/>} />
                 <Route path="/add_user" element={<AddUser/>} />
+                <Route path="/history" element={<History/>} />
             </Routes>
         </Router>
     )

@@ -93,7 +93,7 @@ export class RestAPIHandler {
         return axios.post(requestURI, device)
             .then((response) => {
                 console.log(response);
-                return response.status == 200;
+                return response.status === 200;
             })
             .catch(error => {
                 console.log("Error on API request (registerNewDevice()): " + error.message)

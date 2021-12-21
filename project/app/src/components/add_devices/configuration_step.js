@@ -5,10 +5,6 @@ import Container from "react-bootstrap/Container";
 
 export class ConfigurationStep extends React.Component {
 
-    constructor(props) {
-        super(props);
-    }
-
     render() {
 
         return (

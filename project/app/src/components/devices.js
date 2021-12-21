@@ -22,7 +22,7 @@ export class Devices extends React.Component{
                     <Navbar/>
                 </div>
                 
-                <RoomList/>
+                <RoomPanelsList/>
                 
                 <Row className="my-5">
                     <Col className="col-1">

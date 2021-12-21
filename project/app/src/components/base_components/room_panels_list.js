@@ -4,7 +4,7 @@ import { MiniPanel } from "./mini_panel";
 import React from 'react';
 import { RestAPIHandler } from "../../utils/RestAPIHandler";
 
-export class RoomList extends React.Component {
+export class RoomPanelsList extends React.Component {
 
     constructor(props) {
 
@@ -48,7 +48,7 @@ export class RoomList extends React.Component {
                 {items.map(room => (
                     <MiniPanel
                         room_name={room.name}
-                        power_consumption={room.stats !== null && room.stats !== undefined ? room.stats.powerConsumption : '0 kWh'}
+                        power_consumption={room.stats !== null && room.stats !== undefined ? room.stats.powerConsumption + ' kWh' : '0 kWh'}
                     />
                 ))}
 

@@ -3,7 +3,6 @@ import { RestAPIHandler } from "../../utils/RestAPIHandler";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import {LargePanel} from "./large_panel";
-import {MiniPanel} from "./mini_panel";
 import Container from "react-bootstrap/Container";
 
 export class DevicesList extends React.Component {

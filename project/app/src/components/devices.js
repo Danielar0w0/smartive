@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { MiniPanel } from './base_components/mini_panel'
 import { Navbar } from "./base_components/navbar";
 import Search from './base_components/searchbar';
 import { FaPlusSquare } from 'react-icons/fa'
@@ -8,8 +7,6 @@ import { FaPlusSquare } from 'react-icons/fa'
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import {faBed, faHome, faTv, faUtensilSpoon} from "@fortawesome/free-solid-svg-icons";
-import {LargePanel} from "./base_components/large_panel";
 import {RoomList} from "./base_components/room_list";
 import {DeviceList} from "./add_devices/device_list";
 import {DevicesList} from "./base_components/devices_list";

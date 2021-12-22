@@ -3,11 +3,8 @@ RUN pip install --upgrade pip
 
 
 WORKDIR /
-
-COPY requirements.txt .
-RUN pip install -r requirements.txt
-
 COPY . .
 
+RUN pip install -r requirements.txt
 RUN chmod a+x run.sh
 CMD [ "./run.sh"]

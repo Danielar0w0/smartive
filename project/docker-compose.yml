@@ -69,13 +69,13 @@ services:
 
   processors:
     build:
-    context: ../processors
-    dockerfile: Dockerfile
+      context: ../processors
+      dockerfile: Dockerfile
 
   data_generators:
     build:
-    context: ../projectDataGeneration
-    dockerfile: Dockerfile
+      context: ../projectDataGeneration
+      dockerfile: Dockerfile
 
 networks: 
   mongo-compose-network:

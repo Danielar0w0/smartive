@@ -4,10 +4,15 @@ import Card from 'react-bootstrap/Card'
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
-import {Navbar} from "../navbar";
+import {Navbar} from "../base_components/navbar";
 import {ProgressBar} from "react-bootstrap";
-import {DeviceList} from "./device_list";
 import {DeviceName} from "./device_name";
+import {ConfigurationStep} from "./configuration_step";
+import {RoomItemsList} from "../base_components/room_items_list";
+import {AvailableDevicesList} from "../base_components/available_devices_list";
+import {AvailableTypesList} from "../base_components/available_types_list";
+import {RestAPIHandler} from "../../utils/RestAPIHandler";
+import $ from 'jquery';
 
 export class AddDevice extends React.Component {
 
@@ -15,8 +20,11 @@ export class AddDevice extends React.Component {
 
         super(props);
 
+        this.apiHandler = new RestAPIHandler();
         this.state = {
             currentStep: 0,
+            currentDevice: {},
+            successfullyRegistered: false
         };
 
     }
@@ -25,20 +33,102 @@ export class AddDevice extends React.Component {
 
         switch (configStepIdx) {
             case 0:
-                return (<DeviceName on_next_click={this.handleChildNextClick.bind(this)} />);
+                return (<DeviceName on_next_click={this.setDeviceName.bind(this)} />);
             case 1:
-                return (<DeviceList title={"Select a device from nearby devices:"} elements={ ["Samsung SmartTV", "Philips Bulb", "Xiaomi Temperature Sensor"] } btn_text={"Next"} on_next_click={this.handleChildNextClick.bind(this)} />)
+                return (<ConfigurationStep title={"Select a device from nearby devices:"} childComponent={<AvailableDevicesList on_select={this.setDeviceId.bind(this)}/>} btn_text={"Next"} on_next_click={this.handleChildNextClick.bind(this)} />)
             case 2:
-                return (<DeviceList title={"Select the device category:"} elements={ ["Smart Bulbs", "Environment Sensors", "TVs & Monitors"] } btn_text={"Next"} on_next_click={this.handleChildNextClick.bind(this)} />)
+                return (<ConfigurationStep title={"Select the device category:"} childComponent={<AvailableTypesList on_select={this.setDeviceType.bind(this)}/>} btn_text={"Next"} on_next_click={this.handleChildNextClick.bind(this)} />)
             case 3:
-                return (<DeviceList title={"Select Room:"} elements={ ["Bedroom", "Living Room", "Kitchen"] } btn_text={"Finish"} on_next_click={this.handleChildNextClick.bind(this)} />)
-
+                return (<ConfigurationStep title={"Select Room:"} childComponent={<RoomItemsList on_select={this.setDeviceRoom.bind(this)} />} btn_text={"Finish"} on_next_click={this.registerDevice.bind(this)} />)
+            case 4:
+                if (this.state.successfullyRegistered)
+                    return (<ConfigurationStep title={"Successfully registered new device."} btn_text={"Go Back"} on_next_click={this.goBack.bind(this)} />)
+                else
+                    return (<ConfigurationStep title={"Unable to register your device."} btn_text={"Go Back"} on_next_click={this.goBack.bind(this)} />)
         }
 
     }
 
+    setDeviceName(deviceName) {
+
+        let currentState = this.state;
+        currentState.currentDevice['name'] = deviceName;
+        this.setState(currentState);
+
+        this.handleChildNextClick();
+
+    }
+
+    setDeviceType(deviceType) {
+
+        let currentState = this.state;
+        currentState.currentDevice['category'] = deviceType;
+        this.setState(currentState);
+
+        this.enableNextButton();
+
+    }
+
+    setDeviceId(deviceId) {
+
+        let currentState = this.state;
+        currentState.currentDevice['deviceId'] = deviceId;
+        this.setState(currentState);
+
+        this.enableNextButton();
+
+    }
+
+    setDeviceRoom(deviceRoom) {
+
+        let currentState = this.state;
+        currentState.currentDevice['roomId'] = deviceRoom;
+        this.setState(currentState);
+
+        console.log(this.state.currentDevice);
+
+        this.enableNextButton();
+
+    }
+
+    registerDevice() {
+
+        this.apiHandler.deleteAvailableDevice(this.state.currentDevice)
+            .then(deviceRemovedResult => {
+
+                if (deviceRemovedResult) {
+
+                    this.apiHandler.registerNewDevice(this.state.currentDevice)
+                        .then(deviceRegisteredResult => {
+
+                            if (deviceRegisteredResult) {
+                                this.setState({ successfullyRegistered: true });
+                            } else {
+                                this.setState({ successfullyRegistered: false });
+                            }
+
+                        });
+
+                } else {
+                    this.setState({ successfullyRegistered: false });
+                }
+
+                this.handleChildNextClick();
+
+            });
+
+    }
+
+    goBack() {
+        window.location.replace('/devices');
+    }
+
+    enableNextButton() {
+        $('#configStepNextBtn').removeClass('disabled')
+    }
+
     handleChildNextClick() {
-        this.setState({currentStep: this.state.currentStep+1})
+        this.setState({currentStep: this.state.currentStep+1});
     }
 
     render() {
@@ -54,7 +144,7 @@ export class AddDevice extends React.Component {
                         <Card className="m-3 mx-0 my-2 shadow-sm px-0 boxShadow border-light" style={{borderRadius: "15px"}}>
                             <Container className="my-3">
                                 <Row>
-                                    <img src={process.env.PUBLIC_URL + '/Router.png'} className="my-3" style={{height: "28rem", width: "100%", display: "block"}}/>
+                                    <img src={process.env.PUBLIC_URL + '/Router.png'} className="my-3" style={{height: "28rem", width: "100%", display: "block"}} alt="Device"/>
                                 </Row>
                             </Container>
                         </Card>

@@ -8,19 +8,19 @@
 # docker run -it --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3.9-management
 
 import pika
-import json
 import requests
+import json
 import sys
 
-# REST API
-api_url = "localhost:8080/middleware/device/sensor"
+categories = {'humidity_queue': 'HUMIDITY', 'temperature_queue': 'TEPMPERATURE'}
+units = {'humidity_queue': '%', 'temperature_queue': 'ºC'}
 
 def main():
 
     # Check if the user has provided the correct number of arguments
     if len(sys.argv) < 2:
         print("Usage: python processor.py <queue>")
-        sys.exit(1)
+        return
     queue = sys.argv[1]    
 
     connection = pika.BlockingConnection(
@@ -37,39 +37,126 @@ def main():
 
     try:
         channel.start_consuming()
+        
+    except KeyboardInterrupt:
+        pass
+
     finally:
-        # Close the channel when it is no longer needed
-        print(" [x] Closed channel")
-        channel.close()
+        print(" [x] Closed connection")
+        connection.close()
         
 
 def callback(ch, method, properties, body):
 
     print(" [x] Received %r" % body.decode())
 
-    # Update sensor state
-    # data = json.loads(body.decode())
-    # updateState(data)
+    # Obtain sensor data
+    data = json.loads(body.decode())
+
+    if "id" not in data and "value" not in data:
+        print(" [-] Data is not in the correct format!")
+        return
+    
+    sensor_id = data["id"]
+    state_value = data["value"]
+
+    # Obtain sensor from registered devices
+    sensor = obtain_sensor(sensor_id, "registered")
+
+    # If the sensor is registered
+    if sensor:
+
+        # Update sensor state
+        updateState(sensor, state_value)
+
+    # If the sensor isn't registered
+    else:
+
+        # Obtain sensor from available devices
+        sensor = obtain_sensor(sensor_id, "available")
+
+        # If the sensor isn't available
+        if not sensor:
+            # Register as available sensor
+            category = categories[method.routing_key]
+            sensor = register_sensor(sensor_id, category)
 
     print(" [x] Done")
 
     # An ack() is sent back to tell RabbitMQ that the message has been received, processed and that RabbitMQ is free to delete it
     ch.basic_ack(delivery_tag=method.delivery_tag)
-    
-    
-def updateState(data):
-    
-    # Default value
-    sensor = {}
 
-    # Obtain deviceId and deviceState
-    if "id" in data and "value" in data:
-        sensor = {"deviceId": data["id"], "state": {"value": data["value"], "unit": "%"}}
+
+def obtain_sensor(sensor_id, device_type = "registered"):
+
+    if device_type == "registered":
+        response = requests.get("http://localhost:8080/api/devices/sensors", timeout=5)
+    
+    elif device_type == "available":
+        response = requests.get("http://localhost:8080/api/devices/available", timeout=5)
+
+    else:
+        print(" [-] Unable to get list of '{device_type}' sensors!")
+        return
+    
+    # Check if request was successful
+    if response.status_code != 200: 
+        print(" [-] Unable to get sensors!")
+        print("Error", response.status_code)
+        return
+    
+    # Obtain all sensors (response content is in bytes)
+    all_sensors = response.content.decode()
+
+    current_sensor = {}
+
+    if all_sensors:
+
+        # Convert to JSON
+        all_sensors = json.loads(all_sensors)
+
+        # Run through all sensors and find the sensor with the given id
+        for sensor in all_sensors:
+            
+            # Check if sensor id is the same as the one given
+            if sensor["deviceId"] == sensor_id:
+                current_sensor = sensor
+        
+    return current_sensor
+
+
+def register_sensor(sensor_id, category=None):
+
+    # Create sensor
+    sensor = {"deviceId": sensor_id, "name": f"Sensor {sensor_id}", "category": category}
+        
+    # Register available sensor
+    response = requests.post("http://localhost:8080/api/devices/available", json=sensor, timeout=5)
+    
+    # Check if request was successful
+    if response.status_code != 200: 
+        print("Unable to register sensor!")
+        print("Error", response.status_code)
+        return
+
+    return sensor
+
+    
+def updateState(sensor, state_value):
+
+    # Create sensor state
+    sensor = {"deviceId": sensor["deviceId"], "state": {"value": state_value, "unit": "%"}}
 
     # The keyword json automatically sets the request’s HTTP header Content-Type to application/json
-    response = requests.put(api_url, json=sensor)
-    print(response["message"])
+    response = requests.put("http://localhost:8080/middleware/device/sensor", json=sensor, timeout=5)
     
+    # Check if request was successful
+    if response.status_code != 200: 
+        print(" [-] Unable to get sensors!")
+        print("Error", response.status_code)
+        return
+    
+    print(" [+] Sensor state updated")
 
 if __name__ == '__main__':
     main()

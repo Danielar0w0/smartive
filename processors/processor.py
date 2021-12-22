@@ -38,11 +38,12 @@ def main():
     try:
         channel.start_consuming()
         
-    except KeyboardInterrupt:
+    except KeyboardInterrupt or SystemExit:
         pass
 
     finally:
         print(" [x] Closed connection")
+        channel.stop_consuming()
         connection.close()
         
 
@@ -102,7 +103,7 @@ def obtain_sensor(sensor_id, device_type = "registered"):
     # Check if request was successful
     if response.status_code != 200: 
         print(" [-] Unable to get sensors!")
-        print("Error", response.status_code)
+        print(" [-] Error", response.status_code)
         return
     
     # Obtain all sensors (response content is in bytes)
@@ -128,15 +129,15 @@ def obtain_sensor(sensor_id, device_type = "registered"):
 def register_sensor(sensor_id, category=None):
 
     # Create sensor
-    sensor = {"deviceId": sensor_id, "name": f"Sensor {sensor_id}", "category": category}
+    sensor = {'deviceId': sensor_id, 'name': f'Sensor {sensor_id}', 'category': category}
         
     # Register available sensor
     response = requests.post("http://localhost:8080/api/devices/available", json=sensor, timeout=5)
     
     # Check if request was successful
     if response.status_code != 200: 
-        print("Unable to register sensor!")
-        print("Error", response.status_code)
+        print(" [-] Unable to register sensor!")
+        print(" [-] Error", response.status_code)
         return
 
     return sensor
@@ -153,7 +154,7 @@ def updateState(sensor, state_value):
     # Check if request was successful
     if response.status_code != 200: 
         print(" [-] Unable to get sensors!")
-        print("Error", response.status_code)
+        print(" [-] Error", response.status_code)
         return
     
     print(" [+] Sensor state updated")

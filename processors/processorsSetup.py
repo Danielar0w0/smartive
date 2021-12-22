@@ -11,6 +11,7 @@ connection = pika.BlockingConnection(
 channel = connection.channel()
 
 process_list = {'humidity_queue': [], 'temperature_queue': []}
+# pid_list = {'humidity_queue': [], 'temperature_queue': []}
 
 def first_setup():
 
@@ -29,7 +30,7 @@ def first_setup():
         # Create as many consumers (processors) as messages
         for message in range(messages):
 
-            p = Process(target=createProcessor, args=(queue,))
+            p = Process(target=runProcessor, args=(queue,))
             print(f'Created a processor for queue {queue}!')
             
             # Start the process
@@ -37,12 +38,10 @@ def first_setup():
 
             # Add the alive process to the list
             process_list[queue].append(p)
+            # pid_list[queue].append(p.pid)
         
-def createProcessor(queue):
-    try:
-        os.system('python processor.py ' + queue)
-    except KeyboardInterrupt:
-        pass    
+def runProcessor(queue):
+    os.system('python3 processor.py ' + queue)
 
 def loop():
 
@@ -52,7 +51,7 @@ def loop():
 
         while True:
             
-            time.sleep(20)
+            time.sleep(2)
 
             # Remove closed processes from the list
             for queue in process_list.keys():
@@ -78,12 +77,14 @@ def loop():
 
                     for i in range(ceil(messages/2 - consumers)):
 
-                        p = Process(target=createProcessor, args=(queue,))
+                        p = Process(target=runProcessor, args=(queue,))
                         print(f'Created a processor for queue {queue}!')
 
                         # Start the process
                         p.start()
+
                         process_list[queue].append(p)
+                        # pid_list[queue].append(p.pid)
 
                 # If the number of processes is way more than the number of messages
                 elif consumers > messages:
@@ -94,23 +95,28 @@ def loop():
 
                         # Close a process
                         if process_list[queue]:
+                            
                             p = process_list[queue].pop()
                             p.terminate()
+                                                        
+                            # pid = pid_list[queue].pop()
+                            # os.system("kill -9 " + str(pid))
 
+                print(f'Queue {queue} has {messages} messages and {consumers} consumers.')
 
     except KeyboardInterrupt:
         pass
 
     finally:
+
         # Close the connection
-        print("Closed connection.")
         connection.close()
 
         # Close processors
         if process_list:
             for queue in process_list.keys():
                 for p in process_list[queue]:
-                    p.terminate()   
+                    p.terminate()
         
         time.sleep(5)
         print("Closed processors.") 

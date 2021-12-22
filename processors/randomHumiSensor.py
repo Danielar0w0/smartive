@@ -6,7 +6,7 @@ channel = connection.channel()
 
 channel.queue_declare(queue='humidity_queue', durable=True)
 
-message = '{"id": 1, "value": 30}'
+message = '{"id": "61b3241532f6c61ab2a15b63", "value": 30}'
 channel.basic_publish(
     exchange='',
     routing_key='humidity_queue',

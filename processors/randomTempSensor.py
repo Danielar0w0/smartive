@@ -6,7 +6,7 @@ channel = connection.channel()
 
 channel.queue_declare(queue='temperature_queue', durable=True)
 
-message = '{"id": 1, "value": 30}'
+message = '{"id": "61b3241532f6c61ab2a15b64", "value": 30}'
 channel.basic_publish(
     exchange='',
     routing_key='temperature_queue',

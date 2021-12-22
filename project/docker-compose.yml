@@ -100,5 +100,5 @@ services:
 networks: 
   mongo-compose-network:
     driver: bridge
-    subnet: 172.18.1.0/24
-    gateway: 172.18.1.1
+    subnet: 172.18.0.0/24
+    gateway: 172.18.0.1

@@ -71,11 +71,19 @@ services:
     build:
       context: ../processors
       dockerfile: Dockerfile
+    depends_on:
+      - rabbitmq
+    networks:
+      - mongo-compose-network
 
   data_generators:
     build:
       context: ../projectDataGeneration
       dockerfile: Dockerfile
+    depends_on:
+      - rabbitmq
+    networks:
+      - mongo-compose-network
 
 networks: 
   mongo-compose-network:

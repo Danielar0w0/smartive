@@ -87,13 +87,20 @@ export class AddDevice extends React.Component {
     registerDevice() {
 
         this.apiHandler.registerNewDevice(this.state.currentDevice)
-            .then(result => {
-                if (result) {
-                    this.setState({ successfullyRegistered: true });
-                } else {
-                    this.setState({ successfullyRegistered: false });
-                }
-                this.handleChildNextClick();
+            .then(deviceRegisteredResult => {
+                this.apiHandler.deleteAvailableDevice(this.state.currentDevice)
+                    .then(deviceRemovedResult => {
+
+                        if (deviceRegisteredResult && deviceRemovedResult) {
+                            this.setState({ successfullyRegistered: true });
+                        } else {
+                            this.setState({ successfullyRegistered: false });
+                        }
+                        this.handleChildNextClick();
+
+
+                    });
+
             });
 
     }

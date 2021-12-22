@@ -85,6 +85,22 @@ export class RestAPIHandler {
 
     }
 
+    deleteAvailableDevice(device: Device): Promise<boolean> {
+
+        const endpointURI = `/devices/available/${device.deviceId}`
+        const requestURI = this._publicAPIBaseURI + endpointURI;
+
+        return axios.delete(requestURI)
+            .then(() => {
+                return true
+            })
+            .catch(error => {
+                console.log("Error on API request (deleteAvailableDevice()): " + error.message)
+                return false
+            });
+
+    }
+
     registerNewDevice(device: Device): Promise<boolean> {
 
         const endpointURI = '/devices/sensors/register'
@@ -101,5 +117,7 @@ export class RestAPIHandler {
             });
 
     }
+
+
 
 }

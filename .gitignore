@@ -1,2 +1,5 @@
 .docker
 /project/mongo-data
+/project/mongo-data
+*.class
+*.lst

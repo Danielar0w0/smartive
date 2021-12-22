@@ -25,7 +25,7 @@ public class SpringEventListener {
     @EventListener(ApplicationReadyEvent.class)
     public void runAfterStartup() {
 
-        redisHandler.createPool("localhost");
+        redisHandler.createPool("172.18.0.4");
         logger.info("Successfully created Redis pool!");
 
     }

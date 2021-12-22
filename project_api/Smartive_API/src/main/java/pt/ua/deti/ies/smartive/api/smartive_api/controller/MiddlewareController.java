@@ -11,9 +11,7 @@ import pt.ua.deti.ies.smartive.api.smartive_api.model.MessageResponse;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.RoomStats;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.Sensor;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.SensorState;
-import pt.ua.deti.ies.smartive.api.smartive_api.redis.entities.NullRSensor;
 import pt.ua.deti.ies.smartive.api.smartive_api.redis.entities.RSensor;
-import pt.ua.deti.ies.smartive.api.smartive_api.services.RSensorService;
 import pt.ua.deti.ies.smartive.api.smartive_api.services.RoomService;
 import pt.ua.deti.ies.smartive.api.smartive_api.services.SensorService;
 

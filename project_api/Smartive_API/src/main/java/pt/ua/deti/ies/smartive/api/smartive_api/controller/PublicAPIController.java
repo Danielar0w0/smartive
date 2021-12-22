@@ -8,15 +8,13 @@ import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.InvalidRoomException;
 import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.InvalidUserException;
 import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.RoomNotFoundException;
 import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.UserAlreadyExistsException;
-import pt.ua.deti.ies.smartive.api.smartive_api.middleware.MiddlewareHandler;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.MessageResponse;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.Room;
-import pt.ua.deti.ies.smartive.api.smartive_api.model.RoomStats;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.User;
+import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.AvailableDevice;
+import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.Device;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.Sensor;
-import pt.ua.deti.ies.smartive.api.smartive_api.services.RoomService;
-import pt.ua.deti.ies.smartive.api.smartive_api.services.SensorService;
-import pt.ua.deti.ies.smartive.api.smartive_api.services.UserService;
+import pt.ua.deti.ies.smartive.api.smartive_api.services.*;
 
 import java.util.Collections;
 import java.util.List;
@@ -26,17 +24,19 @@ import java.util.stream.Collectors;
 @RequestMapping("/api")
 public class PublicAPIController {
 
-    private final MiddlewareHandler middlewareHandler;
     private final SensorService sensorService;
     private final UserService userService;
     private final RoomService roomService;
+    private final DeviceService deviceService;
+    private final AvailableDeviceService availableDeviceService;
 
     @Autowired
-    public PublicAPIController(MiddlewareHandler middlewareHandler, SensorService sensorService, UserService userService, RoomService roomService) {
-        this.middlewareHandler = middlewareHandler;
+    public PublicAPIController(SensorService sensorService, UserService userService, RoomService roomService, DeviceService deviceService, AvailableDeviceService availableDeviceService) {
         this.sensorService = sensorService;
         this.userService = userService;
         this.roomService = roomService;
+        this.deviceService = deviceService;
+        this.availableDeviceService = availableDeviceService;
     }
 
     @PostMapping("/users/register")
@@ -61,6 +61,9 @@ public class PublicAPIController {
         if (!room.isValid())
             throw new InvalidRoomException("Invalid Room. Please provide all the mandatory fields.");
 
+        if (roomService.exists(room.getName()))
+            throw new InvalidRoomException("A room with that name already exists. Please use a different name.");
+
         if (room.getUsers() == null)
             room.setUsers(Collections.emptyList());
 
@@ -83,6 +86,28 @@ public class PublicAPIController {
     @GetMapping(value = "/devices/sensors")
     public List<Sensor> getAllRegisteredSensors() {
         return sensorService.getAllSensors();
+    }
+
+    @GetMapping(value = "/devices")
+    public List<Device> getAllDevices() {
+        return deviceService.getAllDevices();
+    }
+
+    @GetMapping(value = "/devices/available")
+    public List<AvailableDevice> getAllAvailableDevices() {
+        return availableDeviceService.getAllAvailableDevices();
+    }
+
+    @PostMapping(value = "/devices/available")
+    public MessageResponse getAllAvailableDevices(@RequestBody AvailableDevice availableDevice) {
+        availableDeviceService.save(availableDevice);
+        return new MessageResponse("Successfully registered available device.");
+    }
+
+    @DeleteMapping(value = "/devices/available/{deviceId}")
+    public MessageResponse removeAvailableDevice(@PathVariable ObjectId deviceId) {
+        availableDeviceService.delete(deviceId);
+        return new MessageResponse("Successfully removed available device.");
     }
 
     @GetMapping(value = "/devices/sensors_by_room")

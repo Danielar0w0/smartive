@@ -59,8 +59,8 @@ public final class MiddlewareHandler {
 
         }
 
-        temperatureSensorsCount = (int) room.getDevices().stream().filter(device -> device.getCategory() == DeviceCategory.TEMPERATURE).count();
-        humiditySensorsCount = (int) room.getDevices().stream().filter(device -> device.getCategory() == DeviceCategory.HUMIDITY).count();
+        temperatureSensorsCount = (int) room.getDevices().stream().filter(abstractDevice -> abstractDevice.getCategory() == DeviceCategory.TEMPERATURE).count();
+        humiditySensorsCount = (int) room.getDevices().stream().filter(abstractDevice -> abstractDevice.getCategory() == DeviceCategory.HUMIDITY).count();
 
         double roomTemperature = temperatureSensorsCount > 0 ? roomTemperatureSum/temperatureSensorsCount : roomTemperatureSum;
         double roomHumidity = humiditySensorsCount > 0 ? roomHumiditySum/humiditySensorsCount : roomHumiditySum;

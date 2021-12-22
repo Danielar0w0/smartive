@@ -40,6 +40,10 @@ public class RoomService {
         return roomRepository.existsByRoomId(roomId);
     }
 
+    public boolean exists(String roomName) {
+        return roomRepository.existsByName(roomName);
+    }
+
     public void saveRoom(Room room) {
         roomRepository.save(room);
     }

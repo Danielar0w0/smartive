@@ -52,15 +52,8 @@ export class MediumPanel extends React.Component {
                         </Col>
                     </Row>
                     <Row className="mt-4">
-                        <p>TV</p>
-                        <p className="mb-0">Model 1</p>
-                        <p>Model 2</p>
-                    </Row>
-                    <Row className="mb-4">
-                        <p>LAMPS</p>
-                        <p className="mb-0">Model 1</p>
-                        <p className="mb-0">Model 2</p>
-                        <p>Model 3</p>
+                        <p className="fw-light text-center">Not Implemented</p>
+                        <span style={{height: "14rem"}}/>
                     </Row>
                 </Container>
 

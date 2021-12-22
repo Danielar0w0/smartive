@@ -16,17 +16,41 @@ import {
     faTemperatureHigh
 } from "@fortawesome/free-solid-svg-icons";
 import {RoomPanelsList} from "./base_components/room_panels_list";
+import {RestAPIHandler} from "../utils/RestAPIHandler";
 
 export class Dashboard extends React.Component {
 
+    constructor(props) {
+        super(props);
+
+        this.apiHandler = new RestAPIHandler();
+        this.state = {
+            selectedRoomStats: {}
+        }
+
+    }
+
+
+    roomChangedHandler(room) {
+
+        this.apiHandler.getRoomStats(room.roomId)
+            .then(roomStats => {
+                this.setState({selectedRoomStats: roomStats !== null ? roomStats : {}});
+            });
+
+    }
+
     render() {
+
+        let roomStats = this.state.selectedRoomStats;
+
         return (
             <Container className="container-fluid">
                 <div className="mb-4">
                     <Navbar/>
                 </div>
 
-                <RoomPanelsList/>
+                <RoomPanelsList on_room_changed={this.roomChangedHandler.bind(this)} />
 
                 <Row className="mt-5">
                     <Col className="col-3 px-0">
@@ -34,7 +58,7 @@ export class Dashboard extends React.Component {
                             icon={faPlug}
                             title={'Devices'}
                             subtitle={'Energy'}
-                            info={'800 kwh'}
+                            info={'No Data'}
                         />
                     </Col>
                     <Col className="col-3">
@@ -44,7 +68,7 @@ export class Dashboard extends React.Component {
                                     icon={faWater}
                                     title={'Devices'}
                                     subtitle={'Water'}
-                                    info={'10 L'}
+                                    info={roomStats.water !== undefined ? roomStats.water + " L" : 'No Data'}
                                 />
                             </TabContainer>
                         </Row>
@@ -53,15 +77,15 @@ export class Dashboard extends React.Component {
                                 icon={faTemperatureHigh}
                                 title={'Devices'}
                                 subtitle={'Temperature'}
-                                info={'20 ºC'}
+                                info={roomStats.temperature !== undefined ? roomStats.temperature + " ºC" : 'No Data'}
                             />
                         </Row>
                         <Row>
                             <MiniPanel
                                 icon={faLightbulb}
                                 title={'Devices'}
-                                subtitle={'Light'}
-                                info={'60 %'}
+                                subtitle={'Humidity'}
+                                info={roomStats.humidity !== undefined ? roomStats.humidity + " g/m³" : 'No Data'}
                             />
                         </Row>
                     </Col>

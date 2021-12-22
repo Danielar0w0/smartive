@@ -12,6 +12,7 @@ import {RoomItemsList} from "../base_components/room_items_list";
 import {AvailableDevicesList} from "../base_components/available_devices_list";
 import {AvailableTypesList} from "../base_components/available_types_list";
 import {RestAPIHandler} from "../../utils/RestAPIHandler";
+import $ from 'jquery';
 
 export class AddDevice extends React.Component {
 
@@ -64,6 +65,8 @@ export class AddDevice extends React.Component {
         currentState.currentDevice['category'] = deviceType;
         this.setState(currentState);
 
+        this.enableNextButton();
+
     }
 
     setDeviceId(deviceId) {
@@ -71,6 +74,8 @@ export class AddDevice extends React.Component {
         let currentState = this.state;
         currentState.currentDevice['deviceId'] = deviceId;
         this.setState(currentState);
+
+        this.enableNextButton();
 
     }
 
@@ -82,24 +87,33 @@ export class AddDevice extends React.Component {
 
         console.log(this.state.currentDevice);
 
+        this.enableNextButton();
+
     }
 
     registerDevice() {
 
-        this.apiHandler.registerNewDevice(this.state.currentDevice)
-            .then(deviceRegisteredResult => {
-                this.apiHandler.deleteAvailableDevice(this.state.currentDevice)
-                    .then(deviceRemovedResult => {
+        this.apiHandler.deleteAvailableDevice(this.state.currentDevice)
+            .then(deviceRemovedResult => {
 
-                        if (deviceRegisteredResult && deviceRemovedResult) {
-                            this.setState({ successfullyRegistered: true });
-                        } else {
-                            this.setState({ successfullyRegistered: false });
-                        }
-                        this.handleChildNextClick();
+                if (deviceRemovedResult) {
 
+                    this.apiHandler.registerNewDevice(this.state.currentDevice)
+                        .then(deviceRegisteredResult => {
 
-                    });
+                            if (deviceRegisteredResult) {
+                                this.setState({ successfullyRegistered: true });
+                            } else {
+                                this.setState({ successfullyRegistered: false });
+                            }
+
+                        });
+
+                } else {
+                    this.setState({ successfullyRegistered: false });
+                }
+
+                this.handleChildNextClick();
 
             });
 
@@ -109,7 +123,11 @@ export class AddDevice extends React.Component {
         window.location.replace('/devices');
     }
 
-    handleChildNextClick(success) {
+    enableNextButton() {
+        $('#configStepNextBtn').removeClass('disabled')
+    }
+
+    handleChildNextClick() {
         this.setState({currentStep: this.state.currentStep+1});
     }
 

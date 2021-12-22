@@ -17,7 +17,7 @@ export class ConfigurationStep extends React.Component {
                     {this.props.childComponent}
                 </Container>
 
-                <Button className="mt-4 w-25" style={{backgroundColor: "#f76540", borderColor: "#f76540"}} onClick={() => this.props.on_next_click()}>{this.props.btn_text}</Button>
+                <Button id="configStepNextBtn" className="mt-4 w-25 disabled" style={{backgroundColor: "#f76540", borderColor: "#f76540"}} onClick={() => this.props.on_next_click()}>{this.props.btn_text}</Button>
 
             </div>
 

@@ -10,19 +10,18 @@ import {faHome} from "@fortawesome/free-solid-svg-icons/faHome";
 export class MiniPanel extends React.Component {
 
     constructor(props) {
-
         super(props);
     }
 
     render() {
 
-        const selected = this.props.selected !== undefined;
+        const selected = this.props.selected;
 
         if (selected) {
 
             return (
 
-                <Card className="m-3 my-2 shadow-sm px-0 boxShadow border-light" style={{borderRadius: "15px", width: "90%", backgroundColor: "#f76540"}}>
+                <Card onClick={this.props.on_click} className="m-3 my-2 shadow-sm px-0 boxShadow border-light" style={{borderRadius: "15px", width: "90%", backgroundColor: "#f76540"}}>
                     <Row className="my-2">
                         <Col className="col-md col-lg-3 offset-lg-1 text-center mx-3">
                             <IconButton className="my-3 p-4" style={{borderRadius: "15px", backgroundColor: "white"}}>                 
@@ -58,7 +57,7 @@ export class MiniPanel extends React.Component {
         
         return (
 
-            <Card className="m-3 my-2 shadow-sm px-0 boxShadow border-light" style={{borderRadius: "15px", width: "90%"}}>
+            <Card onClick={this.props.on_click} className="m-3 my-2 shadow-sm px-0 boxShadow border-light" style={{borderRadius: "15px", width: "90%"}}>
                 <Row className="my-2">
                     <Col className="col-md col-lg-3 offset-lg-1 text-center mx-3">
                         {icon}

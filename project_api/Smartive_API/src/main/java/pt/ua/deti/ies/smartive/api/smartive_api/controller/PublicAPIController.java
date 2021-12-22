@@ -7,7 +7,6 @@ import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.InvalidRoomException;
 import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.InvalidUserException;
 import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.RoomNotFoundException;
 import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.UserAlreadyExistsException;
-import pt.ua.deti.ies.smartive.api.smartive_api.middleware.MiddlewareHandler;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.MessageResponse;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.Room;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.User;
@@ -24,7 +23,6 @@ import java.util.stream.Collectors;
 @RequestMapping("/api")
 public class PublicAPIController {
 
-    private final MiddlewareHandler middlewareHandler;
     private final SensorService sensorService;
     private final UserService userService;
     private final RoomService roomService;
@@ -32,8 +30,7 @@ public class PublicAPIController {
     private final AvailableDeviceService availableDeviceService;
 
     @Autowired
-    public PublicAPIController(MiddlewareHandler middlewareHandler, SensorService sensorService, UserService userService, RoomService roomService, DeviceService deviceService, AvailableDeviceService availableDeviceService) {
-        this.middlewareHandler = middlewareHandler;
+    public PublicAPIController(SensorService sensorService, UserService userService, RoomService roomService, DeviceService deviceService, AvailableDeviceService availableDeviceService) {
         this.sensorService = sensorService;
         this.userService = userService;
         this.roomService = roomService;
@@ -62,6 +59,9 @@ public class PublicAPIController {
 
         if (!room.isValid())
             throw new InvalidRoomException("Invalid Room. Please provide all the mandatory fields.");
+
+        if (roomService.exists(room.getName()))
+            throw new InvalidRoomException("A room with that name already exists. Please use a different name.");
 
         if (room.getUsers() == null)
             room.setUsers(Collections.emptyList());

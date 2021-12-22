@@ -20,8 +20,6 @@ public abstract class AbstractDevice {
     @JsonSerialize(using=ToStringSerializer.class)
     private ObjectId deviceId;
     private String name;
-    @JsonSerialize(using=ToStringSerializer.class)
-    private ObjectId roomId;
     private DeviceCategory category;
 
 }

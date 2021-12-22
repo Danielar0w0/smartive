@@ -12,8 +12,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @ToString(callSuper = true)
 public class AvailableDevice extends AbstractDevice {
 
-    public AvailableDevice(ObjectId deviceId, String name, ObjectId roomId, DeviceCategory category) {
-        super(deviceId, name, roomId, category);
+    public AvailableDevice(ObjectId deviceId, String name, DeviceCategory category) {
+        super(deviceId, name, category);
     }
 
 }

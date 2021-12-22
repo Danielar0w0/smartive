@@ -1,6 +1,7 @@
 import pika
 from multiprocessing import Process
 import os
+from bson import ObjectId
 import time
 import requests
 
@@ -21,6 +22,14 @@ def main_func():
         process_list.append(p)
         id_list.append(item["deviceId"])
         print(item["deviceId"])
+    
+    #Processos extra que podem ser adicionados
+    sensor = "temp"
+    p = Process(target=createProcessor, args=(ObjectId(), sensor))
+    p = Process(target=createProcessor, args=(ObjectId(), sensor))
+    sensor = "humi"
+    p = Process(target=createProcessor, args=(ObjectId(), sensor))
+    p = Process(target=createProcessor, args=(ObjectId(), sensor))
 
     while(True):
         time.sleep(30)

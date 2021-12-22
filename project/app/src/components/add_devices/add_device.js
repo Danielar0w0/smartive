@@ -12,7 +12,6 @@ import {RoomItemsList} from "../base_components/room_items_list";
 import {AvailableDevicesList} from "../base_components/available_devices_list";
 import {AvailableTypesList} from "../base_components/available_types_list";
 import {RestAPIHandler} from "../../utils/RestAPIHandler";
-import { useNavigate } from 'react-router-dom';
 
 export class AddDevice extends React.Component {
 
@@ -23,7 +22,8 @@ export class AddDevice extends React.Component {
         this.apiHandler = new RestAPIHandler();
         this.state = {
             currentStep: 0,
-            currentDevice: {}
+            currentDevice: {},
+            successfullyRegistered: false
         };
 
     }
@@ -40,7 +40,10 @@ export class AddDevice extends React.Component {
             case 3:
                 return (<ConfigurationStep title={"Select Room:"} childComponent={<RoomItemsList on_select={this.setDeviceRoom.bind(this)} />} btn_text={"Finish"} on_next_click={this.registerDevice.bind(this)} />)
             case 4:
-                return (<ConfigurationStep title={"Successfully registered new device."} btn_text={"Go Back"} on_next_click={this.goBack.bind(this)} />)
+                if (this.state.successfullyRegistered)
+                    return (<ConfigurationStep title={"Successfully registered new device."} btn_text={"Go Back"} on_next_click={this.goBack.bind(this)} />)
+                else
+                    return (<ConfigurationStep title={"Unable to register your device."} btn_text={"Go Back"} on_next_click={this.goBack.bind(this)} />)
         }
 
     }
@@ -85,10 +88,12 @@ export class AddDevice extends React.Component {
 
         this.apiHandler.registerNewDevice(this.state.currentDevice)
             .then(result => {
-                if (result)
-                    this.handleChildNextClick();
-                else
-                    this.handleChildNextClick(0);
+                if (result) {
+                    this.setState({ successfullyRegistered: true });
+                } else {
+                    this.setState({ successfullyRegistered: false });
+                }
+                this.handleChildNextClick();
             });
 
     }
@@ -98,10 +103,7 @@ export class AddDevice extends React.Component {
     }
 
     handleChildNextClick(success) {
-        if (success === undefined)
-            this.setState({currentStep: this.state.currentStep+1});
-        else
-            this.setState({currentStep: undefined});
+        this.setState({currentStep: this.state.currentStep+1});
     }
 
     render() {

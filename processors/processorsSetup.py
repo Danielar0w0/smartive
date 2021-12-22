@@ -51,7 +51,7 @@ def loop():
 
         while True:
             
-            time.sleep(2)
+            time.sleep(20)
 
             # Remove closed processes from the list
             for queue in process_list.keys():
@@ -102,7 +102,7 @@ def loop():
                             # pid = pid_list[queue].pop()
                             # os.system("kill -9 " + str(pid))
 
-                print(f'Queue {queue} has {messages} messages and {consumers} consumers.')
+                # print(f'Queue {queue} has {messages} messages and {consumers} consumers.')
 
     except KeyboardInterrupt:
         pass
@@ -118,7 +118,7 @@ def loop():
                 for p in process_list[queue]:
                     p.terminate()
         
-        time.sleep(5)
+        time.sleep(1)
         print("Closed processors.") 
 
 def main():

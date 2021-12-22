@@ -12,7 +12,7 @@ import requests
 import json
 import sys
 
-categories = {'humidity_queue': 'HUMIDITY', 'temperature_queue': 'TEPMPERATURE'}
+categories = {'humidity_queue': 'HUMIDITY', 'temperature_queue': 'TEMPERATURE'}
 units = {'humidity_queue': '%', 'temperature_queue': 'ºC'}
 
 def main():

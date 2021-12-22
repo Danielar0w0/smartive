@@ -1,5 +1,6 @@
 package pt.ua.deti.ies.smartive.api.smartive_api.controller;
 
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.web.bind.annotation.*;
@@ -101,6 +102,12 @@ public class PublicAPIController {
     public MessageResponse getAllAvailableDevices(@RequestBody AvailableDevice availableDevice) {
         availableDeviceService.save(availableDevice);
         return new MessageResponse("Successfully registered available device.");
+    }
+
+    @DeleteMapping(value = "/devices/available/{deviceId}")
+    public MessageResponse removeAvailableDevice(@PathVariable ObjectId deviceId) {
+        availableDeviceService.delete(deviceId);
+        return new MessageResponse("Successfully removed available device.");
     }
 
     @GetMapping(value = "/devices/sensors_by_room")

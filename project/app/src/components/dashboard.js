@@ -77,7 +77,7 @@ export class Dashboard extends React.Component {
                                 icon={faTemperatureHigh}
                                 title={'Devices'}
                                 subtitle={'Temperature'}
-                                info={roomStats.temperature !== undefined ? roomStats.temperature + " ºC" : 'No Data'}
+                                info={roomStats.temperature !== undefined ? roomStats.temperature.toFixed(2) + " ºC" : 'No Data'}
                             />
                         </Row>
                         <Row>
@@ -85,7 +85,7 @@ export class Dashboard extends React.Component {
                                 icon={faLightbulb}
                                 title={'Devices'}
                                 subtitle={'Humidity'}
-                                info={roomStats.humidity !== undefined ? roomStats.humidity + " g/m³" : 'No Data'}
+                                info={roomStats.humidity !== undefined ? roomStats.humidity.toFixed(2) + " g/m³" : 'No Data'}
                             />
                         </Row>
                     </Col>

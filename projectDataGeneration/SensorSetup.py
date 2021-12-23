@@ -9,7 +9,7 @@ process_list = []
 id_list = []
 
 def main_func():
-    request = requests.get("http://localhost:8080/api/devices/sensors")
+    request = requests.get("http://172.18.0.2:8080/api/devices/sensors")
     
     for item in request.json():
         if item["category"] == "TEMPERATURE":
@@ -33,7 +33,7 @@ def main_func():
 
     while(True):
         time.sleep(30)
-        request = requests.get("http://localhost:8080/api/devices/sensors")
+        request = requests.get("http://172.18.0.2:8080/api/devices/sensors")
         for item in request.json():
             if item["deviceId"] not in id_list:
                 if item["category"] == "TEMPERATURE":
@@ -48,6 +48,7 @@ def main_func():
                 print(item["deviceId"])
 
 def createProcessor(processorID, sensor):
+    print('python3 ' + sensor +  'Sensor.py ' + str(processorID))
     os.system('python3 ' + sensor +  'Sensor.py ' + str(processorID))
 
 if __name__ == "__main__":

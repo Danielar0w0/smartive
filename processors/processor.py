@@ -23,8 +23,8 @@ def main():
         return
     queue = sys.argv[1]    
 
-    connection = pika.BlockingConnection(
-    pika.ConnectionParameters(host='localhost'))
+    credentials = pika.PlainCredentials('test', 'test')
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host='172.18.0.6', credentials=credentials))
     channel = connection.channel()
 
     # When RabbitMQ quits or crashes, it won't forget the queue
@@ -91,10 +91,10 @@ def callback(ch, method, properties, body):
 def obtain_sensor(sensor_id, device_type = "registered"):
 
     if device_type == "registered":
-        response = requests.get("http://localhost:8080/api/devices/sensors", timeout=5)
+        response = requests.get("http://172.18.0.2:8080/api/devices/sensors", timeout=5)
     
     elif device_type == "available":
-        response = requests.get("http://localhost:8080/api/devices/available", timeout=5)
+        response = requests.get("http://172.18.0.2:8080/api/devices/available", timeout=5)
 
     else:
         print(" [-] Unable to get list of '{device_type}' sensors!")
@@ -132,7 +132,7 @@ def register_sensor(sensor_id, category=None):
     sensor = {'deviceId': sensor_id, 'name': f'Sensor {sensor_id}', 'category': category}
         
     # Register available sensor
-    response = requests.post("http://localhost:8080/api/devices/available", json=sensor, timeout=5)
+    response = requests.post("http://172.18.0.2:8080/api/devices/available", json=sensor, timeout=5)
     
     # Check if request was successful
     if response.status_code != 200: 
@@ -147,9 +147,9 @@ def updateState(sensor, state_value):
 
     # Create sensor state
     sensor = {"deviceId": sensor["deviceId"], "state": {"value": state_value, "unit": "%"}}
-
+    
     # The keyword json automatically sets the request’s HTTP header Content-Type to application/json
-    response = requests.put("http://localhost:8080/middleware/device/sensor", json=sensor, timeout=5)
+    response = requests.put("http://172.18.0.2:8080/middleware/devices/sensor", json=sensor, timeout=5)
     
     # Check if request was successful
     if response.status_code != 200: 

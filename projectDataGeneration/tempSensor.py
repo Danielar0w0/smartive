@@ -14,7 +14,8 @@ class TempSensor:
         self.type = "Temperature"
         self.id = id
         self.value = self.base_temp
-        self.connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
+        self.credentials = pika.PlainCredentials('test', 'test')
+        self.connection = pika.BlockingConnection(pika.ConnectionParameters(host='172.18.0.6', credentials=self.credentials))
         self.channel = self.connection.channel()
         self.queue = 'temperature_queue'
         self.channel.queue_declare(queue=self.queue, durable=True)
@@ -52,7 +53,7 @@ class TempSensor:
             time.sleep(self.sleep_time)
 
 if __name__ == '__main__':
-    id = sys.argv[0]
+    id = sys.argv[1]
     temp = TempSensor(id)
     temp.run()
 

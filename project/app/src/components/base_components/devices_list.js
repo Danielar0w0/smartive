@@ -89,7 +89,7 @@ export class DevicesList extends React.Component {
                 <LargePanel
                     key={currentSensor.deviceId}
                     device_name={currentSensor.name}
-                    power_consumption={(currentSensor.sensorStats.value + currentSensor.sensorStats.unit) || 'No Data'}
+                    power_consumption={(currentSensor.sensorStats.value.toFixed(2) + currentSensor.sensorStats.unit) || 'No Data'}
                 />
             );
 
@@ -98,7 +98,7 @@ export class DevicesList extends React.Component {
                     <LargePanel
                         key={nextSensor.deviceId}
                         device_name={nextSensor.name}
-                        power_consumption={(nextSensor.sensorStats.value + nextSensor.sensorStats.unit) || 'No Data'}
+                        power_consumption={(nextSensor.sensorStats.value.toFixed(2) + nextSensor.sensorStats.unit) || 'No Data'}
                     />
                 );
             }

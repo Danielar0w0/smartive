@@ -1,5 +1,6 @@
 version: '3.1'
 
+
 services:
   react:
     build:
@@ -10,7 +11,7 @@ services:
     stdin_open: true
     networks:
       mongo-compose-network:
-        ipv4_address: 172.18.0.2
+        ipv4_address: 172.18.0.1
 
   api:
     build:
@@ -21,7 +22,7 @@ services:
       - redis
     networks:
       mongo-compose-network:
-        ipv4_address: 172.18.0.3
+        ipv4_address: 172.18.0.2
 
   mongo-express:
     image: mongo-express:0.54
@@ -40,7 +41,7 @@ services:
       - mongo
     networks:
       mongo-compose-network:
-        ipv4_address: 172.18.0.4
+        ipv4_address: 172.18.0.3
 
   mongo:
     image: mongo:4.4
@@ -52,7 +53,7 @@ services:
       - ./.docker/mongo-data:/data/db
     networks:
       mongo-compose-network:
-        ipv4_address: 172.18.0.5
+        ipv4_address: 172.18.0.4
 
   redis:
     image: redis:6.2.6
@@ -64,10 +65,14 @@ services:
       - ./.docker/redis.conf:/usr/local/etc/redis/redis.conf
     networks:
       mongo-compose-network:
-        ipv4_address: 172.18.0.6
+        ipv4_address: 172.18.0.5
 
   rabbitmq:
     image: rabbitmq:3.9.11
+    environment:
+     - RABBITMQ_DEFAULT_PASS=test
+     - RABBITMQ_DEFAULT_USER=test
+     - RABBITMQ_DEFAULT_VHOST=/
     volumes:
       - ./.docker/rabbitmq/etc/:/etc/rabbitmq/
       - ./.docker/rabbitmq/data/:/var/lib/rabbitmq/mnesia
@@ -75,9 +80,12 @@ services:
     ports:
       - 5672:5672
       - 15672:15672
+    expose:
+      - 5672
+      - 15672
     networks:
       mongo-compose-network:
-        ipv4_address: 172.18.0.7
+        ipv4_address: 172.18.0.6
 
   processors:
     build:
@@ -86,7 +94,8 @@ services:
     depends_on:
       - rabbitmq
     networks:
-      - mongo-compose-network
+      mongo-compose-network:
+        ipv4_address: 172.18.0.7
 
   data_generators:
     build:
@@ -95,10 +104,15 @@ services:
     depends_on:
       - rabbitmq
     networks:
-      - mongo-compose-network
+      mongo-compose-network:
+        ipv4_address: 172.18.0.8
+
+
 
 networks: 
   mongo-compose-network:
-    driver: bridge
-    subnet: 172.18.0.0/24
-    gateway: 172.18.0.1
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.18.0.0/16
+          gateway: 172.18.0.254

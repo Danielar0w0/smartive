@@ -6,8 +6,9 @@ from math import ceil
 
 queues = ['humidity_queue', 'temperature_queue']
 
+credentials = pika.PlainCredentials('test', 'test')
 connection = pika.BlockingConnection(
-    pika.ConnectionParameters(host='localhost'))
+    pika.ConnectionParameters(host='172.18.0.6', credentials=credentials))
 channel = connection.channel()
 
 process_list = {'humidity_queue': [], 'temperature_queue': []}

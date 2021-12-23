@@ -21,7 +21,7 @@ public class SmartiveApiApplication {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:3000")
+                        .allowedOrigins("http://172.18.0.1:3000")
                         .allowedMethods("GET", "POST","PUT", "DELETE");
             }
         };

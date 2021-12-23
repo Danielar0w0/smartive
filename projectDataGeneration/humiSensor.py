@@ -14,7 +14,8 @@ class humiSensor:
         self.type = "Humidity"
         self.id = id
         self.value = self.base_humi
-        self.connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
+        self.credentials = pika.PlainCredentials('test', 'test')
+        self.connection = pika.BlockingConnection(pika.ConnectionParameters(host='172.18.0.6', credentials=self.credentials))
         self.channel = self.connection.channel()
         self.queue = 'humidity_queue'
         self.channel.queue_declare(queue=self.queue, durable=True)
@@ -54,7 +55,7 @@ class humiSensor:
 
 
 if __name__ == '__main__':
-    id = sys.argv[0]
+    id = sys.argv[1]
     temp = humiSensor(id)
     temp.run()
 

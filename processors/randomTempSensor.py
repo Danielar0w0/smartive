@@ -1,7 +1,7 @@
 import pika
 
 connection = pika.BlockingConnection(
-    pika.ConnectionParameters(host='localhost'))
+    pika.ConnectionParameters(host='172.18.0.6'))
 channel = connection.channel()
 
 channel.queue_declare(queue='temperature_queue', durable=True)

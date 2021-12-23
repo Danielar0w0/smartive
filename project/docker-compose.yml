@@ -1,5 +1,6 @@
 version: '3.1'
 
+
 services:
   react:
     build:
@@ -8,6 +9,20 @@ services:
     #volumes:
     #  - './app/src:/app/src'
     stdin_open: true
+    networks:
+      mongo-compose-network:
+        ipv4_address: 172.18.0.1
+
+  api:
+    build:
+      context: ../project_api/Smartive_API
+      dockerfile: Dockerfile
+    depends_on:
+      - mongo
+      - redis
+    networks:
+      mongo-compose-network:
+        ipv4_address: 172.18.0.2
 
   mongo-express:
     image: mongo-express:0.54
@@ -19,13 +34,14 @@ services:
       ME_CONFIG_MONGODB_ADMINPASSWORD: password
       ME_CONFIG_MONGODB_URL: mongo://root:example@mongo:27017/
     volumes:
-      - ./mongo-data:/data/db
+      - ./.docker/mongo-data:/data/db
     depends_on:
       - mongo
     links:
       - mongo
     networks:
-      - mongo-compose-network
+      mongo-compose-network:
+        ipv4_address: 172.18.0.3
 
   mongo:
     image: mongo:4.4
@@ -34,10 +50,69 @@ services:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: password
     volumes:
-      - ./mongo-data:/data/db
+      - ./.docker/mongo-data:/data/db
     networks:
-      - mongo-compose-network
+      mongo-compose-network:
+        ipv4_address: 172.18.0.4
+
+  redis:
+    image: redis:6.2.6
+    command: redis-server
+    ports:
+     - "6379:6379"
+    volumes:
+      - ./.docker/redis-data:/var/lib/redis
+      - ./.docker/redis.conf:/usr/local/etc/redis/redis.conf
+    networks:
+      mongo-compose-network:
+        ipv4_address: 172.18.0.5
+
+  rabbitmq:
+    image: rabbitmq:3.9.11
+    environment:
+     - RABBITMQ_DEFAULT_PASS=test
+     - RABBITMQ_DEFAULT_USER=test
+     - RABBITMQ_DEFAULT_VHOST=/
+    volumes:
+      - ./.docker/rabbitmq/etc/:/etc/rabbitmq/
+      - ./.docker/rabbitmq/data/:/var/lib/rabbitmq/mnesia
+      - ./.docker/rabbitmq/logs/:/var/log/rabbitmq/mnesia
+    ports:
+      - 5672:5672
+      - 15672:15672
+    expose:
+      - 5672
+      - 15672
+    networks:
+      mongo-compose-network:
+        ipv4_address: 172.18.0.6
+
+  processors:
+    build:
+      context: ../processors
+      dockerfile: Dockerfile
+    depends_on:
+      - rabbitmq
+    networks:
+      mongo-compose-network:
+        ipv4_address: 172.18.0.7
+
+  data_generators:
+    build:
+      context: ../projectDataGeneration
+      dockerfile: Dockerfile
+    depends_on:
+      - rabbitmq
+    networks:
+      mongo-compose-network:
+        ipv4_address: 172.18.0.8
+
+
 
 networks: 
   mongo-compose-network:
-    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.18.0.0/16
+          gateway: 172.18.0.254

@@ -20,7 +20,7 @@ def first_setup():
     
     for queue in queues:
 
-        response = channel.queue_declare(queue=queue, passive=True)
+        response = channel.queue_declare(queue=queue, durable=True)
         
         # Obtain number of current messages and consumers
         messages = response.method.message_count

@@ -3,7 +3,7 @@ import { MiniPanel } from "./mini_panel";
 
 import React from 'react';
 import { RestAPIHandler } from "../../utils/RestAPIHandler";
-import {useSelector} from "react-redux";
+import store from "../../store";
 
 export class RoomPanelsList extends React.Component {
 
@@ -21,26 +21,16 @@ export class RoomPanelsList extends React.Component {
 
     componentDidMount() {
 
-        this.setState({ rooms: useSelector(state => state) });
-
-        /*setInterval(() => {
-            this.refreshData();
-        }, 5000);*/
-
-    }
-
-    refreshData() {
-
-        /*this.apiHandler.getAllRooms()
-            .then(allRooms => {
-                this.setState({isLoading: false, rooms: allRooms});
-            });*/
+        store.subscribe(() => {
+            this.setState({
+                rooms: store.getState().rooms
+            });
+        });
 
     }
 
     roomPanelClicked(room) {
         this.setState({ selectedRoom: room });
-
         if (this.props.on_room_changed !== undefined)
             this.props.on_room_changed(room);
     }
@@ -95,11 +85,9 @@ export class RoomPanelsList extends React.Component {
         }
 
         return (
-
             <ScrollMenu>
                 {roomPanels}
             </ScrollMenu>
-
         );
 
     }

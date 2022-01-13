@@ -4,9 +4,17 @@ import './index.css';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import AppRouting from './routes';
 import reportWebVitals from './reportWebVitals';
+import {Provider} from "react-redux";
+import store from "./store";
+import {fetchRooms} from "./features/rooms/roomsReducer";
+
+// Fetch rooms on app start-up
+store.dispatch(fetchRooms);
 
 ReactDOM.render(
-    <AppRouting/>,
+    <Provider store={store}>
+        <AppRouting/>
+    </Provider>,
     document.getElementById('root')
 );
 

@@ -4,10 +4,6 @@ import './index.css';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import AppRouting from './routes';
 import reportWebVitals from './reportWebVitals';
-import {RabbitMQHandler} from "./utils/RabbitMQHandler";
-
-let rabbitMQHandler = new RabbitMQHandler('admin', 'admin', 'ws://localhost:15674/ws');
-rabbitMQHandler.connect();
 
 ReactDOM.render(
     <AppRouting/>,

@@ -11,8 +11,8 @@ export class RestAPIHandler {
     private readonly _publicAPIBaseURI;
 
     constructor() {
-        this._middlewareBaseURI = 'http://172.18.0.2:8080/middleware';
-        this._publicAPIBaseURI = 'http://172.18.0.2:8080/api'
+        this._middlewareBaseURI = 'http://172.18.0.3:8080/middleware';
+        this._publicAPIBaseURI = 'http://172.18.0.3:8080/api'
     }
 
     getAllRooms(): Promise<Room[]> {

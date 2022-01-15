@@ -3,6 +3,7 @@ package pt.ua.deti.ies.smartive.api.smartive_api;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -19,6 +20,12 @@ public class SpringEventListener {
     private final RedisHandler redisHandler;
     private final RabbitMQHandler rabbitMQHandler;
 
+    @Value("${spring.redis.host}")
+    private String redisAddress;
+
+    @Value("${spring.redis.port}")
+    private int redisPort;
+
     @Autowired
     public SpringEventListener(RedisHandler redisHandler, RabbitMQHandler rabbitMQHandler) {
         this.redisHandler = redisHandler;
@@ -28,7 +35,7 @@ public class SpringEventListener {
     @EventListener(ApplicationReadyEvent.class)
     public void runAfterStartup() {
 
-        redisHandler.createPool("172.18.0.6");
+        redisHandler.createPool(redisAddress, redisPort);
         logger.info("Successfully created Redis pool!");
 
         rabbitMQHandler.connect("admin", "admin", "/");

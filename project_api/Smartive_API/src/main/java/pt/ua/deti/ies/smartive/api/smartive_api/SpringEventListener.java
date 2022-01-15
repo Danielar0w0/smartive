@@ -32,7 +32,7 @@ public class SpringEventListener {
         logger.info("Successfully created Redis pool!");
 
         rabbitMQHandler.connect("admin", "admin", "/");
-        rabbitMQHandler.setup("spring_exchange", "notifiers_reactJS");
+        rabbitMQHandler.setup("notifiers_reactJS");
         logger.info("Successfully connected to RabbitMQ!");
 
     }

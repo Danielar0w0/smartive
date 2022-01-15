@@ -4,6 +4,7 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import lombok.Getter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -18,6 +19,9 @@ public class RabbitMQHandler {
 
     private Connection connection;
     private Channel channel;
+
+    @Value("${rabbitmq.default.exchange}")
+    private String exchange;
 
     public RabbitMQHandler() {
         this.address = "localhost";
@@ -43,22 +47,22 @@ public class RabbitMQHandler {
 
     }
 
-    public void setup(String exchangeName, String queueName) {
+    public void setup(String queueName) {
 
         try {
-            this.channel.exchangeDeclare(exchangeName, "direct", true);
+            this.channel.exchangeDeclare(exchange, "direct", true);
             this.channel.queueDeclare(queueName, true, false, false, null);
-            this.channel.queueBind(queueName, exchangeName, queueName);
+            this.channel.queueBind(queueName, exchange, queueName);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
     }
 
-    public void publish(String exchangeName, String queueName, String message) {
+    public void publish(String queueName, String message) {
 
         try {
-            channel.basicPublish(exchangeName, queueName, null, message.getBytes());
+            channel.basicPublish(exchange, queueName, null, message.getBytes());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -74,6 +78,10 @@ public class RabbitMQHandler {
             e.printStackTrace();
         }
 
+    }
+
+    public boolean isConnected() {
+        return this.connection != null && this.channel != null;
     }
 
 }

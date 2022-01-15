@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public abstract class ReactRabbitMQNotification extends RabbitMQNotification {
 
-    private final String queue = "notifications_reactJS";
+    private final String queue = "notifiers_reactJS";
 
     public ReactRabbitMQNotification(RabbitMQHandler rabbitMQHandler) {
         super(rabbitMQHandler);

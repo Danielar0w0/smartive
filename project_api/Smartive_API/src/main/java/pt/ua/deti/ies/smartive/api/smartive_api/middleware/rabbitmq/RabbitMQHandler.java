@@ -4,6 +4,9 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -12,21 +15,21 @@ import java.util.concurrent.TimeoutException;
 
 @Component
 @Getter
+@NoArgsConstructor
 public class RabbitMQHandler {
 
-    private final String address;
-    private final int port;
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
+    @Value("${spring.rabbitmq.host}")
+    private String address;
+    @Value("${spring.rabbitmq.port}")
+    private int port;
 
     private Connection connection;
     private Channel channel;
 
-    @Value("${rabbitmq.default.exchange}")
+    @Value("${spring.rabbitmq.template.exchange}")
     private String exchange;
-
-    public RabbitMQHandler() {
-        this.address = "localhost";
-        this.port = 5672;
-    }
 
     public void connect(String username, String password, String virtualHost) {
 
@@ -63,6 +66,7 @@ public class RabbitMQHandler {
 
         try {
             channel.basicPublish(exchange, queueName, null, message.getBytes());
+            logger.info(String.format("Publishing message %s to queue %s.", message, queueName));
         } catch (IOException e) {
             e.printStackTrace();
         }

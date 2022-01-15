@@ -26,6 +26,12 @@ public class SpringEventListener {
     @Value("${spring.redis.port}")
     private int redisPort;
 
+    @Value("${spring.rabbitmq.username}")
+    private String rabbitMQUser;
+
+    @Value("${spring.rabbitmq.password}")
+    private String rabbitMQPassword;
+
     @Autowired
     public SpringEventListener(RedisHandler redisHandler, RabbitMQHandler rabbitMQHandler) {
         this.redisHandler = redisHandler;
@@ -38,7 +44,7 @@ public class SpringEventListener {
         redisHandler.createPool(redisAddress, redisPort);
         logger.info("Successfully created Redis pool!");
 
-        rabbitMQHandler.connect("admin", "admin", "/");
+        rabbitMQHandler.connect(rabbitMQUser, rabbitMQPassword, "/");
         rabbitMQHandler.setup("notifiers_reactJS");
         logger.info("Successfully connected to RabbitMQ!");
 

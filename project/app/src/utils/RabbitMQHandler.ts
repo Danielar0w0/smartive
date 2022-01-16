@@ -46,6 +46,12 @@ export class RabbitMQHandler {
                     case RabbitMQNotificationType[RabbitMQNotificationType.DEVICE_ADDED]:
                         store.dispatch(fetchDevices);
                         break;
+                    case RabbitMQNotificationType[RabbitMQNotificationType.DEVICE_STATS_CHANGED]:
+                        store.dispatch(fetchDevices);
+                        break;
+                    case RabbitMQNotificationType[RabbitMQNotificationType.DEVICE_REMOVED]:
+                        store.dispatch(fetchDevices);
+                        break;
                 }
 
                 console.log('Received message from RabbitMQ: ' + message);

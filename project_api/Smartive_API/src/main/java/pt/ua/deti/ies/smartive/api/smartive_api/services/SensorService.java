@@ -21,6 +21,10 @@ public class SensorService {
         this.roomService = roomService;
     }
 
+    public Sensor getSensorById(ObjectId sensorId) {
+        return sensorRepository.findByDeviceId(sensorId);
+    }
+
     public void registerSensor(Sensor sensor) {
 
         sensor.setDeviceId(new ObjectId());

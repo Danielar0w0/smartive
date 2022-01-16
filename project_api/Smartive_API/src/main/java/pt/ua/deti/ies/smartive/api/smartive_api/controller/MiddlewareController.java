@@ -7,6 +7,8 @@ import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.DeviceNotFoundExcepti
 import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.InvalidDeviceException;
 import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.InvalidRoomException;
 import pt.ua.deti.ies.smartive.api.smartive_api.middleware.MiddlewareHandler;
+import pt.ua.deti.ies.smartive.api.smartive_api.middleware.rabbitmq.notifications.react.ReactNotificationFactory;
+import pt.ua.deti.ies.smartive.api.smartive_api.middleware.rabbitmq.notifications.react.ReactNotificationType;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.MessageResponse;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.RoomStats;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.Sensor;
@@ -23,12 +25,14 @@ public class MiddlewareController {
     private final SensorService sensorService;
     private final RoomService roomService;
     private final MiddlewareHandler middlewareHandler;
+    private final ReactNotificationFactory reactNotificationFactory;
 
     @Autowired
-    public MiddlewareController(SensorService sensorService, RoomService roomService, MiddlewareHandler middlewareHandler) {
+    public MiddlewareController(SensorService sensorService, RoomService roomService, MiddlewareHandler middlewareHandler, ReactNotificationFactory reactNotificationFactory) {
         this.sensorService = sensorService;
         this.roomService = roomService;
         this.middlewareHandler = middlewareHandler;
+        this.reactNotificationFactory = reactNotificationFactory;
     }
 
     @PutMapping("/devices/sensor")
@@ -44,6 +48,11 @@ public class MiddlewareController {
             throw new DeviceNotFoundException("Unable to find a device with that ID.");
 
         middlewareHandler.updateSensorState(sensor.getDeviceId(), sensor.getState());
+
+        Sensor registeredSensor = sensorService.getSensorById(sensor.getDeviceId());
+
+        if (registeredSensor.getRoomId() != null)
+            reactNotificationFactory.generateNotification(ReactNotificationType.ROOM_STATS_CHANGED, registeredSensor.getRoomId().toString()).sendNotification();
 
         return new MessageResponse("Successfully updated sensor state.");
 

@@ -8,6 +8,7 @@ import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.InvalidRoomException;
 import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.InvalidUserException;
 import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.RoomNotFoundException;
 import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.UserAlreadyExistsException;
+import pt.ua.deti.ies.smartive.api.smartive_api.middleware.MiddlewareHandler;
 import pt.ua.deti.ies.smartive.api.smartive_api.middleware.rabbitmq.notifications.react.ReactNotificationFactory;
 import pt.ua.deti.ies.smartive.api.smartive_api.middleware.rabbitmq.notifications.react.ReactNotificationType;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.MessageResponse;
@@ -32,15 +33,17 @@ public class PublicAPIController {
     private final DeviceService deviceService;
     private final AvailableDeviceService availableDeviceService;
     private final ReactNotificationFactory reactNotificationFactory;
+    private final MiddlewareHandler middlewareHandler;
 
     @Autowired
-    public PublicAPIController(SensorService sensorService, UserService userService, RoomService roomService, DeviceService deviceService, AvailableDeviceService availableDeviceService, ReactNotificationFactory reactNotificationFactory) {
+    public PublicAPIController(SensorService sensorService, UserService userService, RoomService roomService, DeviceService deviceService, AvailableDeviceService availableDeviceService, ReactNotificationFactory reactNotificationFactory, MiddlewareHandler middlewareHandler) {
         this.sensorService = sensorService;
         this.userService = userService;
         this.roomService = roomService;
         this.deviceService = deviceService;
         this.availableDeviceService = availableDeviceService;
         this.reactNotificationFactory = reactNotificationFactory;
+        this.middlewareHandler = middlewareHandler;
     }
 
     @PostMapping("/users/register")
@@ -149,6 +152,7 @@ public class PublicAPIController {
         return sensorService.getAllSensors()
                 .stream()
                 .filter(sensor -> sensor.getRoomId() != null && sensor.getRoomId().equals(roomId))
+                .peek(sensor -> sensor.setState(middlewareHandler.getSensorState(sensor.getDeviceId())))
                 .collect(Collectors.toList());
 
     }

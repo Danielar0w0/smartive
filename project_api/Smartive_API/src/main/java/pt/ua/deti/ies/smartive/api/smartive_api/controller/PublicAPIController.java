@@ -148,7 +148,7 @@ public class PublicAPIController {
 
         return sensorService.getAllSensors()
                 .stream()
-                .filter(sensor -> sensor.getRoomId().equals(roomId))
+                .filter(sensor -> sensor.getRoomId() != null && sensor.getRoomId().equals(roomId))
                 .collect(Collectors.toList());
 
     }

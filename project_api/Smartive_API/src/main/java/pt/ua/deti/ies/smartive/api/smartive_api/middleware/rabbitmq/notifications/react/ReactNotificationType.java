@@ -2,6 +2,7 @@ package pt.ua.deti.ies.smartive.api.smartive_api.middleware.rabbitmq.notificatio
 
 import lombok.Getter;
 import pt.ua.deti.ies.smartive.api.smartive_api.middleware.rabbitmq.ReactRabbitMQNotification;
+import pt.ua.deti.ies.smartive.api.smartive_api.middleware.rabbitmq.notifications.react.implementation.DeviceAddedNotification;
 import pt.ua.deti.ies.smartive.api.smartive_api.middleware.rabbitmq.notifications.react.implementation.RoomCreatedNotification;
 import pt.ua.deti.ies.smartive.api.smartive_api.middleware.rabbitmq.notifications.react.implementation.RoomDeletedNotification;
 import pt.ua.deti.ies.smartive.api.smartive_api.middleware.rabbitmq.notifications.react.implementation.RoomStatsChangedNotification;
@@ -11,7 +12,8 @@ public enum ReactNotificationType {
 
     ROOM_ADDED(RoomCreatedNotification.class),
     ROOM_DELETED(RoomDeletedNotification.class),
-    ROOM_STATS_CHANGED(RoomStatsChangedNotification.class);
+    ROOM_STATS_CHANGED(RoomStatsChangedNotification.class),
+    DEVICE_ADDED(DeviceAddedNotification.class);
 
     private final Class<? extends ReactRabbitMQNotification> executorClass;
 

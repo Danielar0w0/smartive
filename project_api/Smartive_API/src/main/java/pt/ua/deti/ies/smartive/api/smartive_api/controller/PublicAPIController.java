@@ -105,8 +105,12 @@ public class PublicAPIController {
 
     @PostMapping("/devices/sensors/register")
     public MessageResponse registerSensor(@RequestBody Sensor sensor) {
+
         sensorService.registerSensor(sensor);
+        reactNotificationFactory.generateNotification(ReactNotificationType.DEVICE_ADDED).sendNotification();
+
         return new MessageResponse("The sensor was successfully registered.");
+
     }
 
     @GetMapping(value = "/devices/sensors")
@@ -136,15 +140,15 @@ public class PublicAPIController {
         return new MessageResponse("Successfully removed available device.");
     }
 
-    @GetMapping(value = "/devices/sensors_by_room")
-    public List<Sensor> getRegisteredSensorsByRoom(@RequestBody Room room) {
+    @GetMapping(value = "/devices/sensors/{roomId}")
+    public List<Sensor> getRegisteredSensorsByRoom(@PathVariable ObjectId roomId) {
 
-        if (room.getRoomId() == null)
+        if (roomId == null)
             throw new RoomNotFoundException("Unable to find the specified room.");
 
-        return getAllRegisteredSensors()
+        return sensorService.getAllSensors()
                 .stream()
-                .filter(sensor -> sensor.getRoomId().equals(room.getRoomId()))
+                .filter(sensor -> sensor.getRoomId().equals(roomId))
                 .collect(Collectors.toList());
 
     }

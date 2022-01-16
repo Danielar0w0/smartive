@@ -76,8 +76,8 @@ public class PublicAPIController {
         if (room.getUsers() == null)
             room.setUsers(Collections.emptyList());
 
-        roomService.registerRoom(room);
-        reactNotificationFactory.generateNotification(ReactNotificationType.ROOM_ADDED, room).sendNotification();
+        Room registeredRoom = roomService.registerRoom(room);
+        reactNotificationFactory.generateNotification(ReactNotificationType.ROOM_ADDED, registeredRoom).sendNotification();
 
         return new MessageResponse("The room was successfully registered.");
 

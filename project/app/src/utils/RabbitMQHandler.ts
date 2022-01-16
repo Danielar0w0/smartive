@@ -2,7 +2,7 @@
 import Stomp, { Client, Subscription } from 'stompjs';
 import {RabbitMQNotificationType} from "./RabbitMQNotificationType";
 import store from "../store";
-import {fetchRooms, fetchRoomsStates} from "../features/rooms/roomsReducer";
+import {fetchRooms, fetchRoomStats} from "../features/rooms/roomsReducer";
 
 export class RabbitMQHandler {
 
@@ -40,7 +40,7 @@ export class RabbitMQHandler {
                         break;
                     case RabbitMQNotificationType[RabbitMQNotificationType.ROOM_STATS_CHANGED]:
                         let roomId: string = notification['roomId'];
-                        store.dispatch(fetchRoomsStates(store.dispatch, store.getState, roomId));
+                        store.dispatch(fetchRoomStats(roomId));
                         break;
                 }
 

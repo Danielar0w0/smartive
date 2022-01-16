@@ -23,7 +23,7 @@ export class RoomPanelsList extends React.Component {
 
         store.subscribe(() => {
             this.setState({
-                rooms: store.getState().rooms
+                rooms: store.getState().roomsFeature.rooms
             });
         });
 

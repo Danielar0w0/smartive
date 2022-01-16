@@ -2,8 +2,9 @@ import React from 'react';
 import { RestAPIHandler } from "../../utils/RestAPIHandler";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import {LargePanel} from "./large_panel";
+import { LargePanel } from "./large_panel";
 import Container from "react-bootstrap/Container";
+import store from "../../store";
 
 export class DevicesList extends React.Component {
 
@@ -21,42 +22,38 @@ export class DevicesList extends React.Component {
 
     componentDidMount() {
 
-        this.refreshData();
-
         setInterval(() => {
-            this.refreshData();
+
+            this.apiHandler.getAllSensors()
+                .then(sensorsList => {
+
+                    let clonedSensorsList = [];
+
+                    for (let sensorIdx in sensorsList) {
+
+                        let sensor = sensorsList[sensorIdx];
+
+                        this.apiHandler.getSensorStats(sensor.deviceId)
+                            .then(sensorStats => {
+
+                                sensor.sensorStats = sensorStats !== null && sensorStats.sensorState !== undefined ? sensorStats.sensorState : {};
+                                clonedSensorsList.push(sensor);
+
+                                let currentState = this.state;
+                                currentState.sensors = clonedSensorsList;
+                                this.setState(currentState);
+
+                            });
+
+                    }
+
+                });
+
+            this.updateChildComponents();
+
         }, 5000);
 
-    }
 
-    refreshData() {
-
-        this.apiHandler.getAllSensors()
-            .then(sensorsList => {
-
-                let clonedSensorsList = [];
-
-                for (let sensorIdx in sensorsList) {
-
-                    let sensor = sensorsList[sensorIdx];
-
-                    this.apiHandler.getSensorStats(sensor.deviceId)
-                        .then(sensorStats => {
-
-                            sensor.sensorStats = sensorStats !== null && sensorStats.sensorState !== undefined ? sensorStats.sensorState : {};
-                            clonedSensorsList.push(sensor);
-
-                            let currentState = this.state;
-                            currentState.sensors = clonedSensorsList;
-                            this.setState(currentState);
-
-                        });
-
-                }
-
-            });
-
-        this.updateChildComponents();
 
     }
 
@@ -120,7 +117,7 @@ export class DevicesList extends React.Component {
 
             <Container>
 
-                {this.state.childComponents.firstCol === undefined || this.state.childComponents.firstCol.length === 0 || this.state.childComponents.secondCol === undefined || this.state.childComponents.secondCol.length === 0 ? 'Loading...': undefined}
+                { (this.state.childComponents.firstCol === undefined || this.state.childComponents.firstCol.length === 0) && (this.state.childComponents.secondCol === undefined || this.state.childComponents.secondCol.length === 0) ? 'Loading...': undefined }
 
                 <Row>
                     <Col lg={6} md={6} sm={12}>

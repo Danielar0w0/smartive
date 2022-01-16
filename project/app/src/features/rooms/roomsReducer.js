@@ -1,6 +1,10 @@
 import {RestAPIHandler} from "../../utils/RestAPIHandler";
 
-const initialState = []
+const initialState = {
+    rooms: [],
+    roomStats: [],
+    roomDevices: []
+}
 
 const apiHandler = new RestAPIHandler();
 
@@ -14,14 +18,26 @@ export default function roomsReducer(state = initialState, action) {
                 rooms: action.payload
             }
 
-        case 'rooms/roomsStatesLoaded':
+        case 'rooms/roomsStatsLoaded':
             return {
                 ...state,
                 roomStats: [
                     ...state.roomStats,
                     {
-                        roomId: action.payload.roomId,
+                        roomId: action.payload.id,
                         stats: action.payload.stats,
+                    }
+                ]
+            }
+
+        case 'rooms/roomsDevicesLoaded':
+            return {
+                ...state,
+                roomDevices: [
+                    ...state.roomDevices,
+                    {
+                        roomId: action.payload.id,
+                        devices: action.payload.stats,
                     }
                 ]
             }
@@ -38,7 +54,7 @@ export async function fetchRooms(dispatch, getState) {
     dispatch({ type: 'rooms/roomsLoaded', payload: response })
 }
 
-export async function fetchRoomsStates(dispatch, getState, roomId) {
+export const fetchRoomStats = roomId => async dispatch => {
     const response = await apiHandler.getRoomStats(roomId);
-    dispatch({ type: 'rooms/roomsStatesLoaded', payload: { id: roomId, stats: response } });
+    dispatch({ type: 'rooms/roomsStatsLoaded', payload: { id: roomId, stats: response } });
 }

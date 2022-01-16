@@ -42,6 +42,8 @@ export class RabbitMQHandler {
                         let roomId: string = notification['roomId'];
                         store.dispatch(fetchRoomStats(roomId));
                         break;
+                    case RabbitMQNotificationType[RabbitMQNotificationType.DEVICE_ADDED]:
+                        store.dispatch
                 }
 
                 console.log('Received message from RabbitMQ: ' + message);

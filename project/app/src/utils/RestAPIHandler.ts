@@ -136,4 +136,19 @@ export class RestAPIHandler {
 
     }
 
+    getRoomSensors(roomId: string): Promise<any|null> {
+
+        const endpointURI = `/devices/sensors/${roomId}`
+        const requestURI = this._publicAPIBaseURI + endpointURI;
+
+        return axios.get(requestURI)
+            .then(
+
+            ).catch(error => {
+                console.log("Error on API request (getRoomStats()): " + error.message)
+                return null;
+            })
+
+    }
+
 }

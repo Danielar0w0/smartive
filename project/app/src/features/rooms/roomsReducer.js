@@ -58,3 +58,8 @@ export const fetchRoomStats = roomId => async dispatch => {
     const response = await apiHandler.getRoomStats(roomId);
     dispatch({ type: 'rooms/roomsStatsLoaded', payload: { id: roomId, stats: response } });
 }
+
+export const fetchRoomDevices = roomId => async dispatch => {
+    const response = await apiHandler.getRoomStats(roomId);
+    dispatch({ type: 'rooms/roomsStatsLoaded', payload: { id: roomId, stats: response } });
+}

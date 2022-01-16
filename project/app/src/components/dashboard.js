@@ -18,6 +18,7 @@ import {
 import {RoomPanelsList} from "./base_components/room_panels_list";
 import {RestAPIHandler} from "../utils/RestAPIHandler";
 import store from "../store";
+import {fetchRoomStats} from "../features/rooms/roomsReducer";
 
 export class Dashboard extends React.Component {
 
@@ -34,13 +35,7 @@ export class Dashboard extends React.Component {
 
     roomChangedHandler(room) {
 
-        this.apiHandler.getRoomStats(room.roomId)
-            .then(roomStats => {
-                this.setState({
-                    selectedRoomStats: roomStats !== null ? roomStats : {},
-                    selectedRoom: room.roomId
-                });
-            });
+        store.dispatch(fetchRoomStats(room.roomId));
 
         store.subscribe(() => {
 
@@ -48,9 +43,9 @@ export class Dashboard extends React.Component {
 
             for (let roomStatIdx in allRoomsStats) {
                 let roomStats = allRoomsStats[roomStatIdx];
-                console.log(roomStats);
-                if (roomStats.roomId === this.state.selectedRoom) {
+                if (roomStats.roomId === room.roomId) {
                     this.setState({
+                        selectedRoom: room.roomId,
                         selectedRoomStats: roomStats.stats
                     });
                 }

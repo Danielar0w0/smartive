@@ -37,7 +37,7 @@ export default function roomsReducer(state = initialState, action) {
                     ...state.roomDevices,
                     {
                         roomId: action.payload.id,
-                        devices: action.payload.stats,
+                        devices: action.payload.devices,
                     }
                 ]
             }
@@ -60,6 +60,6 @@ export const fetchRoomStats = roomId => async dispatch => {
 }
 
 export const fetchRoomDevices = roomId => async dispatch => {
-    const response = await apiHandler.getRoomStats(roomId);
-    dispatch({ type: 'rooms/roomsStatsLoaded', payload: { id: roomId, stats: response } });
+    const response = await apiHandler.getRoomSensors(roomId);
+    dispatch({ type: 'rooms/roomsDevicesLoaded', payload: { id: roomId, devices: response } });
 }

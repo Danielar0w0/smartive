@@ -9,10 +9,42 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import {DevicesList} from "./base_components/devices_list";
 import { RoomPanelsList } from './base_components/room_panels_list';
+import store from "../store";
+import {fetchRoomDevices} from "../features/rooms/roomsReducer";
 
 export class Devices extends React.Component{
 
-    render(){
+    constructor(props) {
+        super(props);
+        this.state = {
+            selectedRoom: undefined,
+            selectedRoomDevices: {}
+        }
+    }
+
+    roomChangedHandler(room) {
+
+        store.dispatch(fetchRoomDevices(room.roomId));
+
+        store.subscribe(() => {
+
+            let allRoomsDevices = store.getState().roomsFeature.roomDevices;
+
+            for (let roomDeviceIdx in allRoomsDevices) {
+                let roomDevices = allRoomsDevices[roomDeviceIdx];
+                if (roomDevices.roomId === room.roomId) {
+                    this.setState({
+                        selectedRoom: room.roomId,
+                        selectedRoomDevices: roomDevices.devices
+                    });
+                }
+            }
+
+        })
+
+    }
+
+    render() {
 
         return (
             <Container>
@@ -21,7 +53,7 @@ export class Devices extends React.Component{
                     <Navbar/>
                 </div>
                 
-                <RoomPanelsList/>
+                <RoomPanelsList on_room_changed={this.roomChangedHandler.bind(this)}/>
                 
                 <Row className="my-5">
                     <Col className="col-1">
@@ -32,7 +64,7 @@ export class Devices extends React.Component{
                     </Col>
                 </Row>
 
-                <DevicesList/>
+                <DevicesList devices={this.state.selectedRoomDevices} />
 
             </Container>
         );

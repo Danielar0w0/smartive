@@ -142,9 +142,9 @@ export class RestAPIHandler {
         const requestURI = this._publicAPIBaseURI + endpointURI;
 
         return axios.get(requestURI)
-            .then(
-
-            ).catch(error => {
+            .then((response) => {
+                return response.data;
+            }).catch(error => {
                 console.log("Error on API request (getRoomStats()): " + error.message)
                 return null;
             })

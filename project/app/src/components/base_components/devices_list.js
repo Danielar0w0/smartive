@@ -54,7 +54,7 @@ export class DevicesList extends React.Component {
                     <LargePanel
                         key={currentSensor.deviceId}
                         device_name={currentSensor.name}
-                        power_consumption={(currentSensor.state.value.toFixed(2) + currentSensor.sensorStats.unit) || 'No Data'}
+                        power_consumption={(currentSensor.state.value.toFixed(2) + currentSensor.state.unit) || 'No Data'}
                     />
                 );
             } else {
@@ -74,14 +74,14 @@ export class DevicesList extends React.Component {
                         <LargePanel
                             key={nextSensor.deviceId}
                             device_name={nextSensor.name}
-                            power_consumption={(nextSensor.state.value.toFixed(2) + nextSensor.sensorStats.unit) || 'No Data'}
+                            power_consumption={(nextSensor.state.value.toFixed(2) + nextSensor.state.unit) || 'No Data'}
                         />
                     );
                 }else {
-                    childComponents.firstCol.push(
+                    childComponents.secondCol.push(
                         <LargePanel
-                            key={currentSensor.deviceId}
-                            device_name={currentSensor.name}
+                            key={nextSensor.deviceId}
+                            device_name={nextSensor.name}
                             power_consumption={'No Data'}
                         />
                     );
@@ -107,6 +107,8 @@ export class DevicesList extends React.Component {
             <Container>
 
                 {/*{ (this.state.childComponents.firstCol === undefined || this.state.childComponents.firstCol.length === 0) && (this.state.childComponents.secondCol === undefined || this.state.childComponents.secondCol.length === 0) ? 'Loading...': undefined }*/}
+
+                <p className="fw-normal fs-5">{ this.props.room_selected !== undefined ? null : 'All Devices' }</p>
 
                 <Row>
                     <Col lg={6} md={6} sm={12}>

@@ -10,7 +10,8 @@ import Col from "react-bootstrap/Col";
 import {DevicesList} from "./base_components/devices_list";
 import { RoomPanelsList } from './base_components/room_panels_list';
 import store from "../store";
-import {fetchRoomDevices} from "../features/rooms/roomsReducer";
+import { fetchRoomDevices } from "../features/rooms/roomsReducer";
+import {fetchDevices} from "../features/devices/devicesReducer";
 
 export class Devices extends React.Component{
 
@@ -20,6 +21,18 @@ export class Devices extends React.Component{
             selectedRoom: undefined,
             selectedRoomDevices: {}
         }
+    }
+
+    componentDidMount() {
+
+        store.dispatch(fetchDevices);
+
+        store.subscribe(() => {
+            this.setState({
+                selectedRoomDevices: store.getState().devicesFeature.devices
+            });
+        });
+
     }
 
     roomChangedHandler(room) {
@@ -40,7 +53,7 @@ export class Devices extends React.Component{
                 }
             }
 
-        })
+        });
 
     }
 
@@ -64,7 +77,7 @@ export class Devices extends React.Component{
                     </Col>
                 </Row>
 
-                <DevicesList devices={this.state.selectedRoomDevices} />
+                <DevicesList devices={this.state.selectedRoomDevices} room_selected={this.state.selectedRoom} />
 
             </Container>
         );

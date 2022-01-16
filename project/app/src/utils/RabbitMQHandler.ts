@@ -3,6 +3,7 @@ import Stomp, { Client, Subscription } from 'stompjs';
 import {RabbitMQNotificationType} from "./RabbitMQNotificationType";
 import store from "../store";
 import {fetchRooms, fetchRoomStats} from "../features/rooms/roomsReducer";
+import {fetchDevices} from "../features/devices/devicesReducer";
 
 export class RabbitMQHandler {
 
@@ -43,6 +44,7 @@ export class RabbitMQHandler {
                         store.dispatch(fetchRoomStats(roomId));
                         break;
                     case RabbitMQNotificationType[RabbitMQNotificationType.DEVICE_ADDED]:
+                        store.dispatch(fetchDevices);
                         break;
                 }
 

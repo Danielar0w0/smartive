@@ -54,6 +54,8 @@ public class MiddlewareController {
         if (registeredSensor.getRoomId() != null)
             reactNotificationFactory.generateNotification(ReactNotificationType.ROOM_STATS_CHANGED, registeredSensor.getRoomId().toString()).sendNotification();
 
+        reactNotificationFactory.generateNotification(ReactNotificationType.DEVICE_STATS_CHANGED, registeredSensor.getDeviceId().toString()).sendNotification();
+
         return new MessageResponse("Successfully updated sensor state.");
 
     }

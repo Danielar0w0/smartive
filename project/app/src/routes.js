@@ -17,6 +17,7 @@ import { Users } from './components/users/users';
 import { ViewUsers } from './components/users/view_user';
 import { AddUser } from './components/users/add_user';
 import { History } from './components/history';
+import { Login } from "./components/login";
 
 export default function AppRouting () {
 
@@ -25,6 +26,7 @@ export default function AppRouting () {
     return (
         <Router history={ customHistory }>
             <Routes>
+                <Route path="/login" element={<Login/>} />
                 <Route path="/control_device" element={<ControlDevice/>} />
                 <Route path="/devices" element={<Devices/>} />
                 <Route path="/add_device" element={<AddDevice/>} />

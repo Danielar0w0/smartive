@@ -8,7 +8,6 @@ import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.InvalidRoomException;
 import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.InvalidUserException;
 import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.RoomNotFoundException;
 import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.UserAlreadyExistsException;
-import pt.ua.deti.ies.smartive.api.smartive_api.middleware.rabbitmq.ReactRabbitMQNotification;
 import pt.ua.deti.ies.smartive.api.smartive_api.middleware.rabbitmq.notifications.react.ReactNotificationFactory;
 import pt.ua.deti.ies.smartive.api.smartive_api.middleware.rabbitmq.notifications.react.ReactNotificationType;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.MessageResponse;
@@ -60,7 +59,12 @@ public class PublicAPIController {
 
     }
 
-    @PostMapping("/rooms/register")
+    @GetMapping("/rooms")
+    public List<Room> getAllRooms() {
+        return roomService.getAllRooms();
+    }
+
+    @PostMapping("/rooms")
     public MessageResponse registerRoom(@RequestBody Room room) {
 
         if (!room.isValid())
@@ -73,15 +77,30 @@ public class PublicAPIController {
             room.setUsers(Collections.emptyList());
 
         roomService.registerRoom(room);
-        reactNotificationFactory.generateNotification(ReactNotificationType.ROOM_ADDED).sendNotification();
+        reactNotificationFactory.generateNotification(ReactNotificationType.ROOM_ADDED, room).sendNotification();
 
         return new MessageResponse("The room was successfully registered.");
 
     }
 
-    @GetMapping("/rooms")
-    public List<Room> getAllRooms() {
-        return roomService.getAllRooms();
+    @DeleteMapping("/rooms/{roomId}")
+    public MessageResponse deleteRoom(@PathVariable ObjectId roomId) {
+
+        if (!roomService.exists(roomId))
+            throw new InvalidRoomException(String.format("Unable to find a room with the id %s.", roomId.toString()));
+
+        Room room = roomService.getRoom(roomId);
+
+        room.getDevices().forEach(device -> {
+            device.setRoomId(null);
+            deviceService.save(device);
+        });
+
+        roomService.deleteRoom(room);
+        reactNotificationFactory.generateNotification(ReactNotificationType.ROOM_DELETED, room).sendNotification();
+
+        return new MessageResponse("The room was successfully removed.");
+
     }
 
     @PostMapping("/devices/sensors/register")

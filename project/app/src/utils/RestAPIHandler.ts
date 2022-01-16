@@ -119,7 +119,7 @@ export class RestAPIHandler {
 
     }
 
-    getRoomStats(roomId: number): Promise<RoomStats | null> {
+    getRoomStats(roomId: string): Promise<RoomStats | null> {
 
         const endpointURI = `/rooms/${roomId}/stats`
         const requestURI = this._middlewareBaseURI + endpointURI;

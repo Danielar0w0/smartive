@@ -118,7 +118,10 @@ public class PublicAPIController {
 
     @GetMapping(value = "/devices/sensors")
     public List<Sensor> getAllRegisteredSensors() {
-        return sensorService.getAllSensors();
+        return sensorService.getAllSensors()
+                .stream()
+                .peek(sensor -> sensor.setState(middlewareHandler.getSensorState(sensor.getDeviceId())))
+                .collect(Collectors.toList());
     }
 
     @GetMapping(value = "/devices")

@@ -8,6 +8,8 @@ services:
       dockerfile: Dockerfile
     #volumes:
     #  - './app/src:/app/src'
+    ports:
+      - 3000:3000
     stdin_open: true
     networks:
       mongo-compose-network:
@@ -23,6 +25,7 @@ services:
     networks:
       mongo-compose-network:
         ipv4_address: 172.18.0.3
+    #command: tail -F anything
 
   mongo-express:
     image: mongo-express:0.54
@@ -106,7 +109,7 @@ services:
     networks:
       mongo-compose-network:
         ipv4_address: 172.18.0.9
-
+    #command: tail -F anything
 
 
 networks: 

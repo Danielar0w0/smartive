@@ -56,10 +56,10 @@ class TempSensor:
             time.sleep(self.sleep_time)
 
 if __name__ == '__main__':
-    """id = sys.argv[1]
+    id = sys.argv[1]
     temp = TempSensor(id)
-    temp.run()"""
-
-    temp = TempSensor(1,None,1)
     temp.run()
+
+    """temp = TempSensor(1,None,1)
+    temp.run()"""
     

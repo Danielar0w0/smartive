@@ -16,7 +16,7 @@ class humiSensor:
         self.value = self.base_humi
         self.power = random.uniform(30,40)                             #Not sure if values are like real life, unit is Watts per hour
         self.credentials = pika.PlainCredentials('test', 'test')
-        self.connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost', credentials=self.credentials))
+        self.connection = pika.BlockingConnection(pika.ConnectionParameters(host='172.18.0.7', credentials=self.credentials))
         self.channel = self.connection.channel()
         self.queue = 'humidity_queue'
         self.channel.queue_declare(queue=self.queue, durable=True)
@@ -58,10 +58,10 @@ class humiSensor:
 
 
 if __name__ == '__main__':
-    """id = sys.argv[1]
+    id = sys.argv[1]
     temp = humiSensor(id)
-    temp.run()"""
+    temp.run()
 
-    humi = humiSensor(1,None,1)
-    humi.run() 
+    """humi = humiSensor(1,None,1)
+    humi.run()""" 
     

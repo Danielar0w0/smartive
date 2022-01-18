@@ -22,17 +22,6 @@ services:
     depends_on:
       - mongo
       - redis
-    environment:
-     - MONGO_USER=admin
-     - MONGO_PASSWORD=admin
-     - MONGO_ADDRESS=172.18.0.5
-     - MONGO_PORT=27017
-     - REDIS_ADDRESS=172.18.0.6
-     - REDIS_PORT=6379
-     - RABBITMQ_ADDRESS=172.18.0.7
-     - RABBITMQ_PORT=5672
-     - RABBITMQ_USER=test
-     - RABBITMQ_PASSWORD=test
     networks:
       mongo-compose-network:
         ipv4_address: 172.18.0.3

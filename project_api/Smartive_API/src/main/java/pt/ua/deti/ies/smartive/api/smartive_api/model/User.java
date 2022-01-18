@@ -17,13 +17,13 @@ public class User {
     @Id
     @Field(value = "_id")
     private ObjectId userId;
-    private String name;
+    private String username;
     @Indexed(unique = true)
     private String email;
     private String password;
 
     public boolean isValid() {
-        return name != null && email != null && password != null;
+        return username != null && email != null && password != null;
     }
 
 }

@@ -33,9 +33,6 @@ public class RabbitMQHandler {
 
     public void connect(String username, String password, String virtualHost) {
 
-        logger.info("RABBITMQ ADDR: " + address);
-        logger.info("RABBITMQ PORT: " + port);
-
         ConnectionFactory factory = new ConnectionFactory();
 
         factory.setUsername(username);

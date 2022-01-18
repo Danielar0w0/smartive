@@ -27,8 +27,15 @@ export default function AppRouting () {
     const notify = (text) => toast(text);
 
     store.subscribe(() => {
+
         const currentToast = store.getState().toastsFeature.toast;
-        notify(currentToast.text);
+
+        if (currentToast !== undefined && currentToast !== null) {
+            notify(currentToast.text);
+            store.dispatch({ type: 'toasts/clearToast' })
+        }
+
+
     });
 
     return (

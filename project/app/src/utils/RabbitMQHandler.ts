@@ -45,7 +45,7 @@ export class RabbitMQHandler {
                         break;
                     case RabbitMQNotificationType[RabbitMQNotificationType.DEVICE_ADDED]:
                         store.dispatch(fetchDevices);
-                        store.dispatch({ type: 'toasts/displayToast', payload: { text: "Device Added" } });
+                        store.dispatch({ type: 'toasts/setToast', payload: { text: "Device Added" } });
                         break;
                     case RabbitMQNotificationType[RabbitMQNotificationType.DEVICE_STATS_CHANGED]:
                         store.dispatch(fetchDevices);

@@ -20,6 +20,7 @@ import { History } from './components/history';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import store from "./store";
+import {CreateRoom} from "./components/create_room";
 
 export default function AppRouting () {
 
@@ -51,6 +52,7 @@ export default function AppRouting () {
                 <Route path="/users/1" element={<ViewUsers/>} />
                 <Route path="/add_user" element={<AddUser/>} />
                 <Route path="/history" element={<History/>} />
+                <Route path="/create_room" element={<CreateRoom/>} />
             </Routes>
         </Router>
     )

@@ -6,6 +6,8 @@ import Col from "react-bootstrap/Col";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import IconButton from '@mui/material/IconButton';
 import {faHome} from "@fortawesome/free-solid-svg-icons/faHome";
+import {faCross} from "@fortawesome/free-solid-svg-icons/faCross";
+import {faTimes} from "@fortawesome/free-solid-svg-icons/faTimes";
 
 export class MiniPanel extends React.Component {
 
@@ -54,19 +56,29 @@ export class MiniPanel extends React.Component {
                 <FontAwesomeIcon icon={this.props.icon || faHome} style={{fontSize: "115%", color: "#f76540",  minWidth: "30px"}}/>
             </IconButton>;
         }
-        
+
+        let isCloseable = this.props.isCloseable;
+        let closeButton;
+
+        if (isCloseable) {
+            closeButton = (
+                <FontAwesomeIcon icon={this.props.icon || faTimes} style={{fontSize: "120%", color: "#464646",  minWidth: "30px", position: "absolute", top: "0.8rem", right: "0.8rem", paddingRight: "0px"}}/>
+            );
+        }
+
         return (
 
             <Card onClick={this.props.on_click} className="m-3 my-2 shadow-sm px-0 boxShadow border-light" style={{borderRadius: "15px", width: "90%"}}>
                 <Row className="my-2">
-                    <Col className="col-md col-lg-3 offset-lg-1 text-center mx-3">
+                    <Col className="col-md-4 col-lg-3 offset-lg-1 text-center mx-3">
                         {icon}
                     </Col>
-                    <Col className="col-md col-lg mx-4" >
+                    <Col className="col-md-6 col-lg-5 mx-4">
                         <p className="fs-8 fw-bolder mt-3 mb-0">{this.props.title}</p>
                         <p className="fs-6 fw-normal mb-2">{this.props.subtitle}</p>
                         <p className="fs-7 fw-light text-secondary">{this.props.info}</p>
                     </Col>
+                    { closeButton }
                 </Row>
             </Card>
         );

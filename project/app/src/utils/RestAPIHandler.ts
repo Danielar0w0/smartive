@@ -151,4 +151,20 @@ export class RestAPIHandler {
 
     }
 
+    registerRoom(roomName: string): Promise<boolean | null> {
+
+        const endpointURI = "/rooms"
+        const requestURI = this._publicAPIBaseURI + endpointURI;
+
+        return axios.post(requestURI, {name: roomName} )
+            .then((response) => {
+                return response.status === 200;
+            })
+            .catch(error => {
+                console.log("Error on API request (registerRoom()): " + error.message);
+                return false;
+            });
+
+    }
+
 }

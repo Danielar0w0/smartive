@@ -4,6 +4,8 @@ import { MiniPanel } from "./mini_panel";
 import React from 'react';
 import { RestAPIHandler } from "../../utils/RestAPIHandler";
 import store from "../../store";
+import {MiniPanelInfo, RegisterButton} from "./mini_panel_info";
+import {Modal} from "@mui/material";
 
 export class RoomPanelsList extends React.Component {
 
@@ -56,7 +58,6 @@ export class RoomPanelsList extends React.Component {
             let room = rooms[roomIdx];
 
             if (this.state.selectedRoom !== undefined && room.roomId === this.state.selectedRoom.roomId)  {
-                console.log('Debug 1');
                 roomPanels.push(
                     <MiniPanel
                         key={room.roomId}
@@ -65,10 +66,10 @@ export class RoomPanelsList extends React.Component {
                         info={room.stats !== null && room.stats !== undefined ? room.stats.powerConsumption + ' kWh' : '0 kWh'}
                         on_click={this.roomPanelClicked.bind(this, room)}
                         selected={true}
+                        isCloseable={true}
                     />
                 );
             } else {
-                console.log('Debug 2');
                 roomPanels.push(
                     <MiniPanel
                         key={room.roomId}
@@ -77,17 +78,23 @@ export class RoomPanelsList extends React.Component {
                         info={room.stats !== null && room.stats !== undefined ? room.stats.powerConsumption + ' kWh' : '0 kWh'}
                         on_click={this.roomPanelClicked.bind(this, room)}
                         selected={false}
+                        isCloseable={true}
                     />
                 );
             }
 
-
         }
 
+        roomPanels.push(
+            <MiniPanelInfo title={"Add new room"} on_click={() => window.location.replace("/create_room")} />
+        );
+
         return (
+
             <ScrollMenu>
                 {roomPanels}
             </ScrollMenu>
+
         );
 
     }

@@ -7,15 +7,16 @@ import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.DeviceNotFoundExcepti
 import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.InvalidDeviceException;
 import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.InvalidRoomException;
 import pt.ua.deti.ies.smartive.api.smartive_api.middleware.MiddlewareHandler;
+import pt.ua.deti.ies.smartive.api.smartive_api.middleware.MiddlewareInterceptor;
 import pt.ua.deti.ies.smartive.api.smartive_api.middleware.rabbitmq.notifications.react.ReactNotificationFactory;
 import pt.ua.deti.ies.smartive.api.smartive_api.middleware.rabbitmq.notifications.react.ReactNotificationType;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.MessageResponse;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.RoomStats;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.Sensor;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.SensorState;
-import pt.ua.deti.ies.smartive.api.smartive_api.redis.entities.RSensor;
 import pt.ua.deti.ies.smartive.api.smartive_api.services.RoomService;
 import pt.ua.deti.ies.smartive.api.smartive_api.services.SensorService;
+import pt.ua.deti.ies.smartive.api.smartive_api.utils.RequestType;
 
 
 @RestController
@@ -25,13 +26,15 @@ public class MiddlewareController {
     private final SensorService sensorService;
     private final RoomService roomService;
     private final MiddlewareHandler middlewareHandler;
+    private final MiddlewareInterceptor middlewareInterceptor;
     private final ReactNotificationFactory reactNotificationFactory;
 
     @Autowired
-    public MiddlewareController(SensorService sensorService, RoomService roomService, MiddlewareHandler middlewareHandler, ReactNotificationFactory reactNotificationFactory) {
+    public MiddlewareController(SensorService sensorService, RoomService roomService, MiddlewareHandler middlewareHandler, MiddlewareInterceptor middlewareInterceptor, ReactNotificationFactory reactNotificationFactory) {
         this.sensorService = sensorService;
         this.roomService = roomService;
         this.middlewareHandler = middlewareHandler;
+        this.middlewareInterceptor = middlewareInterceptor;
         this.reactNotificationFactory = reactNotificationFactory;
     }
 
@@ -47,13 +50,16 @@ public class MiddlewareController {
         if (!sensorService.sensorExists(sensor.getDeviceId()))
             throw new DeviceNotFoundException("Unable to find a device with that ID.");
 
-        middlewareHandler.updateSensorState(sensor.getDeviceId(), sensor.getState());
-
+        SensorState newSensorState = sensor.getState();
         Sensor registeredSensor = sensorService.getSensorById(sensor.getDeviceId());
+
+        registeredSensor.setState(newSensorState);
+        sensorService.update(registeredSensor);
 
         if (registeredSensor.getRoomId() != null)
             reactNotificationFactory.generateNotification(ReactNotificationType.ROOM_STATS_CHANGED, registeredSensor.getRoomId().toString()).sendNotification();
 
+        middlewareInterceptor.interceptRequest("/middleware/devices/sensor", RequestType.PUT, sensor);
         reactNotificationFactory.generateNotification(ReactNotificationType.DEVICE_STATS_CHANGED, registeredSensor.getDeviceId().toString()).sendNotification();
 
         return new MessageResponse("Successfully updated sensor state.");
@@ -61,7 +67,7 @@ public class MiddlewareController {
     }
 
     @GetMapping("/devices/sensor/{sensorId}")
-    public RSensor getSensorState(@PathVariable ObjectId sensorId) {
+    public SensorState getSensorState(@PathVariable ObjectId sensorId) {
 
         if (sensorId == null)
             throw new InvalidDeviceException("Please provide a valid sensor id.");
@@ -69,12 +75,8 @@ public class MiddlewareController {
         if (!sensorService.sensorExists(sensorId))
             throw new DeviceNotFoundException("Unable to find a device with that ID.");
 
-        SensorState sensorState = middlewareHandler.getSensorState(sensorId);
-
-        if (sensorState == null)
-            throw new DeviceNotFoundException("Unable to load the device from Redis cache.");
-
-        return new RSensor(sensorId, sensorState);
+        Sensor sensor = sensorService.getSensorById(sensorId);
+        return sensor.getState();
 
     }
 

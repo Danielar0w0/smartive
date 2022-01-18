@@ -45,7 +45,7 @@ export class Form extends React.Component {
     handleChange = (name, value) => {
         let new_inputs = this.state.inputs
         for (let i in new_inputs) {
-            if (new_inputs[i].name == name) {
+            if (new_inputs[i].name === name) {
                 new_inputs[i].value = value
             }
         }
@@ -63,13 +63,13 @@ export class Form extends React.Component {
             let inputs = this.state.inputs
 
             for (let i in inputs) {
-                if (inputs[i].name == 'username')
+                if (inputs[i].name === 'username')
                     username = inputs[i].value
-                if (inputs[i].name == 'password')
+                if (inputs[i].name === 'password')
                     password = inputs[i].value
             }
 
-            if (username != '' && password != '') {
+            if (username !== '' && password !== '') {
                 this.apiHandler.login({username: username, password: password})
                     .then(success => {
                         if (success) {

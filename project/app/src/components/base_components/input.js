@@ -16,9 +16,11 @@ export class Input extends React.Component {
     inputChange = (event) => {
         const value = event.target.value, name = event.target.name
         switch(name) {
-            case 'username': this.validate(name, value, /^([a-zA-Z0-9.]{4,})$/, 'Invalid username (Minimum four characters)')
+            case 'username':
+                this.validate(name, value, /^([a-zA-Z0-9.]{4,})$/, 'Invalid username (Minimum four characters)')
             break;
-            case 'password': this.validate(name, value, /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/, 'Insecure password (Minimum eight characters, at least one letter and one number)')
+            case 'password':
+                this.validate(name, value, /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/, 'Insecure password (Minimum eight characters, at least one letter and one number)')
             break;
             default:
             console.warn(`Unknown field ${name}`)

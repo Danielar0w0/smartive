@@ -140,7 +140,7 @@ export class RestAPIHandler {
     login(user: User): Promise<boolean> {
 
         const endpointURI = '/login';
-        const requestURI = this._middlewareBaseURI + endpointURI;
+        const requestURI = this._publicAPIBaseURI + endpointURI;
 
         return axios.post(requestURI, user)
             .then((response) => {
@@ -163,7 +163,7 @@ export class RestAPIHandler {
     register(user: User) {
 
         const endpointURI = '/register';
-        const requestURI = this._middlewareBaseURI + endpointURI;
+        const requestURI = this._publicAPIBaseURI + endpointURI;
 
         return axios.post(requestURI, user)
             .then((response) => {

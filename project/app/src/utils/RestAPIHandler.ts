@@ -4,6 +4,7 @@ import {Device} from "./entities/Device";
 import {SensorStat} from "./entities/SensorStat";
 import {Sensor} from "./entities/Sensor";
 import {RoomStats} from "./entities/RoomStats";
+import { User } from "./entities/User";
 
 export class RestAPIHandler {
 
@@ -135,5 +136,54 @@ export class RestAPIHandler {
             });
 
     }
+
+    login(user: User): Promise<boolean> {
+
+        const endpointURI = '/login';
+        const requestURI = this._middlewareBaseURI + endpointURI;
+
+        return axios.post(requestURI, user)
+            .then((response) => {
+                console.log(response)
+                if (response.data.accessToken) {
+                    localStorage.setItem("user", JSON.stringify(response.data));
+                }
+                return true;
+            })
+            .catch(error => {
+                console.log("Error on API request (getRoomStats()): " + error.message)
+                return false;
+            });
+    }
+
+    logout(): void {
+        localStorage.removeItem("user");
+    }
+
+    register(user: User) {
+
+        const endpointURI = '/register';
+        const requestURI = this._middlewareBaseURI + endpointURI;
+
+        return axios.post(requestURI, user)
+            .then((response) => {
+                if (response.data.accessToken) {
+                    localStorage.setItem("user", JSON.stringify(response.data));
+                }
+                return true;
+            })
+            .catch(error => {
+                console.log("Error on API request (getRoomStats()): " + error.message)
+                return false;
+            });
+    }
+
+    getCurrentUser() {
+        const user = localStorage.getItem('user');
+        if (user)
+            return JSON.parse(user);
+        return null
+    }
+
 
 }

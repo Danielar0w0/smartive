@@ -5,10 +5,12 @@ export class Input extends React.Component {
     constructor(props){
         super(props)
         this.state = {
+            name: props.name? props.name : '',
             value: props.value? props.value : '',
             className: props.className? props.className : '',
             error: false
         }
+
     }
 
     inputChange = (event) => {
@@ -21,13 +23,14 @@ export class Input extends React.Component {
             default:
             console.warn(`Unknown field ${name}`)
         }
+
         this.setState({ value: value })
+        this.handleChange(this.state.name, value)
     }
 
     validate = (name, value, validRegex, warnmsg) => {
 
         const invalid = !value || !validRegex.test(value)
-        console.log(this.state.error)
 
         if(!this.state.error && invalid) {
             this.setState({ error: true })
@@ -39,18 +42,20 @@ export class Input extends React.Component {
     }
 
     render () {
-        const {handleError, ...opts} = this.props
+        const {handleError, handleChange, ...opts} = this.props
+
         this.handleError = handleError
+        this.handleChange = handleChange
 
         if (this.state.className.startsWith("btn")) {
             return (
-                <input {...opts} value={this.state.value} style={{backgroundColor: "#f76540", color: "white"}}
+                <input {...opts} name={this.state.name} value={this.state.value} style={{backgroundColor: "#f76540", color: "white"}}
                        onChange={this.inputChange} className={this.state.className} />
             )
         }
 
         return (
-            <input {...opts} value={this.state.value}
+            <input {...opts} name={this.state.name} value={this.state.value}
                    onChange={this.inputChange} className={this.state.className} />
         )
     }

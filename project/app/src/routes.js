@@ -22,6 +22,19 @@ import { Login } from "./components/login";
 export default function AppRouting () {
 
     const customHistory = createBrowserHistory();
+    const user = JSON.parse(localStorage.getItem('user'));
+
+    if (!user) {
+
+        return (
+        <Router history={ customHistory }>
+            <Routes>
+                <Route path="/login" element={<Login/>} />
+                <Route path="*" element={<Login/>} />
+            </Routes>
+        </Router>
+        )
+    }
 
     return (
         <Router history={ customHistory }>

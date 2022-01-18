@@ -22,7 +22,8 @@ const inputs = [{
     className: "btn my-3"
 }]
 
-const props = {name: 'loginForm', method: 'POST', action: '/perform_login', inputs: inputs}
+// const props = {name: 'loginForm', method: 'POST', action: '/login', inputs: inputs}
+const props = {name: 'loginForm', inputs: inputs}
 const params = new URLSearchParams(window.location.search)
 
 export class Login extends React.Component {
@@ -43,7 +44,7 @@ export class Login extends React.Component {
                         <Form className="p-4" {...props} error={params.get('error')} />
                     </Col>
                     <Col className="col-3 mx-5">
-                        <img src={process.env.PUBLIC_URL + '/start_image.jpg'} className="rounded" style={{height: "20vw", width: "20vw", objectFit: "cover"}} />
+                        <img src={process.env.PUBLIC_URL + '/start_image.jpg'} className="rounded" style={{height: "40vh", width: "40vh", objectFit: "cover"}} />
                     </Col>
                 </Row>
 

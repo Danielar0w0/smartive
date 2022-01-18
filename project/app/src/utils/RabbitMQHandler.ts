@@ -1,4 +1,6 @@
+// @ts-ignore
 import Stomp, { Client, Subscription } from 'stompjs';
+import {RabbitMQNotificationType} from "./RabbitMQNotificationType";
 
 export class RabbitMQHandler {
 
@@ -23,9 +25,17 @@ export class RabbitMQHandler {
 
             console.log('Connected to RabbitMQ.');
 
-            this._subscriptions.push(this.client.subscribe('notifiers_reactJS', (message) => {
+            this._subscriptions.push(this.client.subscribe('notifiers_reactJS', (message: any) => {
                 // TODO: Update app data.
-                console.log('Received message from RabbitMQ: ' + message.body);
+                let notification: any = JSON.parse(message.body);
+
+                switch (notification['notification']) {
+                    case RabbitMQNotificationType[RabbitMQNotificationType.ROOM_ADDED]:
+                        console.log("Room Added")
+                }
+
+                console.log('Received message from RabbitMQ: ' + message);
+
             }));
 
         };
@@ -64,3 +74,4 @@ export class RabbitMQHandler {
     }
 
 }
+

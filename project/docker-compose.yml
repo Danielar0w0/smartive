@@ -8,10 +8,12 @@ services:
       dockerfile: Dockerfile
     #volumes:
     #  - './app/src:/app/src'
+    ports:
+      - 3000:3000
     stdin_open: true
     networks:
       mongo-compose-network:
-        ipv4_address: 172.18.0.1
+        ipv4_address: 172.18.0.2
 
   api:
     build:
@@ -22,7 +24,8 @@ services:
       - redis
     networks:
       mongo-compose-network:
-        ipv4_address: 172.18.0.2
+        ipv4_address: 172.18.0.3
+    #command: tail -F anything
 
   mongo-express:
     image: mongo-express:0.54
@@ -41,7 +44,7 @@ services:
       - mongo
     networks:
       mongo-compose-network:
-        ipv4_address: 172.18.0.3
+        ipv4_address: 172.18.0.4
 
   mongo:
     image: mongo:4.4
@@ -53,7 +56,7 @@ services:
       - ./.docker/mongo-data:/data/db
     networks:
       mongo-compose-network:
-        ipv4_address: 172.18.0.4
+        ipv4_address: 172.18.0.5
 
   redis:
     image: redis:6.2.6
@@ -65,7 +68,7 @@ services:
       - ./.docker/redis.conf:/usr/local/etc/redis/redis.conf
     networks:
       mongo-compose-network:
-        ipv4_address: 172.18.0.5
+        ipv4_address: 172.18.0.6
 
   rabbitmq:
     image: rabbitmq:3.9.11
@@ -85,7 +88,7 @@ services:
       - 15672
     networks:
       mongo-compose-network:
-        ipv4_address: 172.18.0.6
+        ipv4_address: 172.18.0.7
 
   processors:
     build:
@@ -95,7 +98,7 @@ services:
       - rabbitmq
     networks:
       mongo-compose-network:
-        ipv4_address: 172.18.0.7
+        ipv4_address: 172.18.0.8
 
   data_generators:
     build:
@@ -105,8 +108,8 @@ services:
       - rabbitmq
     networks:
       mongo-compose-network:
-        ipv4_address: 172.18.0.8
-
+        ipv4_address: 172.18.0.9
+    #command: tail -F anything
 
 
 networks: 
@@ -115,4 +118,3 @@ networks:
       driver: default
       config:
         - subnet: 172.18.0.0/16
-          gateway: 172.18.0.254

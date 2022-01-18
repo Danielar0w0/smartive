@@ -8,6 +8,9 @@ import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.InvalidRoomException;
 import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.InvalidUserException;
 import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.RoomNotFoundException;
 import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.UserAlreadyExistsException;
+import pt.ua.deti.ies.smartive.api.smartive_api.middleware.rabbitmq.ReactRabbitMQNotification;
+import pt.ua.deti.ies.smartive.api.smartive_api.middleware.rabbitmq.notifications.react.ReactNotificationFactory;
+import pt.ua.deti.ies.smartive.api.smartive_api.middleware.rabbitmq.notifications.react.ReactNotificationType;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.MessageResponse;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.Room;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.User;
@@ -29,14 +32,16 @@ public class PublicAPIController {
     private final RoomService roomService;
     private final DeviceService deviceService;
     private final AvailableDeviceService availableDeviceService;
+    private final ReactNotificationFactory reactNotificationFactory;
 
     @Autowired
-    public PublicAPIController(SensorService sensorService, UserService userService, RoomService roomService, DeviceService deviceService, AvailableDeviceService availableDeviceService) {
+    public PublicAPIController(SensorService sensorService, UserService userService, RoomService roomService, DeviceService deviceService, AvailableDeviceService availableDeviceService, ReactNotificationFactory reactNotificationFactory) {
         this.sensorService = sensorService;
         this.userService = userService;
         this.roomService = roomService;
         this.deviceService = deviceService;
         this.availableDeviceService = availableDeviceService;
+        this.reactNotificationFactory = reactNotificationFactory;
     }
 
     @PostMapping("/users/register")
@@ -68,6 +73,8 @@ public class PublicAPIController {
             room.setUsers(Collections.emptyList());
 
         roomService.registerRoom(room);
+        reactNotificationFactory.generateNotification(ReactNotificationType.ROOM_ADDED).sendNotification();
+
         return new MessageResponse("The room was successfully registered.");
 
     }

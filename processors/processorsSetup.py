@@ -8,7 +8,7 @@ queues = ['humidity_queue', 'temperature_queue']
 
 credentials = pika.PlainCredentials('test', 'test')
 connection = pika.BlockingConnection(
-    pika.ConnectionParameters(host='172.18.0.6', credentials=credentials))
+    pika.ConnectionParameters(host='172.18.0.7', credentials=credentials))
 channel = connection.channel()
 
 process_list = {'humidity_queue': [], 'temperature_queue': []}
@@ -20,7 +20,7 @@ def first_setup():
     
     for queue in queues:
 
-        response = channel.queue_declare(queue=queue, passive=True)
+        response = channel.queue_declare(queue=queue, durable=True)
         
         # Obtain number of current messages and consumers
         messages = response.method.message_count

@@ -17,13 +17,23 @@ import { Users } from './components/users/users';
 import { ViewUsers } from './components/users/view_user';
 import { AddUser } from './components/users/add_user';
 import { History } from './components/history';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import store from "./store";
 
 export default function AppRouting () {
 
     const customHistory = createBrowserHistory();
+    const notify = (text) => toast(text);
+
+    store.subscribe(() => {
+        const currentToast = store.getState().toastsFeature.toast;
+        notify(currentToast.text);
+    });
 
     return (
         <Router history={ customHistory }>
+            <ToastContainer />
             <Routes>
                 <Route path="/control_device" element={<ControlDevice/>} />
                 <Route path="/devices" element={<Devices/>} />

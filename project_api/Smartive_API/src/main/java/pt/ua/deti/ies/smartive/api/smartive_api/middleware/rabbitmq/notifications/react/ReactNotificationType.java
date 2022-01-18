@@ -12,7 +12,8 @@ public enum ReactNotificationType {
     ROOM_STATS_CHANGED(RoomStatsChangedNotification.class),
     DEVICE_ADDED(DeviceAddedNotification.class),
     DEVICE_REMOVED(DeviceRemovedNotification.class),
-    DEVICE_STATS_CHANGED(DeviceStatsChangedNotification.class);
+    DEVICE_STATS_CHANGED(DeviceStatsChangedNotification.class),
+    EVENT_TRIGGERED(EventTriggeredNotification.class);
 
     private final Class<? extends ReactRabbitMQNotification> executorClass;
 

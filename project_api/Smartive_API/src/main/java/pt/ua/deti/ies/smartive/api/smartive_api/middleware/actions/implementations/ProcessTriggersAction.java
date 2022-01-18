@@ -2,6 +2,7 @@ package pt.ua.deti.ies.smartive.api.smartive_api.middleware.actions.implementati
 
 import pt.ua.deti.ies.smartive.api.smartive_api.middleware.actions.MiddlewareAction;
 import pt.ua.deti.ies.smartive.api.smartive_api.middleware.actions.MiddlewareActionDependencyInjector;
+import pt.ua.deti.ies.smartive.api.smartive_api.middleware.rabbitmq.notifications.react.ReactNotificationType;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.Sensor;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.events.ActionType;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.events.SensorEvent;
@@ -79,6 +80,7 @@ public class ProcessTriggersAction extends MiddlewareAction {
             // TODO: Complete this.
         }
 
+        getMiddlewareActionDependencyInjector().getReactNotificationFactory().generateNotification(ReactNotificationType.EVENT_TRIGGERED, sensorEvent, targetSensor).sendNotification();
         getMiddlewareActionDependencyInjector().getSensorService().update(targetSensor);
 
     }

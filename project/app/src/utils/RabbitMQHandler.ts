@@ -35,9 +35,11 @@ export class RabbitMQHandler {
                 switch (notification['notification']) {
                     case RabbitMQNotificationType[RabbitMQNotificationType.ROOM_ADDED]:
                         store.dispatch(fetchRooms);
+                        store.dispatch({ type: 'toasts/setToast', payload: { text: "Room Added" } });
                         break;
                     case RabbitMQNotificationType[RabbitMQNotificationType.ROOM_DELETED]:
                         store.dispatch(fetchRooms);
+                        store.dispatch({ type: 'toasts/setToast', payload: { text: "Room Removed" } });
                         break;
                     case RabbitMQNotificationType[RabbitMQNotificationType.ROOM_STATS_CHANGED]:
                         let roomId: string = notification['roomId'];
@@ -52,6 +54,12 @@ export class RabbitMQHandler {
                         break;
                     case RabbitMQNotificationType[RabbitMQNotificationType.DEVICE_REMOVED]:
                         store.dispatch(fetchDevices);
+                        store.dispatch({ type: 'toasts/setToast', payload: { text: "Device Removed" } });
+                        break;
+                    case RabbitMQNotificationType[RabbitMQNotificationType.EVENT_TRIGGERED]:
+                        const event = notification['event'];
+                        const deviceName = notification['targetName'];
+                        store.dispatch({ type: 'toasts/setToast', payload: { text: "Event " + event + " triggered in " + deviceName + "." } });
                         break;
                 }
 

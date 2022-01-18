@@ -53,4 +53,17 @@ public class SensorService {
         return sensorRepository.existsSensorByDeviceId(objectId);
     }
 
+    public void save(Sensor sensor) {
+        sensorRepository.save(sensor);
+    }
+
+    public void delete(Sensor sensor) {
+        sensorRepository.deleteByDeviceId(sensor.getDeviceId());
+    }
+
+    public void update(Sensor sensor) {
+        delete(sensor);
+        save(sensor);
+    }
+
 }

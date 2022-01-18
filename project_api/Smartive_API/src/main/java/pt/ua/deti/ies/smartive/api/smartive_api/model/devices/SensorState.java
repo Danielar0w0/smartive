@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 @Data
 public class SensorState extends DeviceState {
 
+    private boolean status;
     private final Double value;
     private final String unit;
 

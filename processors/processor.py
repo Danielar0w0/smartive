@@ -54,12 +54,14 @@ def callback(ch, method, properties, body):
     # Obtain sensor data
     data = json.loads(body.decode())
 
-    if "id" not in data and "value" not in data:
+    if "id" not in data and "value" not in data and "power" not in data:
         print(" [-] Data is not in the correct format!")
         return
     
     sensor_id = data["id"]
     state_value = data["value"]
+    power_consumption = data["power"]
+
 
     # Obtain sensor from registered devices
     sensor = obtain_sensor(sensor_id, "registered")
@@ -68,7 +70,7 @@ def callback(ch, method, properties, body):
     if sensor:
 
         # Update sensor state
-        updateState(sensor, state_value)
+        updateState(sensor, state_value, power_consumption)
 
     # If the sensor isn't registered
     else:
@@ -143,10 +145,10 @@ def register_sensor(sensor_id, category=None):
     return sensor
 
     
-def updateState(sensor, state_value):
+def updateState(sensor, state_value, power_consumption):
 
     # Create sensor state
-    sensor = {"deviceId": sensor["deviceId"], "state": {"value": state_value, "unit": "%"}}
+    sensor = {"deviceId": sensor["deviceId"], "state": {"value": state_value, "unit": "%", "powerConsumption": power_consumption}}
     
     # The keyword json automatically sets the request’s HTTP header Content-Type to application/json
     response = requests.put("http://172.18.0.3:8080/middleware/devices/sensor", json=sensor, timeout=5)

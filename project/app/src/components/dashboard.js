@@ -83,7 +83,7 @@ export class Dashboard extends React.Component {
                                     icon={faWater}
                                     title={'Devices'}
                                     subtitle={'Water'}
-                                    info={roomStats.water !== undefined ? roomStats.water + " L" : 'No Data'}
+                                    info={roomStats !== null && roomStats.water !== undefined ? roomStats.water + " L" : 'No Data'}
                                 />
                             </TabContainer>
                         </Row>
@@ -92,7 +92,7 @@ export class Dashboard extends React.Component {
                                 icon={faTemperatureHigh}
                                 title={'Devices'}
                                 subtitle={'Temperature'}
-                                info={roomStats.temperature !== undefined ? roomStats.temperature.toFixed(2) + " ºC" : 'No Data'}
+                                info={roomStats !== null && roomStats.temperature !== undefined ? roomStats.temperature.toFixed(2) + " ºC" : 'No Data'}
                             />
                         </Row>
                         <Row>
@@ -100,7 +100,7 @@ export class Dashboard extends React.Component {
                                 icon={faLightbulb}
                                 title={'Devices'}
                                 subtitle={'Humidity'}
-                                info={roomStats.humidity !== undefined ? roomStats.humidity.toFixed(2) + " g/m³" : 'No Data'}
+                                info={roomStats !== null && roomStats.humidity !== undefined ? roomStats.humidity.toFixed(2) + " g/m³" : 'No Data'}
                             />
                         </Row>
                     </Col>

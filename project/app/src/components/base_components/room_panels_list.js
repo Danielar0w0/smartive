@@ -84,6 +84,7 @@ export class RoomPanelsList extends React.Component {
                         on_click={this.roomPanelClicked.bind(this, room)}
                         selected={false}
                         isCloseable={true}
+                        onCloseClick={this.removeRoom.bind(this, room)}
                     />
                 );
             }

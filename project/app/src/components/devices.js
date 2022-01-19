@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Navbar } from "./base_components/navbar";
 import Search from './base_components/searchbar';
-import { FaPlusSquare } from 'react-icons/fa'
+import {FaBell, FaPlusSquare} from 'react-icons/fa'
 
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
@@ -70,9 +70,12 @@ export class Devices extends React.Component{
                 
                 <Row className="my-5">
                     <Col className="col-1">
-                        <FaPlusSquare size={50} color='#f76540' style={{borderRadius: "15px"}} onClick={() => window.location.replace("/add_device")}/>
+                        <FaPlusSquare size={50} color='#f76540' style={{borderRadius: "15px"}} onClick={() => window.location.replace("/add_device")} />
                     </Col>
-                    <Col className="col-3 mt-2">
+                    <Col className="col-1 mt-1">
+                        <FaBell size={40} color='#f76540' style={{borderRadius: "15px"}} onClick={() => window.location.replace("/triggers")} />
+                    </Col>
+                    <Col className="col-4 mt-2">
                         <Search/>
                     </Col>
                 </Row>

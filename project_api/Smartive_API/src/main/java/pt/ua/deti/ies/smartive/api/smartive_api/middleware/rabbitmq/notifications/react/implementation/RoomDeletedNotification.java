@@ -6,9 +6,9 @@ import pt.ua.deti.ies.smartive.api.smartive_api.middleware.rabbitmq.ReactRabbitM
 import pt.ua.deti.ies.smartive.api.smartive_api.middleware.rabbitmq.notifications.react.ReactNotificationType;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.Room;
 
-public class RoomCreatedNotification extends ReactRabbitMQNotification {
+public class RoomDeletedNotification extends ReactRabbitMQNotification {
 
-    public RoomCreatedNotification(RabbitMQHandler rabbitMQHandler, Object... args) {
+    public RoomDeletedNotification(RabbitMQHandler rabbitMQHandler, Object... args) {
         super(rabbitMQHandler, args);
     }
 
@@ -21,7 +21,7 @@ public class RoomCreatedNotification extends ReactRabbitMQNotification {
         }
 
         JsonObject messageObject = new JsonObject();
-        messageObject.addProperty("notification", ReactNotificationType.ROOM_ADDED.name());
+        messageObject.addProperty("notification", ReactNotificationType.ROOM_DELETED.name());
 
         if (getArgs().length > 0)
             messageObject.addProperty("roomId", ((Room)getArgs()[0]).getRoomId().toString());

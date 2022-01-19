@@ -8,7 +8,6 @@ import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.InvalidRoomException;
 import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.InvalidUserException;
 import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.RoomNotFoundException;
 import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.UserAlreadyExistsException;
-import pt.ua.deti.ies.smartive.api.smartive_api.middleware.rabbitmq.ReactRabbitMQNotification;
 import pt.ua.deti.ies.smartive.api.smartive_api.middleware.rabbitmq.notifications.react.ReactNotificationFactory;
 import pt.ua.deti.ies.smartive.api.smartive_api.middleware.rabbitmq.notifications.react.ReactNotificationType;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.MessageResponse;
@@ -17,6 +16,7 @@ import pt.ua.deti.ies.smartive.api.smartive_api.model.User;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.AvailableDevice;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.Device;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.Sensor;
+import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.events.SensorEvent;
 import pt.ua.deti.ies.smartive.api.smartive_api.services.*;
 
 import java.util.Collections;
@@ -33,15 +33,17 @@ public class PublicAPIController {
     private final DeviceService deviceService;
     private final AvailableDeviceService availableDeviceService;
     private final ReactNotificationFactory reactNotificationFactory;
+    private final SensorEventService sensorEventService;
 
     @Autowired
-    public PublicAPIController(SensorService sensorService, UserService userService, RoomService roomService, DeviceService deviceService, AvailableDeviceService availableDeviceService, ReactNotificationFactory reactNotificationFactory) {
+    public PublicAPIController(SensorService sensorService, UserService userService, RoomService roomService, DeviceService deviceService, AvailableDeviceService availableDeviceService, ReactNotificationFactory reactNotificationFactory, SensorEventService sensorEventService) {
         this.sensorService = sensorService;
         this.userService = userService;
         this.roomService = roomService;
         this.deviceService = deviceService;
         this.availableDeviceService = availableDeviceService;
         this.reactNotificationFactory = reactNotificationFactory;
+        this.sensorEventService = sensorEventService;
     }
 
     @PostMapping("/users/register")
@@ -60,7 +62,12 @@ public class PublicAPIController {
 
     }
 
-    @PostMapping("/rooms/register")
+    @GetMapping("/rooms")
+    public List<Room> getAllRooms() {
+        return roomService.getAllRooms();
+    }
+
+    @PostMapping("/rooms")
     public MessageResponse registerRoom(@RequestBody Room room) {
 
         if (!room.isValid())
@@ -72,22 +79,41 @@ public class PublicAPIController {
         if (room.getUsers() == null)
             room.setUsers(Collections.emptyList());
 
-        roomService.registerRoom(room);
-        reactNotificationFactory.generateNotification(ReactNotificationType.ROOM_ADDED).sendNotification();
+        Room registeredRoom = roomService.registerRoom(room);
+        reactNotificationFactory.generateNotification(ReactNotificationType.ROOM_ADDED, registeredRoom).sendNotification();
 
         return new MessageResponse("The room was successfully registered.");
 
     }
 
-    @GetMapping("/rooms")
-    public List<Room> getAllRooms() {
-        return roomService.getAllRooms();
+    @DeleteMapping("/rooms/{roomId}")
+    public MessageResponse deleteRoom(@PathVariable ObjectId roomId) {
+
+        if (!roomService.exists(roomId))
+            throw new InvalidRoomException(String.format("Unable to find a room with the id %s.", roomId.toString()));
+
+        Room room = roomService.getRoom(roomId);
+
+        room.getDevices().forEach(device -> {
+            device.setRoomId(null);
+            deviceService.save(device);
+        });
+
+        roomService.deleteRoom(room);
+        reactNotificationFactory.generateNotification(ReactNotificationType.ROOM_DELETED, room).sendNotification();
+
+        return new MessageResponse("The room was successfully removed.");
+
     }
 
     @PostMapping("/devices/sensors/register")
     public MessageResponse registerSensor(@RequestBody Sensor sensor) {
+
         sensorService.registerSensor(sensor);
+        reactNotificationFactory.generateNotification(ReactNotificationType.DEVICE_ADDED).sendNotification();
+
         return new MessageResponse("The sensor was successfully registered.");
+
     }
 
     @GetMapping(value = "/devices/sensors")
@@ -117,17 +143,27 @@ public class PublicAPIController {
         return new MessageResponse("Successfully removed available device.");
     }
 
-    @GetMapping(value = "/devices/sensors_by_room")
-    public List<Sensor> getRegisteredSensorsByRoom(@RequestBody Room room) {
+    @GetMapping(value = "/devices/sensors/{roomId}")
+    public List<Sensor> getRegisteredSensorsByRoom(@PathVariable ObjectId roomId) {
 
-        if (room.getRoomId() == null)
+        if (roomId == null)
             throw new RoomNotFoundException("Unable to find the specified room.");
 
-        return getAllRegisteredSensors()
+        return sensorService.getAllSensors()
                 .stream()
-                .filter(sensor -> sensor.getRoomId().equals(room.getRoomId()))
+                .filter(sensor -> sensor.getRoomId() != null && sensor.getRoomId().equals(roomId))
                 .collect(Collectors.toList());
 
+    }
+
+    @GetMapping("/devices/sensors/events")
+    public List<SensorEvent> getSensorsEvents() {
+        return sensorEventService.getAllEvents();
+    }
+
+    @PostMapping("/devices/sensors/events")
+    public SensorEvent addSensorEvent(@RequestBody SensorEvent event) {
+        return sensorEventService.registerEvent(event);
     }
 
 }

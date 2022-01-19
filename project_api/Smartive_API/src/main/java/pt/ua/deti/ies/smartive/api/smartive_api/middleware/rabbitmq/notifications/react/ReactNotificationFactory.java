@@ -17,13 +17,13 @@ public class ReactNotificationFactory {
         this.rabbitMQHandler = rabbitMQHandler;
     }
 
-    public ReactRabbitMQNotification generateNotification(ReactNotificationType reactNotificationType) {
+    public ReactRabbitMQNotification generateNotification(ReactNotificationType reactNotificationType, Object... args) {
 
         Class<? extends ReactRabbitMQNotification> executorClass = reactNotificationType.getExecutorClass();
 
         try {
-            Constructor<? extends ReactRabbitMQNotification> executorClassConstructor = executorClass.getConstructor(RabbitMQHandler.class);
-            return executorClassConstructor.newInstance(rabbitMQHandler);
+            Constructor<? extends ReactRabbitMQNotification> executorClassConstructor = executorClass.getConstructor(RabbitMQHandler.class, Object[].class);
+            return executorClassConstructor.newInstance(rabbitMQHandler, args);
         } catch (ReflectiveOperationException e) {
             e.printStackTrace();
         }

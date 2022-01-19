@@ -4,11 +4,11 @@ import com.google.gson.JsonObject;
 import pt.ua.deti.ies.smartive.api.smartive_api.middleware.rabbitmq.RabbitMQHandler;
 import pt.ua.deti.ies.smartive.api.smartive_api.middleware.rabbitmq.ReactRabbitMQNotification;
 import pt.ua.deti.ies.smartive.api.smartive_api.middleware.rabbitmq.notifications.react.ReactNotificationType;
-import pt.ua.deti.ies.smartive.api.smartive_api.model.Room;
+import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.Device;
 
-public class RoomCreatedNotification extends ReactRabbitMQNotification {
+public class DeviceRemovedNotification extends ReactRabbitMQNotification {
 
-    public RoomCreatedNotification(RabbitMQHandler rabbitMQHandler, Object... args) {
+    public DeviceRemovedNotification(RabbitMQHandler rabbitMQHandler, Object... args) {
         super(rabbitMQHandler, args);
     }
 
@@ -21,12 +21,13 @@ public class RoomCreatedNotification extends ReactRabbitMQNotification {
         }
 
         JsonObject messageObject = new JsonObject();
-        messageObject.addProperty("notification", ReactNotificationType.ROOM_ADDED.name());
+        messageObject.addProperty("notification", ReactNotificationType.DEVICE_REMOVED.name());
 
         if (getArgs().length > 0)
-            messageObject.addProperty("roomId", ((Room)getArgs()[0]).getRoomId().toString());
+            messageObject.addProperty("deviceId", (String) getArgs()[0]);
 
         getRabbitMQHandler().publish(getQueue(), messageObject.toString());
+
 
     }
 

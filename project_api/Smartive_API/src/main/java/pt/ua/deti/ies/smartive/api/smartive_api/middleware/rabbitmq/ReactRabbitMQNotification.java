@@ -7,8 +7,8 @@ public abstract class ReactRabbitMQNotification extends RabbitMQNotification {
 
     private final String queue = "notifiers_reactJS";
 
-    public ReactRabbitMQNotification(RabbitMQHandler rabbitMQHandler) {
-        super(rabbitMQHandler);
+    public ReactRabbitMQNotification(RabbitMQHandler rabbitMQHandler, Object... args) {
+        super(rabbitMQHandler, args);
     }
 
 }

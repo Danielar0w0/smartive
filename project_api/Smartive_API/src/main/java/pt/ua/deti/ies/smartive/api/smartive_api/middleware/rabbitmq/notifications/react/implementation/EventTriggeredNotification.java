@@ -4,11 +4,12 @@ import com.google.gson.JsonObject;
 import pt.ua.deti.ies.smartive.api.smartive_api.middleware.rabbitmq.RabbitMQHandler;
 import pt.ua.deti.ies.smartive.api.smartive_api.middleware.rabbitmq.ReactRabbitMQNotification;
 import pt.ua.deti.ies.smartive.api.smartive_api.middleware.rabbitmq.notifications.react.ReactNotificationType;
-import pt.ua.deti.ies.smartive.api.smartive_api.model.Room;
+import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.Sensor;
+import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.events.SensorEvent;
 
-public class RoomCreatedNotification extends ReactRabbitMQNotification {
+public class EventTriggeredNotification extends ReactRabbitMQNotification {
 
-    public RoomCreatedNotification(RabbitMQHandler rabbitMQHandler, Object... args) {
+    public EventTriggeredNotification(RabbitMQHandler rabbitMQHandler, Object... args) {
         super(rabbitMQHandler, args);
     }
 
@@ -21,10 +22,18 @@ public class RoomCreatedNotification extends ReactRabbitMQNotification {
         }
 
         JsonObject messageObject = new JsonObject();
-        messageObject.addProperty("notification", ReactNotificationType.ROOM_ADDED.name());
+        messageObject.addProperty("notification", ReactNotificationType.EVENT_TRIGGERED.name());
 
-        if (getArgs().length > 0)
-            messageObject.addProperty("roomId", ((Room)getArgs()[0]).getRoomId().toString());
+        if (getArgs().length > 1) {
+
+            SensorEvent sensorEvent = (SensorEvent) getArgs()[0];
+            Sensor targetSensor = (Sensor) getArgs()[1];
+
+            messageObject.addProperty("event", sensorEvent.getEvent().name());
+            messageObject.addProperty("targetName", targetSensor.getName());
+            messageObject.addProperty("targetId", targetSensor.getDeviceId().toString());
+
+        }
 
         getRabbitMQHandler().publish(getQueue(), messageObject.toString());
 

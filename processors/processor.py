@@ -23,7 +23,7 @@ def main():
         return
     queue = sys.argv[1]    
 
-    credentials = pika.PlainCredentials('guest', 'guest')
+    credentials = pika.PlainCredentials('test', 'test')
     connection = pika.BlockingConnection(pika.ConnectionParameters(host='172.18.0.7', credentials=credentials))
     #connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost',port=5672, credentials=credentials))
     channel = connection.channel()

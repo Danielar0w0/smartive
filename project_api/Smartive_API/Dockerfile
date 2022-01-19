@@ -12,4 +12,7 @@ ENV RABBITMQ_USER=test
 ENV RABBITMQ_PASSWORD=test
 
 COPY target/Smartive_API-0.0.1-SNAPSHOT.jar Smartive_API-0.0.1-SNAPSHOT.jar
-ENTRYPOINT ["java","-jar","/Smartive_API-0.0.1-SNAPSHOT.jar"]
+COPY run.sh run.sh
+
+RUN ["chmod", "u+x", "./run.sh"]
+CMD [ "./run.sh" ]

@@ -94,10 +94,10 @@ public class PublicAPIController {
 
         Room room = roomService.getRoom(roomId);
 
-        room.getDevices().forEach(device -> {
-            device.setRoomId(null);
-            deviceService.save(device);
-        });
+        for (Device currentDevice : room.getDevices()) {
+            currentDevice.setRoomId(null);
+            deviceService.update(currentDevice);
+        }
 
         roomService.deleteRoom(room);
         reactNotificationFactory.generateNotification(ReactNotificationType.ROOM_DELETED, room).sendNotification();

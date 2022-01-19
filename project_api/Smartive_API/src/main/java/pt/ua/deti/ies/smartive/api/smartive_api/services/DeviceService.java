@@ -30,4 +30,9 @@ public class DeviceService {
         deviceRepository.save(device);
     }
 
+    public void update(Device device) {
+        deviceRepository.deleteByDeviceId(device.getDeviceId());
+        deviceRepository.save(device);
+    }
+
 }

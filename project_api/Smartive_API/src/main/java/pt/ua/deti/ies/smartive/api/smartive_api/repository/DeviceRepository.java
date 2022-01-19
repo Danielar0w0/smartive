@@ -10,5 +10,6 @@ import java.util.List;
 public interface DeviceRepository extends MongoRepository<Device, Long> {
 
     Device findByDeviceId(ObjectId deviceId);
+    void deleteByDeviceId(ObjectId deviceId);
 
 }

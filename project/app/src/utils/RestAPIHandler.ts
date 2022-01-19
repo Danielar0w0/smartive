@@ -119,7 +119,7 @@ export class RestAPIHandler {
 
     }
 
-    getRoomStats(roomId: number): Promise<RoomStats | null> {
+    getRoomStats(roomId: string): Promise<RoomStats | null> {
 
         const endpointURI = `/rooms/${roomId}/stats`
         const requestURI = this._middlewareBaseURI + endpointURI;
@@ -132,6 +132,53 @@ export class RestAPIHandler {
             .catch(error => {
                 console.log("Error on API request (getRoomStats()): " + error.message)
                 return null;
+            });
+
+    }
+
+    getRoomSensors(roomId: string): Promise<any|null> {
+
+        const endpointURI = `/devices/sensors/${roomId}`
+        const requestURI = this._publicAPIBaseURI + endpointURI;
+
+        return axios.get(requestURI)
+            .then((response) => {
+                return response.data;
+            }).catch(error => {
+                console.log("Error on API request (getRoomStats()): " + error.message)
+                return null;
+            })
+
+    }
+
+    registerRoom(roomName: string): Promise<boolean | null> {
+
+        const endpointURI = "/rooms"
+        const requestURI = this._publicAPIBaseURI + endpointURI;
+
+        return axios.post(requestURI, {name: roomName} )
+            .then((response) => {
+                return response.status === 200;
+            })
+            .catch(error => {
+                console.log("Error on API request (registerRoom()): " + error.message);
+                return false;
+            });
+
+    }
+
+    removeRoom(roomId: string): Promise<boolean | null> {
+
+        const endpointURI = `/rooms/${roomId}`
+        const requestURI = this._publicAPIBaseURI + endpointURI;
+
+        return axios.delete(requestURI)
+            .then((response) => {
+                return response.status === 200;
+            })
+            .catch(error => {
+                console.log("Error on API request (removeRoom()): " + error.message);
+                return false;
             });
 
     }

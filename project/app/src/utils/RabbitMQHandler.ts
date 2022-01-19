@@ -1,6 +1,9 @@
 // @ts-ignore
 import Stomp, { Client, Subscription } from 'stompjs';
 import {RabbitMQNotificationType} from "./RabbitMQNotificationType";
+import store from "../store";
+import {fetchRooms, fetchRoomStats} from "../features/rooms/roomsReducer";
+import {fetchDevices} from "../features/devices/devicesReducer";
 
 export class RabbitMQHandler {
 
@@ -26,12 +29,38 @@ export class RabbitMQHandler {
             console.log('Connected to RabbitMQ.');
 
             this._subscriptions.push(this.client.subscribe('notifiers_reactJS', (message: any) => {
-                // TODO: Update app data.
+
                 let notification: any = JSON.parse(message.body);
 
                 switch (notification['notification']) {
                     case RabbitMQNotificationType[RabbitMQNotificationType.ROOM_ADDED]:
-                        console.log("Room Added")
+                        store.dispatch(fetchRooms);
+                        store.dispatch({ type: 'toasts/setToast', payload: { text: "Room Added" } });
+                        break;
+                    case RabbitMQNotificationType[RabbitMQNotificationType.ROOM_DELETED]:
+                        store.dispatch(fetchRooms);
+                        store.dispatch({ type: 'toasts/setToast', payload: { text: "Room Removed" } });
+                        break;
+                    case RabbitMQNotificationType[RabbitMQNotificationType.ROOM_STATS_CHANGED]:
+                        let roomId: string = notification['roomId'];
+                        store.dispatch(fetchRoomStats(roomId));
+                        break;
+                    case RabbitMQNotificationType[RabbitMQNotificationType.DEVICE_ADDED]:
+                        store.dispatch(fetchDevices);
+                        store.dispatch({ type: 'toasts/setToast', payload: { text: "Device Added" } });
+                        break;
+                    case RabbitMQNotificationType[RabbitMQNotificationType.DEVICE_STATS_CHANGED]:
+                        store.dispatch(fetchDevices);
+                        break;
+                    case RabbitMQNotificationType[RabbitMQNotificationType.DEVICE_REMOVED]:
+                        store.dispatch(fetchDevices);
+                        store.dispatch({ type: 'toasts/setToast', payload: { text: "Device Removed" } });
+                        break;
+                    case RabbitMQNotificationType[RabbitMQNotificationType.EVENT_TRIGGERED]:
+                        const event = notification['event'];
+                        const deviceName = notification['targetName'];
+                        store.dispatch({ type: 'toasts/setToast', payload: { text: "Event " + event + " triggered in " + deviceName + "." } });
+                        break;
                 }
 
                 console.log('Received message from RabbitMQ: ' + message);

@@ -17,13 +17,31 @@ import { Users } from './components/users/users';
 import { ViewUsers } from './components/users/view_user';
 import { AddUser } from './components/users/add_user';
 import { History } from './components/history';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import store from "./store";
+import {CreateRoom} from "./components/create_room";
 
 export default function AppRouting () {
 
     const customHistory = createBrowserHistory();
+    const notify = (text) => toast(text);
+
+    store.subscribe(() => {
+
+        const currentToast = store.getState().toastsFeature.toast;
+
+        if (currentToast !== undefined && currentToast !== null) {
+            notify(currentToast.text);
+            store.dispatch({ type: 'toasts/clearToast' })
+        }
+
+
+    });
 
     return (
         <Router history={ customHistory }>
+            <ToastContainer />
             <Routes>
                 <Route path="/control_device" element={<ControlDevice/>} />
                 <Route path="/devices" element={<Devices/>} />
@@ -34,6 +52,7 @@ export default function AppRouting () {
                 <Route path="/users/1" element={<ViewUsers/>} />
                 <Route path="/add_user" element={<AddUser/>} />
                 <Route path="/history" element={<History/>} />
+                <Route path="/create_room" element={<CreateRoom/>} />
             </Routes>
         </Router>
     )

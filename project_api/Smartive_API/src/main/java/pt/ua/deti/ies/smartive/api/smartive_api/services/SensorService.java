@@ -21,6 +21,10 @@ public class SensorService {
         this.roomService = roomService;
     }
 
+    public Sensor getSensorById(ObjectId sensorId) {
+        return sensorRepository.findByDeviceId(sensorId);
+    }
+
     public void registerSensor(Sensor sensor) {
 
         sensor.setDeviceId(new ObjectId());
@@ -47,6 +51,19 @@ public class SensorService {
 
     public boolean sensorExists(ObjectId objectId) {
         return sensorRepository.existsSensorByDeviceId(objectId);
+    }
+
+    public void save(Sensor sensor) {
+        sensorRepository.save(sensor);
+    }
+
+    public void delete(Sensor sensor) {
+        sensorRepository.deleteByDeviceId(sensor.getDeviceId());
+    }
+
+    public void update(Sensor sensor) {
+        delete(sensor);
+        save(sensor);
     }
 
 }

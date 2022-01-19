@@ -17,6 +17,8 @@ import { Users } from './components/users/users';
 import { ViewUsers } from './components/users/view_user';
 import { AddUser } from './components/users/add_user';
 import { History } from './components/history';
+import {AddTrigger} from "./components/triggers/add_trigger";
+import {Triggers} from "./components/triggers/triggers";
 
 export default function AppRouting () {
 
@@ -34,6 +36,8 @@ export default function AppRouting () {
                 <Route path="/users/1" element={<ViewUsers/>} />
                 <Route path="/add_user" element={<AddUser/>} />
                 <Route path="/history" element={<History/>} />
+                <Route path="/add_trigger" element={<AddTrigger/>} />
+                <Route path="/triggers" element={<Triggers/>} />
             </Routes>
         </Router>
     )

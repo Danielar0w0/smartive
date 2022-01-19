@@ -4,6 +4,7 @@ import {Device} from "./entities/Device";
 import {SensorStat} from "./entities/SensorStat";
 import {Sensor} from "./entities/Sensor";
 import {RoomStats} from "./entities/RoomStats";
+import {Event} from "./entities/Event";
 
 export class RestAPIHandler {
 
@@ -136,4 +137,35 @@ export class RestAPIHandler {
 
     }
 
+    addSensorEvent(event: Event): Promise<boolean> {
+
+        const endpointURI = '/devices/sensors/events'
+        const requestURI = this._publicAPIBaseURI + endpointURI;
+
+        return axios.post(requestURI, event)
+            .then((response) => {
+                console.log(response);
+                return response.status === 200;
+            })
+            .catch(error => {
+                console.log("Error on API request (addSensorEvent()): " + error.message)
+                return false
+            });
+    }
+
+    getAllEvents() : Promise<Event[]> {
+
+        const endpointURI = '/devices/sensors/events'
+        const requestURI = this._publicAPIBaseURI + endpointURI;
+
+        return axios.get(requestURI)
+            .then((response) => {
+                const allEvents: Event[] = response.data;
+                return allEvents
+            })
+            .catch(error => {
+                console.log("Error on API request (getAvailableDevices()): " + error.message)
+                return []
+            });
+    }
 }

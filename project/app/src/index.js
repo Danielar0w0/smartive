@@ -5,8 +5,22 @@ import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import AppRouting from './routes';
 import reportWebVitals from './reportWebVitals';
 
+import {RabbitMQHandler} from "./utils/RabbitMQHandler";
+
+import {Provider} from "react-redux";
+import store from "./store";
+import {fetchRooms} from "./features/rooms/roomsReducer";
+
+let rabbitMQHandler = new RabbitMQHandler('test', 'test', 'ws://' + process.env.REACT_APP_RABBIT_MQ_ADDRESS + ':15674/ws');
+rabbitMQHandler.connect();
+
+// Fetch rooms on app start-up
+store.dispatch(fetchRooms);
+
 ReactDOM.render(
-    <AppRouting/>,
+    <Provider store={store}>
+        <AppRouting/>
+    </Provider>,
     document.getElementById('root')
 );
 

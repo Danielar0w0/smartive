@@ -3,6 +3,9 @@ import { MiniPanel } from "./mini_panel";
 
 import React from 'react';
 import { RestAPIHandler } from "../../utils/RestAPIHandler";
+import store from "../../store";
+import {MiniPanelInfo, RegisterButton} from "./mini_panel_info";
+import {Modal} from "@mui/material";
 
 export class RoomPanelsList extends React.Component {
 
@@ -20,28 +23,22 @@ export class RoomPanelsList extends React.Component {
 
     componentDidMount() {
 
-        this.refreshData();
-
-        setInterval(() => {
-            this.refreshData();
-        }, 5000);
-
-    }
-
-    refreshData() {
-
-        this.apiHandler.getAllRooms()
-            .then(allRooms => {
-                this.setState({isLoading: false, rooms: allRooms});
+        store.subscribe(() => {
+            this.setState({
+                rooms: store.getState().roomsFeature.rooms
             });
+        });
 
     }
 
     roomPanelClicked(room) {
         this.setState({ selectedRoom: room });
-
         if (this.props.on_room_changed !== undefined)
             this.props.on_room_changed(room);
+    }
+
+    removeRoom(room) {
+        this.apiHandler.removeRoom(room.roomId);
     }
 
     render() {
@@ -65,7 +62,6 @@ export class RoomPanelsList extends React.Component {
             let room = rooms[roomIdx];
 
             if (this.state.selectedRoom !== undefined && room.roomId === this.state.selectedRoom.roomId)  {
-                console.log('Debug 1');
                 roomPanels.push(
                     <MiniPanel
                         key={room.roomId}
@@ -74,10 +70,11 @@ export class RoomPanelsList extends React.Component {
                         info={room.stats !== null && room.stats !== undefined ? room.stats.powerConsumption + ' kWh' : '0 kWh'}
                         on_click={this.roomPanelClicked.bind(this, room)}
                         selected={true}
+                        isCloseable={true}
+                        onCloseClick={this.removeRoom.bind(this, room)}
                     />
                 );
             } else {
-                console.log('Debug 2');
                 roomPanels.push(
                     <MiniPanel
                         key={room.roomId}
@@ -86,12 +83,17 @@ export class RoomPanelsList extends React.Component {
                         info={room.stats !== null && room.stats !== undefined ? room.stats.powerConsumption + ' kWh' : '0 kWh'}
                         on_click={this.roomPanelClicked.bind(this, room)}
                         selected={false}
+                        isCloseable={true}
+                        onCloseClick={this.removeRoom.bind(this, room)}
                     />
                 );
             }
 
-
         }
+
+        roomPanels.push(
+            <MiniPanelInfo title={"Add new room"} on_click={() => window.location.replace("/create_room")} />
+        );
 
         return (
 

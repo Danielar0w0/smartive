@@ -6,9 +6,12 @@ import pt.ua.deti.ies.smartive.api.smartive_api.model.Room;
 
 public interface RoomRepository extends MongoRepository<Room, Long> {
 
+    Room findByRoomId(ObjectId roomId);
+    Room findByName(String roomName);
+
     boolean existsByRoomId(ObjectId roomId);
     boolean existsByName(String roomName);
-    Room findByRoomId(ObjectId roomId);
+
     void deleteByRoomId(ObjectId roomId);
 
 }

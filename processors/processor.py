@@ -24,7 +24,8 @@ def main():
     queue = sys.argv[1]    
 
     credentials = pika.PlainCredentials('test', 'test')
-    connection = pika.BlockingConnection(pika.ConnectionParameters(host='172.18.0.6', credentials=credentials))
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host='172.18.0.7', credentials=credentials))
+    #connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost',port=5672, credentials=credentials))
     channel = connection.channel()
 
     # When RabbitMQ quits or crashes, it won't forget the queue
@@ -54,12 +55,14 @@ def callback(ch, method, properties, body):
     # Obtain sensor data
     data = json.loads(body.decode())
 
-    if "id" not in data and "value" not in data:
+    if "id" not in data and "value" not in data and "power" not in data:
         print(" [-] Data is not in the correct format!")
         return
     
     sensor_id = data["id"]
     state_value = data["value"]
+    power_consumption = data["power"]
+
 
     # Obtain sensor from registered devices
     sensor = obtain_sensor(sensor_id, "registered")
@@ -68,7 +71,7 @@ def callback(ch, method, properties, body):
     if sensor:
 
         # Update sensor state
-        updateState(sensor, state_value)
+        updateState(sensor, state_value, power_consumption)
 
     # If the sensor isn't registered
     else:
@@ -91,10 +94,10 @@ def callback(ch, method, properties, body):
 def obtain_sensor(sensor_id, device_type = "registered"):
 
     if device_type == "registered":
-        response = requests.get("http://172.18.0.2:8080/api/devices/sensors", timeout=5)
+        response = requests.get("http://172.18.0.3:8080/api/devices/sensors", timeout=5)
     
     elif device_type == "available":
-        response = requests.get("http://172.18.0.2:8080/api/devices/available", timeout=5)
+        response = requests.get("http://172.18.0.3:8080/api/devices/available", timeout=5)
 
     else:
         print(" [-] Unable to get list of '{device_type}' sensors!")
@@ -132,7 +135,7 @@ def register_sensor(sensor_id, category=None):
     sensor = {'deviceId': sensor_id, 'name': f'Sensor {sensor_id}', 'category': category}
         
     # Register available sensor
-    response = requests.post("http://172.18.0.2:8080/api/devices/available", json=sensor, timeout=5)
+    response = requests.post("http://172.18.0.3:8080/api/devices/available", json=sensor, timeout=5)
     
     # Check if request was successful
     if response.status_code != 200: 
@@ -143,13 +146,13 @@ def register_sensor(sensor_id, category=None):
     return sensor
 
     
-def updateState(sensor, state_value):
+def updateState(sensor, state_value, power_consumption):
 
     # Create sensor state
-    sensor = {"deviceId": sensor["deviceId"], "state": {"value": state_value, "unit": "%"}}
+    sensor = {"deviceId": sensor["deviceId"], "state": {"value": state_value, "unit": "%", "powerConsumption": power_consumption}}
     
     # The keyword json automatically sets the request’s HTTP header Content-Type to application/json
-    response = requests.put("http://172.18.0.2:8080/middleware/devices/sensor", json=sensor, timeout=5)
+    response = requests.put("http://172.18.0.3:8080/middleware/devices/sensor", json=sensor, timeout=5)
     
     # Check if request was successful
     if response.status_code != 200: 

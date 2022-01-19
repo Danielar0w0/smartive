@@ -1,3 +1,18 @@
 FROM openjdk:11.0.13-jdk-slim
+
+ENV MONGO_USER=root
+ENV MONGO_PASSWORD=password
+ENV MONGO_ADDRESS=172.18.0.5
+ENV MONGO_PORT=27017
+ENV REDIS_ADDRESS=172.18.0.6
+ENV REDIS_PORT=6379
+ENV RABBITMQ_ADDRESS=project_rabbitmq_1
+ENV RABBITMQ_PORT=5672
+ENV RABBITMQ_USER=test
+ENV RABBITMQ_PASSWORD=test
+
 COPY target/Smartive_API-0.0.1-SNAPSHOT.jar Smartive_API-0.0.1-SNAPSHOT.jar
-ENTRYPOINT ["java","-jar","/Smartive_API-0.0.1-SNAPSHOT.jar"]
+COPY run.sh run.sh
+
+RUN ["chmod", "u+x", "./run.sh"]
+CMD [ "./run.sh" ]

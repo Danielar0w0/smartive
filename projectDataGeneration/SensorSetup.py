@@ -9,7 +9,7 @@ process_list = []
 id_list = []
 
 def main_func():
-    request = requests.get("http://172.18.0.2:8080/api/devices/sensors")
+    request = requests.get("http://172.18.0.3:8080/api/devices/sensors")
     
     for item in request.json():
         if item["category"] == "TEMPERATURE":
@@ -26,14 +26,18 @@ def main_func():
     #Processos extra que podem ser adicionados
     sensor = "temp"
     p = Process(target=createProcessor, args=(ObjectId(), sensor))
+    p.start()
     p = Process(target=createProcessor, args=(ObjectId(), sensor))
+    p.start()
     sensor = "humi"
     p = Process(target=createProcessor, args=(ObjectId(), sensor))
+    p.start()
     p = Process(target=createProcessor, args=(ObjectId(), sensor))
+    p.start()
 
     while(True):
         time.sleep(30)
-        request = requests.get("http://172.18.0.2:8080/api/devices/sensors")
+        request = requests.get("http://172.18.0.3:8080/api/devices/sensors")
         for item in request.json():
             if item["deviceId"] not in id_list:
                 if item["category"] == "TEMPERATURE":

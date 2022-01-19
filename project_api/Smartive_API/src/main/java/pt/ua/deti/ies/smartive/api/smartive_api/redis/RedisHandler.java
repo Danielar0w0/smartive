@@ -24,13 +24,13 @@ public class RedisHandler {
 
     private RedisHandler() { }
 
-    public void createPool(String redisAddress) {
+    public void createPool(String redisAddress, int redisPort) {
 
         final JedisPoolConfig poolConfig = configPool();
 
         try {
             if (jedisPool == null)
-                jedisPool = new JedisPool(poolConfig, redisAddress);
+                jedisPool = new JedisPool(poolConfig, redisAddress, redisPort);
         } catch (Exception e) {
             logger.warn("Unable to connect to Redis Server.");
         }

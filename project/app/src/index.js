@@ -11,7 +11,7 @@ import {Provider} from "react-redux";
 import store from "./store";
 import {fetchRooms} from "./features/rooms/roomsReducer";
 
-let rabbitMQHandler = new RabbitMQHandler('admin', 'admin', 'ws://localhost:15674/ws');
+let rabbitMQHandler = new RabbitMQHandler('admin', 'admin', 'ws://' + process.env.REACT_APP_RABBIT_MQ_ADDRESS + ':15674/ws');
 rabbitMQHandler.connect();
 
 // Fetch rooms on app start-up

@@ -6,7 +6,7 @@ from math import ceil
 
 queues = ['humidity_queue', 'temperature_queue']
 
-credentials = pika.PlainCredentials('test', 'test')
+credentials = pika.PlainCredentials('guest', 'guest')
 connection = pika.BlockingConnection(
     pika.ConnectionParameters(host='172.18.0.7', credentials=credentials))
 channel = connection.channel()

@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Navbar } from "./base_components/navbar";
 import Search from './base_components/searchbar';
-import {FaBell, FaPlusSquare} from 'react-icons/fa'
+import {FaPlusSquare} from 'react-icons/fa'
 
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
@@ -12,7 +12,6 @@ import { RoomPanelsList } from './base_components/room_panels_list';
 import store from "../store";
 import { fetchRoomDevices } from "../features/rooms/roomsReducer";
 import {fetchDevices} from "../features/devices/devicesReducer";
-import {RoomPanelsList} from './base_components/room_panels_list';
 import {Button} from "react-bootstrap";
 import {Link} from "react-router-dom";
 
@@ -75,9 +74,6 @@ export class Devices extends React.Component{
                     <Col className="col-1">
                         <FaPlusSquare size={50} color='#f76540' style={{borderRadius: "15px"}} onClick={() => window.location.replace("/add_device")}/>
                     </Col>
-                    <Col className="col-1 mt-1">
-                        <FaBell size={40} color='#f76540' style={{borderRadius: "15px"}} onClick={() => window.location.replace("/triggers")} />
-                    </Col>
                     <Col className="col-4 mt-2">
                         <Search/>
                     </Col>
@@ -96,7 +92,7 @@ export class Devices extends React.Component{
                     </Col>
                 </Row>
 
-                <DevicesList/>
+                <DevicesList devices={this.state.selectedRoomDevices} room_selected={this.state.selectedRoom} />
 
             </Container>
         );

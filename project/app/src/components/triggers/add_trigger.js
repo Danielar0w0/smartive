@@ -10,6 +10,7 @@ import {SensorSelect} from "./sensor_select";
 import {Button, Image} from "react-bootstrap";
 import {EventSelect} from "./event_select";
 import {TriggerSelect} from "./trigger_select";
+import store from "../../store";
 
 export class AddTrigger extends React.Component {
 
@@ -36,10 +37,21 @@ export class AddTrigger extends React.Component {
             }
         }
 
-        if (validEvent)
-            this.apiHandler.addSensorEvent(this.state.event).then(response => (
-                console.log(response)
-            ))
+        if (validEvent) {
+
+            this.apiHandler.addSensorEvent(this.state.event).then(response => {
+
+                if (response) {
+                    store.dispatch({type: 'toasts/setToast', payload: {text: "Trigger successfully added"}});
+                } else {
+                    store.dispatch({type: 'toasts/setToast', payload: {text: "Error adding the trigger"}});
+                }
+                console.log(response);
+
+            });
+
+        }
+
     }
 
     handleChange = (childData) => {

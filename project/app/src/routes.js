@@ -21,6 +21,8 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import store from "./store";
 import {CreateRoom} from "./components/create_room";
+import {AddTrigger} from "./components/triggers/add_trigger";
+import {Triggers} from "./components/triggers/triggers";
 
 export default function AppRouting () {
 
@@ -53,6 +55,8 @@ export default function AppRouting () {
                 <Route path="/add_user" element={<AddUser/>} />
                 <Route path="/history" element={<History/>} />
                 <Route path="/create_room" element={<CreateRoom/>} />
+                <Route path="/add_trigger" element={<AddTrigger/>} />
+                <Route path="/triggers" element={<Triggers/>} />
             </Routes>
         </Router>
     )

@@ -37,6 +37,10 @@ export class RoomPanelsList extends React.Component {
             this.props.on_room_changed(room);
     }
 
+    removeRoom(room) {
+        this.apiHandler.removeRoom(room.roomId);
+    }
+
     render() {
 
         let rooms = this.state.rooms;
@@ -67,6 +71,7 @@ export class RoomPanelsList extends React.Component {
                         on_click={this.roomPanelClicked.bind(this, room)}
                         selected={true}
                         isCloseable={true}
+                        onCloseClick={this.removeRoom.bind(this, room)}
                     />
                 );
             } else {

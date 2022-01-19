@@ -167,4 +167,20 @@ export class RestAPIHandler {
 
     }
 
+    removeRoom(roomId: string): Promise<boolean | null> {
+
+        const endpointURI = `/rooms/${roomId}`
+        const requestURI = this._publicAPIBaseURI + endpointURI;
+
+        return axios.delete(requestURI)
+            .then((response) => {
+                return response.status === 200;
+            })
+            .catch(error => {
+                console.log("Error on API request (removeRoom()): " + error.message);
+                return false;
+            });
+
+    }
+
 }

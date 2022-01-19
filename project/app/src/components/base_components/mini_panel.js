@@ -62,7 +62,7 @@ export class MiniPanel extends React.Component {
 
         if (isCloseable) {
             closeButton = (
-                <FontAwesomeIcon icon={this.props.icon || faTimes} style={{fontSize: "120%", color: "#464646",  minWidth: "30px", position: "absolute", top: "0.8rem", right: "0.8rem", paddingRight: "0px"}}/>
+                <FontAwesomeIcon onClick={this.props.onCloseClick} icon={this.props.icon || faTimes} style={{fontSize: "120%", color: "#464646",  minWidth: "30px", position: "absolute", top: "0.8rem", right: "0.8rem", paddingRight: "0px"}}/>
             );
         }
 

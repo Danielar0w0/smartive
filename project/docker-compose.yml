@@ -25,7 +25,6 @@ services:
     networks:
       mongo-compose-network:
         ipv4_address: 172.18.0.3
-    #command: tail -F anything
 
   mongo-express:
     image: mongo-express:0.54

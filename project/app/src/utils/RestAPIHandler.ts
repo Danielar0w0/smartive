@@ -11,7 +11,7 @@ export class RestAPIHandler {
     private readonly _publicAPIBaseURI;
 
     constructor() {
-        this._middlewareBaseURI = 'http://' + process.env.REACT_APP_API_ADDRESS + 'localhost:8080/middleware';
+        this._middlewareBaseURI = 'http://' + process.env.REACT_APP_API_ADDRESS + ':8080/middleware';
         this._publicAPIBaseURI = 'http://' + process.env.REACT_APP_API_ADDRESS + ':8080/api'
     }
 

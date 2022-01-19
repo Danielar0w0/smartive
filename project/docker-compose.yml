@@ -82,9 +82,11 @@ services:
     ports:
       - 5672:5672
       - 15672:15672
+      - 15674:15674
     expose:
       - 5672
       - 15672
+      - 15674
     networks:
       mongo-compose-network:
         ipv4_address: 172.18.0.7

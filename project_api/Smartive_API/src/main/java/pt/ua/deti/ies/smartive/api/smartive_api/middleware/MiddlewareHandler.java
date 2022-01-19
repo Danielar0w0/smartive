@@ -7,29 +7,21 @@ import pt.ua.deti.ies.smartive.api.smartive_api.model.Room;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.RoomStats;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.Device;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.DeviceCategory;
+import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.Sensor;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.SensorState;
-import pt.ua.deti.ies.smartive.api.smartive_api.redis.entities.RSensor;
-import pt.ua.deti.ies.smartive.api.smartive_api.services.RSensorService;
 import pt.ua.deti.ies.smartive.api.smartive_api.services.RoomService;
+import pt.ua.deti.ies.smartive.api.smartive_api.services.SensorService;
 
 @Component
 public final class MiddlewareHandler {
 
-    private final RSensorService rSensorService;
+    private final SensorService sensorService;
     private final RoomService roomService;
 
     @Autowired
-    public MiddlewareHandler(RSensorService rSensorService, RoomService roomService) {
-        this.rSensorService = rSensorService;
+    public MiddlewareHandler(SensorService sensorService, RoomService roomService) {
+        this.sensorService = sensorService;
         this.roomService = roomService;
-    }
-
-    public SensorState getSensorState(ObjectId sensorId) {
-        return rSensorService.load(sensorId).getSensorState();
-    }
-
-    public void updateSensorState(ObjectId sensorId, SensorState sensorState) {
-        rSensorService.save(new RSensor(sensorId, sensorState));
     }
 
     public RoomStats calculateRoomStats(ObjectId roomId) {
@@ -43,7 +35,8 @@ public final class MiddlewareHandler {
 
         for (Device device : room.getDevices()) {
 
-            SensorState sensorState = getSensorState(device.getDeviceId());
+            Sensor sensor = sensorService.getSensorById(device.getDeviceId());
+            SensorState sensorState =  sensor.getState();
 
             if (sensorState == null) continue;
 

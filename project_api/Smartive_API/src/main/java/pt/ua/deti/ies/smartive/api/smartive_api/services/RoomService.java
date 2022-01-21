@@ -20,12 +20,18 @@ public class RoomService {
         this.roomRepository = roomRepository;
     }
 
-    public void registerRoom(Room room) {
+    public Room registerRoom(Room room) {
+
         if (!room.isValid())
             throw new InvalidRoomException("Invalid Room - invalid room.");
+
         if (room.getDevices() == null) room.setDevices(new ArrayList<>());
         if (room.getUsers() == null) room.setUsers(new ArrayList<>());
+
         roomRepository.save(room);
+
+        return roomRepository.findByName(room.getName());
+
     }
 
     public Room getRoom(ObjectId roomId) {

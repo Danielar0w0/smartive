@@ -1,8 +1,7 @@
 import React from 'react';
-import { RestAPIHandler } from "../../utils/RestAPIHandler";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import {LargePanel} from "./large_panel";
+import { LargePanel } from "./large_panel";
 import Container from "react-bootstrap/Container";
 
 export class DevicesList extends React.Component {
@@ -10,51 +9,16 @@ export class DevicesList extends React.Component {
     constructor(props) {
 
         super(props);
-        this.apiHandler = new RestAPIHandler();
         this.state = {
             isLoading: true,
-            sensors: [],
             childComponents: {}
         };
 
     }
 
-    componentDidMount() {
+    componentDidUpdate(prevProps, prevState, snapshot) {
 
-        this.refreshData();
-
-        setInterval(() => {
-            this.refreshData();
-        }, 5000);
-
-    }
-
-    refreshData() {
-
-        this.apiHandler.getAllSensors()
-            .then(sensorsList => {
-
-                let clonedSensorsList = [];
-
-                for (let sensorIdx in sensorsList) {
-
-                    let sensor = sensorsList[sensorIdx];
-
-                    this.apiHandler.getSensorStats(sensor.deviceId)
-                        .then(sensorStats => {
-
-                            sensor.sensorStats = sensorStats !== null && sensorStats.sensorState !== undefined ? sensorStats.sensorState : {};
-                            clonedSensorsList.push(sensor);
-
-                            let currentState = this.state;
-                            currentState.sensors = clonedSensorsList;
-                            this.setState(currentState);
-
-                        });
-
-                }
-
-            });
+        if (prevState !== this.state) return;
 
         this.updateChildComponents();
 
@@ -62,7 +26,7 @@ export class DevicesList extends React.Component {
 
     updateChildComponents() {
 
-        let allSensors = this.state.sensors;
+        let allSensors = this.props.devices;
         let componentState = this.state;
 
         let childComponents = {
@@ -85,22 +49,44 @@ export class DevicesList extends React.Component {
             let currentSensor = allSensors[sensorIdx];
             let nextSensor = allSensors[sensorIdx+1];
 
-            childComponents.firstCol.push(
-                <LargePanel
-                    key={currentSensor.deviceId}
-                    device_name={currentSensor.name}
-                    power_consumption={(currentSensor.sensorStats.value.toFixed(2) + currentSensor.sensorStats.unit) || 'No Data'}
-                />
-            );
-
-            if (sensorIdx+1 < allSensors.length) {
-                childComponents.secondCol.push(
+            if (currentSensor.state !== null) {
+                childComponents.firstCol.push(
                     <LargePanel
-                        key={nextSensor.deviceId}
-                        device_name={nextSensor.name}
-                        power_consumption={(nextSensor.sensorStats.value.toFixed(2) + nextSensor.sensorStats.unit) || 'No Data'}
+                        key={currentSensor.deviceId}
+                        device_name={currentSensor.name}
+                        power_consumption={(currentSensor.state.value.toFixed(2) + currentSensor.state.unit) || 'No Data'}
                     />
                 );
+            } else {
+                childComponents.firstCol.push(
+                    <LargePanel
+                        key={currentSensor.deviceId}
+                        device_name={currentSensor.name}
+                        power_consumption={'No Data'}
+                    />
+                );
+            }
+
+
+            if (sensorIdx+1 < allSensors.length) {
+                if (nextSensor.state !== null) {
+                    childComponents.secondCol.push(
+                        <LargePanel
+                            key={nextSensor.deviceId}
+                            device_name={nextSensor.name}
+                            power_consumption={(nextSensor.state.value.toFixed(2) + nextSensor.state.unit) || 'No Data'}
+                        />
+                    );
+                }else {
+                    childComponents.secondCol.push(
+                        <LargePanel
+                            key={nextSensor.deviceId}
+                            device_name={nextSensor.name}
+                            power_consumption={'No Data'}
+                        />
+                    );
+                }
+
             }
 
         }
@@ -120,7 +106,9 @@ export class DevicesList extends React.Component {
 
             <Container>
 
-                {this.state.childComponents.firstCol === undefined || this.state.childComponents.firstCol.length === 0 || this.state.childComponents.secondCol === undefined || this.state.childComponents.secondCol.length === 0 ? 'Loading...': undefined}
+                {/*{ (this.state.childComponents.firstCol === undefined || this.state.childComponents.firstCol.length === 0) && (this.state.childComponents.secondCol === undefined || this.state.childComponents.secondCol.length === 0) ? 'Loading...': undefined }*/}
+
+                <p className="fw-normal fs-5">{ this.props.room_selected !== undefined ? null : 'All Devices' }</p>
 
                 <Row>
                     <Col lg={6} md={6} sm={12}>

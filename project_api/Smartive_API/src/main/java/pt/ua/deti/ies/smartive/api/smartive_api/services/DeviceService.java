@@ -1,5 +1,6 @@
 package pt.ua.deti.ies.smartive.api.smartive_api.services;
 
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.Device;
@@ -19,6 +20,19 @@ public class DeviceService {
 
     public List<Device> getAllDevices() {
         return deviceRepository.findAll();
+    }
+
+    public Device getDeviceById(ObjectId deviceId) {
+        return deviceRepository.findByDeviceId(deviceId);
+    }
+
+    public void save(Device device) {
+        deviceRepository.save(device);
+    }
+
+    public void update(Device device) {
+        deviceRepository.deleteByDeviceId(device.getDeviceId());
+        deviceRepository.save(device);
     }
 
 }

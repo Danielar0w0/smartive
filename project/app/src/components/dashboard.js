@@ -17,6 +17,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import {RoomPanelsList} from "./base_components/room_panels_list";
 import {RestAPIHandler} from "../utils/RestAPIHandler";
+import store from "../store";
+import {fetchRoomStats} from "../features/rooms/roomsReducer";
 
 export class Dashboard extends React.Component {
 
@@ -25,18 +27,31 @@ export class Dashboard extends React.Component {
 
         this.apiHandler = new RestAPIHandler();
         this.state = {
+            selectedRoom: undefined,
             selectedRoomStats: {}
         }
 
     }
 
-
     roomChangedHandler(room) {
 
-        this.apiHandler.getRoomStats(room.roomId)
-            .then(roomStats => {
-                this.setState({selectedRoomStats: roomStats !== null ? roomStats : {}});
-            });
+        store.dispatch(fetchRoomStats(room.roomId));
+
+        store.subscribe(() => {
+
+            let allRoomsStats = store.getState().roomsFeature.roomStats;
+
+            for (let roomStatIdx in allRoomsStats) {
+                let roomStats = allRoomsStats[roomStatIdx];
+                if (roomStats.roomId === room.roomId) {
+                    this.setState({
+                        selectedRoom: room.roomId,
+                        selectedRoomStats: roomStats.stats
+                    });
+                }
+            }
+
+        })
 
     }
 
@@ -68,7 +83,7 @@ export class Dashboard extends React.Component {
                                     icon={faWater}
                                     title={'Devices'}
                                     subtitle={'Water'}
-                                    info={roomStats.water !== undefined ? roomStats.water + " L" : 'No Data'}
+                                    info={roomStats !== null && roomStats.water !== undefined ? roomStats.water + " L" : 'No Data'}
                                 />
                             </TabContainer>
                         </Row>
@@ -77,7 +92,7 @@ export class Dashboard extends React.Component {
                                 icon={faTemperatureHigh}
                                 title={'Devices'}
                                 subtitle={'Temperature'}
-                                info={roomStats.temperature !== undefined ? roomStats.temperature.toFixed(2) + " ºC" : 'No Data'}
+                                info={roomStats !== null && roomStats.temperature !== undefined ? roomStats.temperature.toFixed(2) + " ºC" : 'No Data'}
                             />
                         </Row>
                         <Row>
@@ -85,7 +100,7 @@ export class Dashboard extends React.Component {
                                 icon={faLightbulb}
                                 title={'Devices'}
                                 subtitle={'Humidity'}
-                                info={roomStats.humidity !== undefined ? roomStats.humidity.toFixed(2) + " g/m³" : 'No Data'}
+                                info={roomStats !== null && roomStats.humidity !== undefined ? roomStats.humidity.toFixed(2) + " g/m³" : 'No Data'}
                             />
                         </Row>
                     </Col>

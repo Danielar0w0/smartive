@@ -9,9 +9,11 @@ public abstract class RabbitMQNotification {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final RabbitMQHandler rabbitMQHandler;
+    private final Object[] args;
 
-    public RabbitMQNotification(RabbitMQHandler rabbitMQHandler) {
+    public RabbitMQNotification(RabbitMQHandler rabbitMQHandler, Object... args) {
         this.rabbitMQHandler = rabbitMQHandler;
+        this.args = args;
     }
 
     public abstract void sendNotification();

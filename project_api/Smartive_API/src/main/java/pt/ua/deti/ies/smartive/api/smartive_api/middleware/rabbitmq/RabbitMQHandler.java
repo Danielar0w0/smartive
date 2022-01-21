@@ -39,7 +39,7 @@ public class RabbitMQHandler {
         factory.setPassword(password);
         factory.setVirtualHost(virtualHost);
         factory.setHost(address);
-        factory.setPort(port);
+        //factory.setPort(port);
 
         try {
             this.connection = factory.newConnection();

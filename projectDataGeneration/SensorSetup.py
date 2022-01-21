@@ -26,10 +26,14 @@ def main_func():
     #Processos extra que podem ser adicionados
     sensor = "temp"
     p = Process(target=createProcessor, args=(ObjectId(), sensor))
+    p.start()
     p = Process(target=createProcessor, args=(ObjectId(), sensor))
+    p.start()
     sensor = "humi"
     p = Process(target=createProcessor, args=(ObjectId(), sensor))
+    p.start()
     p = Process(target=createProcessor, args=(ObjectId(), sensor))
+    p.start()
 
     while(True):
         time.sleep(30)

@@ -8,7 +8,7 @@ queues = ['humidity_queue', 'temperature_queue']
 
 credentials = pika.PlainCredentials('test', 'test')
 connection = pika.BlockingConnection(
-    pika.ConnectionParameters(host='172.18.0.7', credentials=credentials))
+    pika.ConnectionParameters(host='172.18.0.7', port=5672, credentials=credentials))
 channel = connection.channel()
 
 process_list = {'humidity_queue': [], 'temperature_queue': []}

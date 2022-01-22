@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 @Service
 @Component
-public class UserService implements UserDetailsService {
+public class UserService {
 
     private final UserRepository userRepository;
 
@@ -27,22 +27,5 @@ public class UserService implements UserDetailsService {
         if (!user.isValid())
             throw new InvalidUserException("Invalid user - invalid instance.");
         userRepository.save(user);
-    }
-
-    public User getUser(String username) throws UserNotFoundException {
-        if ("javainuse".equals(username)) {
-            return new User(null, "javainuse", "javainuse@ua.pt", "$2a$10$slYQmyNdGzTn7ZLBXBChFOC9f6kFjAqPhccnP6DxlWXx2lPk1C3G6");
-        } else {
-            throw new UserNotFoundException("User not found - username " + username);
-        }
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        if ("javainuse".equals(username)) {
-            return new User(null, "javainuse", "javainuse@ua.pt", "$2a$10$slYQmyNdGzTn7ZLBXBChFOC9f6kFjAqPhccnP6DxlWXx2lPk1C3G6");
-        } else {
-            throw new UserNotFoundException("User not found - username " + username);
-        }
     }
 }

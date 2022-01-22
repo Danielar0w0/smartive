@@ -1,10 +1,6 @@
 package pt.ua.deti.ies.smartive.api.smartive_api.tokens;
 
-import java.io.Serializable;
-
-public class JwtRequest implements Serializable {
-
-    private static final long serialVersionUID = 5926468583005150707L;
+public class JwtRequest {
 
     private String username;
     private String password;

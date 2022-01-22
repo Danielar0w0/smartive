@@ -13,8 +13,8 @@ export class RestAPIHandler {
     private readonly _publicAPIBaseURI;
 
     constructor() {
-        this._middlewareBaseURI = 'http://' + process.env.REACT_APP_API_ADDRESS + ':8080/middleware';
-        this._publicAPIBaseURI = 'http://' + process.env.REACT_APP_API_ADDRESS + ':8080/api'
+        this._middlewareBaseURI = 'http://localhost:8080/middleware';
+        this._publicAPIBaseURI = 'http://localhost:8080/api'
     }
 
     getAllRooms(): Promise<Room[]> {
@@ -225,13 +225,13 @@ export class RestAPIHandler {
         return axios.post(requestURI, user)
             .then((response) => {
                 console.log(response)
-                if (response.data.accessToken) {
+                if (response.data.jwttoken) {
                     localStorage.setItem("user", JSON.stringify(response.data));
                 }
                 return true;
             })
             .catch(error => {
-                console.log("Error on API request (getRoomStats()): " + error.message)
+                console.log("Error on API request (login()): " + error.message)
                 return false;
             });
     }

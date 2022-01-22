@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Navbar } from "./base_components/navbar";
+import {Navbar} from "./base_components/navbar";
 import Search from './base_components/searchbar';
 import {FaPlusSquare} from 'react-icons/fa'
 
@@ -8,14 +8,14 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import {DevicesList} from "./base_components/devices_list";
-import { RoomPanelsList } from './base_components/room_panels_list';
+import {RoomPanelsList} from './base_components/room_panels_list';
 import store from "../store";
-import { fetchRoomDevices } from "../features/rooms/roomsReducer";
+import {fetchRoomDevices} from "../features/rooms/roomsReducer";
 import {fetchDevices} from "../features/devices/devicesReducer";
 import {Button} from "react-bootstrap";
 import {Link} from "react-router-dom";
 
-export class Devices extends React.Component{
+export class Devices extends React.Component {
 
     constructor(props) {
         super(props);
@@ -67,12 +67,13 @@ export class Devices extends React.Component{
                 <div className="mb-4">
                     <Navbar/>
                 </div>
-                
+
                 <RoomPanelsList on_room_changed={this.roomChangedHandler.bind(this)}/>
-                
+
                 <Row className="my-5">
                     <Col className="col-1">
-                        <FaPlusSquare size={50} color='#f76540' style={{borderRadius: "15px"}} onClick={() => window.location.replace("/add_device")}/>
+                        <FaPlusSquare size={50} color='#f76540' style={{borderRadius: "15px"}}
+                                      onClick={() => window.location.replace("/add_device")}/>
                     </Col>
                     <Col className="col-4 mt-2">
                         <Search/>
@@ -92,7 +93,7 @@ export class Devices extends React.Component{
                     </Col>
                 </Row>
 
-                <DevicesList devices={this.state.selectedRoomDevices} room_selected={this.state.selectedRoom} />
+                <DevicesList devices={this.state.selectedRoomDevices} room_selected={this.state.selectedRoom}/>
 
             </Container>
         );

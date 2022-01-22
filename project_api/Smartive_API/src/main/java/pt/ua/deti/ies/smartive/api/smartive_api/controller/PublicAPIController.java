@@ -3,6 +3,12 @@ package pt.ua.deti.ies.smartive.api.smartive_api.controller;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.InvalidRoomException;
 import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.InvalidUserException;
@@ -18,6 +24,10 @@ import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.Device;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.Sensor;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.events.SensorEvent;
 import pt.ua.deti.ies.smartive.api.smartive_api.services.*;
+import pt.ua.deti.ies.smartive.api.smartive_api.tokens.JwtRequest;
+import pt.ua.deti.ies.smartive.api.smartive_api.tokens.JwtResponse;
+import pt.ua.deti.ies.smartive.api.smartive_api.tokens.JwtTokenUtil;
+import pt.ua.deti.ies.smartive.api.smartive_api.tokens.JwtUserDetailsService;
 
 import java.util.Collections;
 import java.util.List;
@@ -35,8 +45,15 @@ public class PublicAPIController {
     private final ReactNotificationFactory reactNotificationFactory;
     private final SensorEventService sensorEventService;
 
+    // Auth
+    private final AuthenticationManager authenticationManager;
+    private final JwtTokenUtil jwtTokenUtil;
+    private JwtUserDetailsService userDetailsService;
+
     @Autowired
-    public PublicAPIController(SensorService sensorService, UserService userService, RoomService roomService, DeviceService deviceService, AvailableDeviceService availableDeviceService, ReactNotificationFactory reactNotificationFactory, SensorEventService sensorEventService) {
+    public PublicAPIController(SensorService sensorService, UserService userService, RoomService roomService, DeviceService deviceService,
+                               AvailableDeviceService availableDeviceService, ReactNotificationFactory reactNotificationFactory, SensorEventService sensorEventService,
+                               AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, JwtUserDetailsService userDetailsService) {
         this.sensorService = sensorService;
         this.userService = userService;
         this.roomService = roomService;
@@ -44,6 +61,9 @@ public class PublicAPIController {
         this.availableDeviceService = availableDeviceService;
         this.reactNotificationFactory = reactNotificationFactory;
         this.sensorEventService = sensorEventService;
+        this.authenticationManager = authenticationManager;
+        this.jwtTokenUtil = jwtTokenUtil;
+        this.userDetailsService = userDetailsService;
     }
 
     @PostMapping("/users/register")
@@ -164,6 +184,27 @@ public class PublicAPIController {
     @PostMapping("/devices/sensors/events")
     public SensorEvent addSensorEvent(@RequestBody SensorEvent event) {
         return sensorEventService.registerEvent(event);
+    }
+
+    @PostMapping("/login")
+    public JwtResponse createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) {
+
+        String username = authenticationRequest.getUsername();
+        String password = authenticationRequest.getPassword();
+
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+        } catch (DisabledException e) {
+            return new JwtResponse("User is disabled.", null);
+        } catch (BadCredentialsException e) {
+            return new JwtResponse("Invalid Credentials.", null);
+        }
+
+        final UserDetails userDetails = userDetailsService
+                .loadUserByUsername(authenticationRequest.getUsername());
+        final String token = jwtTokenUtil.generateToken(userDetails);
+
+        return new JwtResponse("Authentication succeed.", null);
     }
 
 }

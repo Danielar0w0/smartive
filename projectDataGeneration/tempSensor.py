@@ -14,6 +14,7 @@ class TempSensor:
         self.type = "Temperature"
         self.id = id
         self.value = self.base_temp
+        self.unit = "°C"
         self.power = random.uniform(30,40)                             #Not sure if values are like real life, unit is Watts per hour
         self.credentials = pika.PlainCredentials('test', 'test')
         self.connection = pika.BlockingConnection(pika.ConnectionParameters(host='172.18.0.7', port=5672, credentials=self.credentials))
@@ -48,7 +49,7 @@ class TempSensor:
             power = ((self.power / 60)/60) * self.sleep_time
             print(self.value)
             print(power)
-            message = {"id":self.id, "value":self.value, "power":power}
+            message = {"id":self.id, "value":self.value, "power":power, "unit":self.unit}
             self.channel.basic_publish(
                 exchange = '',
                 routing_key = self.queue, 

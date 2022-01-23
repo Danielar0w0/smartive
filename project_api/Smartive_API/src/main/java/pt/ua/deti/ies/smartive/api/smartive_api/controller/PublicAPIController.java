@@ -29,7 +29,6 @@ import pt.ua.deti.ies.smartive.api.smartive_api.tokens.JwtResponse;
 import pt.ua.deti.ies.smartive.api.smartive_api.tokens.JwtTokenUtil;
 import pt.ua.deti.ies.smartive.api.smartive_api.tokens.JwtUserDetailsService;
 
-
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,7 +38,6 @@ import java.util.stream.Collectors;
 public class PublicAPIController {
 
     private final SensorService sensorService;
-    private final UserService userService;
     private final RoomService roomService;
     private final DeviceService deviceService;
     private final AvailableDeviceService availableDeviceService;
@@ -52,11 +50,10 @@ public class PublicAPIController {
     private JwtUserDetailsService userDetailsService;
 
     @Autowired
-    public PublicAPIController(SensorService sensorService, UserService userService, RoomService roomService, DeviceService deviceService,
+    public PublicAPIController(SensorService sensorService, RoomService roomService, DeviceService deviceService,
                                AvailableDeviceService availableDeviceService, ReactNotificationFactory reactNotificationFactory, SensorEventService sensorEventService,
                                AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, JwtUserDetailsService userDetailsService) {
         this.sensorService = sensorService;
-        this.userService = userService;
         this.roomService = roomService;
         this.deviceService = deviceService;
         this.availableDeviceService = availableDeviceService;

@@ -1,6 +1,5 @@
 import React from 'react';
 import Container from "react-bootstrap/Container";
-import Card from 'react-bootstrap/Card'
 import {Form} from "./base_components/form";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
@@ -22,7 +21,6 @@ const inputs = [{
     className: "btn my-3"
 }]
 
-// const props = {name: 'loginForm', method: 'POST', action: '/login', inputs: inputs}
 const props = {name: 'loginForm', inputs: inputs}
 const params = new URLSearchParams(window.location.search)
 

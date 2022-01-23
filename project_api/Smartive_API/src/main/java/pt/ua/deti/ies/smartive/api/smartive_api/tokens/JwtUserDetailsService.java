@@ -32,8 +32,14 @@ public class JwtUserDetailsService implements UserDetailsService {
     }
 
     public void registerUser(User user) {
-        if (!user.isValid())
-            throw new InvalidUserException("Invalid user - invalid instance.");
-        userRepository.save(user);
+        try {
+            UserDetails userDetails = loadUserByUsername(user.getUsername());
+            if (userDetails != null)
+                throw new InvalidUserException("Invalid user - invalid instance.");
+        } catch (UsernameNotFoundException e) {
+            if (!user.isValid())
+                throw new InvalidUserException("Invalid user - invalid instance.");
+            userRepository.save(user);
+        }
     }
 }

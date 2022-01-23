@@ -2,12 +2,12 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 export class Input extends React.Component {
-    constructor(props){
+    constructor(props) {
         super(props)
         this.state = {
-            name: props.name? props.name : '',
-            value: props.value? props.value : '',
-            className: props.className? props.className : '',
+            name: props.name ? props.name : '',
+            value: props.value ? props.value : '',
+            className: props.className ? props.className : '',
             error: false
         }
 
@@ -15,18 +15,21 @@ export class Input extends React.Component {
 
     inputChange = (event) => {
         const value = event.target.value, name = event.target.name
-        switch(name) {
+        switch (name) {
             case 'username':
                 this.validate(name, value, /^([a-zA-Z0-9.]{4,})$/, 'Invalid username (Minimum four characters)')
-            break;
+                break;
+            case 'email':
+                this.validate(name, value, /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Invalid email (try again)')
+                break;
             case 'password':
                 this.validate(name, value, /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/, 'Insecure password (Minimum eight characters, at least one letter and one number)')
-            break;
+                break;
             default:
-            console.warn(`Unknown field ${name}`)
+                console.warn(`Unknown field ${name}`)
         }
 
-        this.setState({ value: value })
+        this.setState({value: value})
         this.handleChange(this.state.name, value)
     }
 
@@ -34,16 +37,16 @@ export class Input extends React.Component {
 
         const invalid = !value || !validRegex.test(value)
 
-        if(!this.state.error && invalid) {
-            this.setState({ error: true })
+        if (!this.state.error && invalid) {
+            this.setState({error: true})
             this.handleError(name, warnmsg)
-        }else if(this.state.error && !invalid) {
-            this.setState({ error: false })
+        } else if (this.state.error && !invalid) {
+            this.setState({error: false})
             this.handleError(name)
         }
     }
 
-    render () {
+    render() {
         const {handleError, handleChange, ...opts} = this.props
 
         this.handleError = handleError
@@ -51,14 +54,15 @@ export class Input extends React.Component {
 
         if (this.state.className.startsWith("btn")) {
             return (
-                <input {...opts} name={this.state.name} value={this.state.value} style={{backgroundColor: "#f76540", color: "white"}}
-                       onChange={this.inputChange} className={this.state.className} />
+                <input {...opts} name={this.state.name} value={this.state.value}
+                       style={{backgroundColor: "#f76540", color: "white"}}
+                       onChange={this.inputChange} className={this.state.className}/>
             )
         }
 
         return (
             <input {...opts} name={this.state.name} value={this.state.value}
-                   onChange={this.inputChange} className={this.state.className} />
+                   onChange={this.inputChange} className={this.state.className}/>
         )
     }
 }

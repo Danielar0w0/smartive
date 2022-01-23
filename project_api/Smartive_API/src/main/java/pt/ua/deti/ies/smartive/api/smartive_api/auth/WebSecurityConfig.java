@@ -55,9 +55,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity httpSecurity) throws Exception {
 
 		// Add CORS Configuration
-		httpSecurity.cors().configurationSource(corsConfiguration);
+		// httpSecurity.cors().configurationSource(corsConfiguration);
 
-		httpSecurity.csrf().disable()
+		httpSecurity.cors().and().csrf().disable()
 				.authorizeRequests().antMatchers("/api/login", "/api/register").permitAll()
 				.anyRequest().authenticated()
 				.and()

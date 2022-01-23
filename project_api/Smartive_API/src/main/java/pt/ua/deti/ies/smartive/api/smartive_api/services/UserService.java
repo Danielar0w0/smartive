@@ -7,10 +7,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.InvalidUserException;
-import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.UserNotFoundException;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.User;
 import pt.ua.deti.ies.smartive.api.smartive_api.repository.UserRepository;
-import java.util.ArrayList;
 
 @Service
 @Component

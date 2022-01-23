@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import {Input} from "./input";
 import Row from "react-bootstrap/Row";
 import {RestAPIHandler} from "../../utils/RestAPIHandler";
+import store from "../../store";
 
 export class Form extends React.Component {
 
@@ -12,12 +13,14 @@ export class Form extends React.Component {
         this.apiHandler = new RestAPIHandler();
         if(props.error) {
             this.state = {
+                name: props.name,
                 inputs: props.inputs,
                 failure: 'Wrong username or password!',
                 errcount: 0
             }
         } else {
             this.state = {
+                name: props.name,
                 inputs: props.inputs,
                 errcount: 0
             }
@@ -58,6 +61,7 @@ export class Form extends React.Component {
         if(!this.state.errcount) {
 
             let username = ''
+            let email = ''
             let password = ''
 
             let inputs = this.state.inputs
@@ -65,22 +69,52 @@ export class Form extends React.Component {
             for (let i in inputs) {
                 if (inputs[i].name === 'username')
                     username = inputs[i].value
+                if (inputs[i].name === 'email')
+                    email = inputs[i].value
                 if (inputs[i].name === 'password')
                     password = inputs[i].value
             }
 
-            if (username !== '' && password !== '') {
-                this.apiHandler.login({username: username, password: password})
-                    .then(success => {
-                        if (success) {
-                            console.log("Successful login!")
-                        }
-                        else
-                            console.log("Unsuccessful login!")
-                    })
+            if (this.state.name === "loginForm") {
+                if (username !== '' && password !== '') {
+                    this.login({username: username, password: password});
+                }
+            } else if (this.state.name === "registerForm") {
+                if (username !== '' && email !== '' && password !== '') {
+                    this.register({username: username, email: email, password: password});
+                }
             }
         }
     }
+
+    login(user) {
+        this.apiHandler.login(user)
+            .then(success => {
+                if (success) {
+                    setTimeout(() => {
+                        window.location.replace("/");
+                    }, 5000);
+                    store.dispatch({ type: 'toasts/setToast', payload: { text: "Successful login." } });
+                }
+                else
+                    store.dispatch({ type: 'toasts/setToast', payload: { text: "Unsuccessful login." } });
+            })
+    }
+
+    register(user) {
+        this.apiHandler.register(user)
+            .then(success => {
+                if (success) {
+                    setTimeout(() => {
+                        window.location.replace("/login");
+                    }, 5000);
+                    store.dispatch({ type: 'toasts/setToast', payload: { text: "Successful registration." } });
+                }
+                else
+                    store.dispatch({ type: 'toasts/setToast', payload: { text: "Unsuccessful registration." } });
+            })
+    }
+
 
     renderError = () => {
         if(this.state.errcount || this.state.failure) {

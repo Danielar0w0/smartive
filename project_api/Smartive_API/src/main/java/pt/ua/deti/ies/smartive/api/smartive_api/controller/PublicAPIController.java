@@ -3,7 +3,6 @@ package pt.ua.deti.ies.smartive.api.smartive_api.controller;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -29,6 +28,7 @@ import pt.ua.deti.ies.smartive.api.smartive_api.tokens.JwtRequest;
 import pt.ua.deti.ies.smartive.api.smartive_api.tokens.JwtResponse;
 import pt.ua.deti.ies.smartive.api.smartive_api.tokens.JwtTokenUtil;
 import pt.ua.deti.ies.smartive.api.smartive_api.tokens.JwtUserDetailsService;
+
 
 import java.util.Collections;
 import java.util.List;
@@ -187,9 +187,11 @@ public class PublicAPIController {
         try {
             authResult = authenticationManager.authenticate(userToken);
         } catch (DisabledException e) {
-            return new JwtResponse("User is disabled.", null);
+            // return new JwtResponse("User is disabled.", null);
+            throw new DisabledException("User is disabled.");
         } catch (BadCredentialsException e) {
-            return new JwtResponse("Invalid Credentials.", null);
+            //return new JwtResponse("Invalid Credentials.", null);
+            throw new BadCredentialsException("Invalid credentials.");
         }
 
         if(authResult.isAuthenticated())
@@ -216,6 +218,4 @@ public class PublicAPIController {
 
         return new MessageResponse("The user was successfully registered.");
     }
-
-
 }

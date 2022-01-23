@@ -8,6 +8,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.InvalidRoomException;
@@ -64,22 +65,6 @@ public class PublicAPIController {
         this.authenticationManager = authenticationManager;
         this.jwtTokenUtil = jwtTokenUtil;
         this.userDetailsService = userDetailsService;
-    }
-
-    @PostMapping("/users/register")
-    public MessageResponse registerUser(@RequestBody User user) {
-
-        if (!user.isValid())
-            throw new InvalidUserException("Invalid user. Please provide all the mandatory fields.");
-
-        try {
-            userService.registerUser(user);
-        } catch (DuplicateKeyException keyException) {
-            throw new UserAlreadyExistsException(String.format("A user with the email %s is already registered.", user.getEmail()));
-        }
-
-        return new MessageResponse("The user was successfully registered.");
-
     }
 
     @GetMapping("/rooms")
@@ -189,22 +174,48 @@ public class PublicAPIController {
     @PostMapping("/login")
     public JwtResponse createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) {
 
+        Authentication authResult;
         String username = authenticationRequest.getUsername();
         String password = authenticationRequest.getPassword();
 
+        if (username == null || password == null) {
+            return new JwtResponse("Please provide a valid request.", null);
+        }
+
+        UsernamePasswordAuthenticationToken userToken = new UsernamePasswordAuthenticationToken(username, password);
+
         try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+            authResult = authenticationManager.authenticate(userToken);
         } catch (DisabledException e) {
             return new JwtResponse("User is disabled.", null);
         } catch (BadCredentialsException e) {
             return new JwtResponse("Invalid Credentials.", null);
         }
 
+        if(authResult.isAuthenticated())
+            System.out.println("User is Authenticated.");
+
         final UserDetails userDetails = userDetailsService
                 .loadUserByUsername(authenticationRequest.getUsername());
         final String token = jwtTokenUtil.generateToken(userDetails);
 
-        return new JwtResponse("Authentication succeed.", null);
+        return new JwtResponse("Authentication succeed.", token);
     }
+
+    @PostMapping("/register")
+    public MessageResponse registerUser(@RequestBody User user) {
+
+        if (!user.isValid())
+            throw new InvalidUserException("Invalid user. Please provide all the mandatory fields.");
+
+        try {
+            userDetailsService.registerUser(user);
+        } catch (DuplicateKeyException keyException) {
+            throw new UserAlreadyExistsException(String.format("A user with the email %s is already registered.", user.getEmail()));
+        }
+
+        return new MessageResponse("The user was successfully registered.");
+    }
+
 
 }

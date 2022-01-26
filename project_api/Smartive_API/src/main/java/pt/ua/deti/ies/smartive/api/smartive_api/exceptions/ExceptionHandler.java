@@ -46,4 +46,10 @@ public class ExceptionHandler {
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
 
+    @org.springframework.web.bind.annotation.ExceptionHandler(InvalidPermissionsException.class)
+    public ResponseEntity<?> invalidRoomException(InvalidPermissionsException invalidPermissionsException, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails(new Date(), invalidPermissionsException.getMessage(), request.getDescription(false));
+        return new ResponseEntity<>(errorDetails, HttpStatus.FORBIDDEN);
+    }
+
 }

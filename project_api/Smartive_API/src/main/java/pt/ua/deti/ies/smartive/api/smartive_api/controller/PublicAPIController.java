@@ -1,6 +1,8 @@
 package pt.ua.deti.ies.smartive.api.smartive_api.controller;
 
 import org.bson.types.ObjectId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -10,10 +12,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.InvalidRoomException;
-import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.InvalidUserException;
-import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.RoomNotFoundException;
-import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.UserAlreadyExistsException;
+import pt.ua.deti.ies.smartive.api.smartive_api.auth.AuthManager;
+import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.*;
 import pt.ua.deti.ies.smartive.api.smartive_api.middleware.rabbitmq.notifications.react.ReactNotificationFactory;
 import pt.ua.deti.ies.smartive.api.smartive_api.middleware.rabbitmq.notifications.react.ReactNotificationType;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.MessageResponse;
@@ -37,6 +37,8 @@ import java.util.stream.Collectors;
 @RequestMapping("/api")
 public class PublicAPIController {
 
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
     private final SensorService sensorService;
     private final RoomService roomService;
     private final DeviceService deviceService;
@@ -47,12 +49,13 @@ public class PublicAPIController {
     // Auth
     private final AuthenticationManager authenticationManager;
     private final JwtTokenUtil jwtTokenUtil;
-    private JwtUserDetailsService userDetailsService;
+    private final JwtUserDetailsService userDetailsService;
+    private final AuthManager authManager;
 
     @Autowired
     public PublicAPIController(SensorService sensorService, RoomService roomService, DeviceService deviceService,
                                AvailableDeviceService availableDeviceService, ReactNotificationFactory reactNotificationFactory, SensorEventService sensorEventService,
-                               AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, JwtUserDetailsService userDetailsService) {
+                               AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, JwtUserDetailsService userDetailsService, AuthManager authManager) {
         this.sensorService = sensorService;
         this.roomService = roomService;
         this.deviceService = deviceService;
@@ -62,11 +65,18 @@ public class PublicAPIController {
         this.authenticationManager = authenticationManager;
         this.jwtTokenUtil = jwtTokenUtil;
         this.userDetailsService = userDetailsService;
+        this.authManager = authManager;
     }
 
     @GetMapping("/rooms")
     public List<Room> getAllRooms() {
-        return roomService.getAllRooms();
+
+        List<Room> allRooms = roomService.getAllRooms();
+
+        return allRooms.stream()
+                .filter(room -> room.getUsers().contains(authManager.getUserName()))
+                .collect(Collectors.toList());
+
     }
 
     @PostMapping("/rooms")
@@ -79,7 +89,7 @@ public class PublicAPIController {
             throw new InvalidRoomException("A room with that name already exists. Please use a different name.");
 
         if (room.getUsers() == null)
-            room.setUsers(Collections.emptyList());
+            room.setUsers(Collections.singletonList(authManager.getUserName()));
 
         Room registeredRoom = roomService.registerRoom(room);
         reactNotificationFactory.generateNotification(ReactNotificationType.ROOM_ADDED, registeredRoom).sendNotification();
@@ -95,6 +105,9 @@ public class PublicAPIController {
             throw new InvalidRoomException(String.format("Unable to find a room with the id %s.", roomId.toString()));
 
         Room room = roomService.getRoom(roomId);
+
+        if (!room.getUsers().contains(authManager.getUserName()))
+            throw new InvalidPermissionsException();
 
         for (Device currentDevice : room.getDevices()) {
             currentDevice.setRoomId(null);
@@ -120,12 +133,28 @@ public class PublicAPIController {
 
     @GetMapping(value = "/devices/sensors")
     public List<Sensor> getAllRegisteredSensors() {
-        return sensorService.getAllSensors();
+
+        return sensorService.getAllSensors().stream()
+                .filter(sensor -> sensor.getRoomId() != null)
+                .filter(sensor -> {
+                    Room sensorRoom = roomService.getRoom(sensor.getRoomId());
+                    if (sensorRoom == null) return false;
+                    return sensorRoom.getUsers().contains(authManager.getUserName());
+                })
+                .collect(Collectors.toList());
+
     }
 
     @GetMapping(value = "/devices")
     public List<Device> getAllDevices() {
-        return deviceService.getAllDevices();
+        return deviceService.getAllDevices().stream()
+                .filter(device -> device.getRoomId() != null)
+                .filter(device -> {
+                    Room deviceRoom = roomService.getRoom(device.getRoomId());
+                    if (deviceRoom == null) return false;
+                    return deviceRoom.getUsers().contains(authManager.getUserName());
+                })
+                .collect(Collectors.toList());
     }
 
     @GetMapping(value = "/devices/available")
@@ -151,6 +180,11 @@ public class PublicAPIController {
         if (roomId == null)
             throw new RoomNotFoundException("Unable to find the specified room.");
 
+        Room room = roomService.getRoom(roomId);
+
+        if (room == null || !room.getUsers().contains(authManager.getUserName()))
+            throw new InvalidPermissionsException();
+
         return sensorService.getAllSensors()
                 .stream()
                 .filter(sensor -> sensor.getRoomId() != null && sensor.getRoomId().equals(roomId))
@@ -160,12 +194,35 @@ public class PublicAPIController {
 
     @GetMapping("/devices/sensors/events")
     public List<SensorEvent> getSensorsEvents() {
-        return sensorEventService.getAllEvents();
+        return sensorEventService.getAllEvents().stream()
+                .filter(sensorEvent -> sensorService.getSensorById(sensorEvent.getSensorId()) != null)
+                .filter(sensorEvent -> {
+                    Sensor sensor = sensorService.getSensorById(sensorEvent.getSensorId());
+                    if (sensor.getRoomId() == null) return false;
+                    Room sensorRoom = roomService.getRoom(sensor.getRoomId());
+                    return sensorRoom.getUsers().contains(authManager.getUserName());
+                })
+                .collect(Collectors.toList());
     }
 
     @PostMapping("/devices/sensors/events")
     public SensorEvent addSensorEvent(@RequestBody SensorEvent event) {
+
+        if (!sensorService.sensorExists(event.getSensorId()))
+            throw new InvalidDeviceException(String.format("Unable to find a sensor with the id %s.", event.getSensorId()));
+
+        Sensor sensor = sensorService.getSensorById(event.getSensorId());
+
+        if (sensor.getRoomId() == null || !roomService.exists(sensor.getRoomId()))
+            throw new InvalidRoomException(String.format("Unable to find a room with the id %s.", sensor.getRoomId()));
+
+        Room room = roomService.getRoom(sensor.getRoomId());
+
+        if (!room.getUsers().contains(authManager.getUserName()))
+            throw new InvalidPermissionsException();
+
         return sensorEventService.registerEvent(event);
+
     }
 
     @PostMapping("/login")
@@ -184,14 +241,12 @@ public class PublicAPIController {
         try {
             authResult = authenticationManager.authenticate(userToken);
         } catch (DisabledException e) {
-            // return new JwtResponse("User is disabled.", null);
             throw new DisabledException("User is disabled.");
         } catch (BadCredentialsException e) {
-            //return new JwtResponse("Invalid Credentials.", null);
             throw new BadCredentialsException("Invalid credentials.");
         }
 
-        if(authResult.isAuthenticated())
+        if (authResult.isAuthenticated())
             System.out.println("User is Authenticated.");
 
         final UserDetails userDetails = userDetailsService

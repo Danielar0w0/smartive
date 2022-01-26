@@ -23,6 +23,8 @@ import store from "./store";
 import {CreateRoom} from "./components/create_room";
 import {AddTrigger} from "./components/triggers/add_trigger";
 import {Triggers} from "./components/triggers/triggers";
+import { Login } from "./components/login";
+import {Register} from "./components/register";
 
 export default function AppRouting () {
 
@@ -41,10 +43,27 @@ export default function AppRouting () {
 
     });
 
-    return (
+    const token = localStorage.getItem('user');
+
+    if (!token) {
+
+        return (
         <Router history={ customHistory }>
             <ToastContainer />
             <Routes>
+                <Route path="/login" element={<Login/>} />
+                <Route path="/register" element={<Register/>} />
+                <Route path="*" element={<Login/>} />
+            </Routes>
+        </Router>
+        )
+    }
+
+    return (
+        <Router history={ customHistory }>
+            <Routes>
+                <Route path="/login" element={<Login/>} />
+                <Route path="/register" element={<Register/>} />
                 <Route path="/control_device" element={<ControlDevice/>} />
                 <Route path="/devices" element={<Devices/>} />
                 <Route path="/add_device" element={<AddDevice/>} />

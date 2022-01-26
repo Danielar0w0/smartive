@@ -5,4 +5,5 @@ import pt.ua.deti.ies.smartive.api.smartive_api.model.User;
 
 public interface UserRepository extends MongoRepository<User, Long> {
 
+    User findByUsername(String username);
 }

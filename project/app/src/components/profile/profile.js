@@ -38,17 +38,12 @@ export class Profile extends React.Component {
 
     componentDidMount() {
 
-        let userStats;
-        let userDetails;
-        let shouldRefresh = 0;
-
         let requests = [
             this.apiHandler.getUserStats(),
             this.apiHandler.getUserDetails()
         ]
 
         Promise.allSettled(requests).then(values => {
-            console.log(values)
             this.setState({
                 roomsCount: values[0].value.roomsCount,
                 devicesCount: values[0].value.devicesCount,

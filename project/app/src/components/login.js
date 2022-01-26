@@ -31,7 +31,7 @@ export class Login extends React.Component {
 
             <Container className="container-fluid">
                 <div className="mb-4">
-                    <NavbarLogin></NavbarLogin>
+                    <NavbarLogin/>
                 </div>
                 <Row className="justify-content-center align-items-center d-flex mt-5">
                     <Col className="col-3 mx-5 shadow-sm boxShadow border rounded">

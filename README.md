@@ -11,20 +11,16 @@ DevOps: [José Trigo](https://github.com/zepedrotrigo)
 
 # Quick Links
 
-* Project Management board
+* [Project Management board](https://app.zenhub.com/workspaces/ies-planning-61afe72170a170001067f7a0/board?repos=431834632)
 * Reports
-* API documentation
+* [API documentation](https://documenter.getpostman.com/view/16743908/UVR5sVHN)
 
 # Run the app
 
 To run the Smartive application, follow these steps:
 
-* Enter the directory project/app
-* Do the command:
-        npm install
-* To start the app, use:
-        npm start
-* If you are using wsl, use:
-        npm run startwsl
+* Navigate to the /project directory;
+* Run docker-compose build --no-cache
+* Run docker-compose up
 * Open the browser in the following url:
-        http://localhost:3000
+  * http://172.18.0.1:3000

@@ -7,22 +7,26 @@ import {RoomStats} from "./entities/RoomStats";
 import { User } from "./entities/User";
 import {Event} from "./entities/Event";
 import { authHeader } from "./AuthHeader";
+import {UserStats} from "./entities/UserStats";
 import {HistoryItem} from "./entities/HistoryItem";
+
 
 export class RestAPIHandler {
 
     private readonly _middlewareBaseURI;
     private readonly _publicAPIBaseURI;
+    private readonly _usersAPIBaseURI;
 
     constructor() {
         this._middlewareBaseURI = 'http://localhost:8080/middleware';
-        this._publicAPIBaseURI = 'http://localhost:8080/api'
+        this._publicAPIBaseURI = 'http://localhost:8080/public';
+        this._usersAPIBaseURI = 'http://localhost:8080/api'
     }
 
     getAllRooms(): Promise<Room[]> {
 
         const endpointURI = '/rooms'
-        const requestURI = this._publicAPIBaseURI + endpointURI;
+        const requestURI = this._usersAPIBaseURI + endpointURI;
 
         return axios.get(requestURI, {headers: authHeader()})
             .then((response) => {
@@ -42,7 +46,7 @@ export class RestAPIHandler {
     getAllSensors(): Promise<Sensor[]> {
 
         const endpointURI = '/devices/sensors'
-        const requestURI = this._publicAPIBaseURI + endpointURI;
+        const requestURI = this._usersAPIBaseURI + endpointURI;
 
         return axios.get(requestURI, {headers: authHeader()})
             .then((response) => {
@@ -59,7 +63,7 @@ export class RestAPIHandler {
     getSensorStats(sensorId: String): Promise<SensorStat | null> {
 
         const endpointURI = `/devices/sensor/${sensorId}`
-        const requestURI = this._middlewareBaseURI + endpointURI;
+        const requestURI = this._usersAPIBaseURI + endpointURI;
 
         return axios.get(requestURI, {headers: authHeader()})
             .then((response) => {
@@ -93,7 +97,7 @@ export class RestAPIHandler {
     deleteAvailableDevice(device: Device): Promise<boolean> {
 
         const endpointURI = `/devices/available/${device.deviceId}`
-        const requestURI = this._publicAPIBaseURI + endpointURI;
+        const requestURI = this._usersAPIBaseURI + endpointURI;
 
         return axios.delete(requestURI, {headers: authHeader()})
             .then(() => {
@@ -109,7 +113,7 @@ export class RestAPIHandler {
     registerNewDevice(device: Device): Promise<boolean> {
 
         const endpointURI = '/devices/sensors/register'
-        const requestURI = this._publicAPIBaseURI + endpointURI;
+        const requestURI = this._usersAPIBaseURI + endpointURI;
 
         return axios.post(requestURI, device, {headers: authHeader()})
             .then((response) => {
@@ -126,7 +130,7 @@ export class RestAPIHandler {
     getRoomStats(roomId: string): Promise<RoomStats | null> {
 
         const endpointURI = `/rooms/${roomId}/stats`
-        const requestURI = this._middlewareBaseURI + endpointURI;
+        const requestURI = this._usersAPIBaseURI + endpointURI;
 
         return axios.get(requestURI, {headers: authHeader()})
             .then((response) => {
@@ -143,7 +147,7 @@ export class RestAPIHandler {
     getRoomSensors(roomId: string): Promise<any|null> {
 
         const endpointURI = `/devices/sensors/${roomId}`
-        const requestURI = this._publicAPIBaseURI + endpointURI;
+        const requestURI = this._usersAPIBaseURI + endpointURI;
 
         return axios.get(requestURI, {headers: authHeader()})
             .then((response) => {
@@ -158,7 +162,7 @@ export class RestAPIHandler {
     registerRoom(roomName: string): Promise<boolean | null> {
 
         const endpointURI = "/rooms"
-        const requestURI = this._publicAPIBaseURI + endpointURI;
+        const requestURI = this._usersAPIBaseURI + endpointURI;
 
         return axios.post(requestURI, {name: roomName}, {headers: authHeader()})
             .then((response) => {
@@ -174,7 +178,7 @@ export class RestAPIHandler {
     removeRoom(roomId: string): Promise<boolean | null> {
 
         const endpointURI = `/rooms/${roomId}`
-        const requestURI = this._publicAPIBaseURI + endpointURI;
+        const requestURI = this._usersAPIBaseURI + endpointURI;
 
         return axios.delete(requestURI, {headers: authHeader()})
             .then((response) => {
@@ -189,8 +193,8 @@ export class RestAPIHandler {
 
     addSensorEvent(event: Event): Promise<boolean> {
 
-        const endpointURI = '/devices/sensors/history'
-        const requestURI = this._publicAPIBaseURI + endpointURI;
+        const endpointURI = '/devices/sensors/events'
+        const requestURI = this._usersAPIBaseURI + endpointURI;
 
         return axios.post(requestURI, event, {headers: authHeader()})
             .then((response) => {
@@ -205,8 +209,8 @@ export class RestAPIHandler {
 
     getAllEvents() : Promise<Event[]> {
 
-        const endpointURI = '/devices/sensors/history'
-        const requestURI = this._publicAPIBaseURI + endpointURI;
+        const endpointURI = '/devices/sensors/events'
+        const requestURI = this._usersAPIBaseURI + endpointURI;
 
         return axios.get(requestURI, {headers: authHeader()})
             .then((response) => {
@@ -332,4 +336,39 @@ export class RestAPIHandler {
                 return false;
             });
     }
+
+    getUserStats(): Promise<UserStats | null> {
+
+        const endpointURI = '/user/stats';
+        const requestURI = this._usersAPIBaseURI + endpointURI;
+
+        return axios.get(requestURI, {headers: authHeader()})
+            .then((response) => {
+                const userStats: UserStats = response.data;
+                return userStats
+            })
+            .catch(error => {
+                console.log("Error on API request (getUserStats()): " + error.message)
+                return null
+            });
+
+    }
+
+    getUserDetails(): Promise<User | null> {
+
+        const endpointURI = '/user';
+        const requestURI = this._usersAPIBaseURI + endpointURI;
+
+        return axios.get(requestURI, {headers: authHeader()})
+            .then((response) => {
+                const user: User = response.data;
+                return user
+            })
+            .catch(error => {
+                console.log("Error on API request (getUserDetails()): " + error.message)
+                return null
+            });
+
+    }
+
 }

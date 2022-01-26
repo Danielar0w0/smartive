@@ -6,7 +6,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.InvalidUserException;
-import pt.ua.deti.ies.smartive.api.smartive_api.model.User;
+import pt.ua.deti.ies.smartive.api.smartive_api.model.users.User;
 import pt.ua.deti.ies.smartive.api.smartive_api.repository.UserRepository;
 
 import java.util.ArrayList;
@@ -35,10 +35,10 @@ public class JwtUserDetailsService implements UserDetailsService {
         try {
             UserDetails userDetails = loadUserByUsername(user.getUsername());
             if (userDetails != null)
-                throw new InvalidUserException("Invalid user - invalid instance.");
+                throw new InvalidUserException("That username is already in use.");
         } catch (UsernameNotFoundException e) {
             if (!user.isValid())
-                throw new InvalidUserException("Invalid user - invalid instance.");
+                throw new InvalidUserException("Invalid user. Please check the request body.");
             userRepository.save(user);
         }
     }

@@ -8,6 +8,8 @@ import { User } from "./entities/User";
 import {Event} from "./entities/Event";
 import { authHeader } from "./AuthHeader";
 import {UserStats} from "./entities/UserStats";
+import {HistoryItem} from "./entities/HistoryItem";
+
 
 export class RestAPIHandler {
 
@@ -217,6 +219,82 @@ export class RestAPIHandler {
             })
             .catch(error => {
                 console.log("Error on API request (getAvailableDevices()): " + error.message)
+                return []
+            });
+    }
+
+    getHistory(): Promise<HistoryItem[]> {
+
+        const endpointURI = '/history'
+        const requestURI = this._publicAPIBaseURI + endpointURI;
+
+        return axios.get(requestURI, {headers: authHeader()})
+            .then((response) => {
+
+                const history: HistoryItem[] = response.data;
+                return history
+
+            })
+
+            .catch(error => {
+                console.log("Error on API request (getHistory()): " + error.message)
+                return []
+            });
+    }
+
+    getHistoryTriggers(): Promise<HistoryItem[]> {
+
+        const endpointURI = `/history/TRIGGERS`
+        const requestURI = this._publicAPIBaseURI + endpointURI;
+
+        return axios.get(requestURI, {headers: authHeader()})
+            .then((response) => {
+
+                const history: HistoryItem[] = response.data;
+                return history
+
+            })
+
+            .catch(error => {
+                console.log("Error on API request (getHistoryTriggers()): " + error.message)
+                return []
+            });
+    }
+
+    getHistoryDevices(): Promise<HistoryItem[]> {
+
+        const endpointURI = `/history/DEVICES`
+        const requestURI = this._publicAPIBaseURI + endpointURI;
+
+        return axios.get(requestURI, {headers: authHeader()})
+            .then((response) => {
+
+                const history: HistoryItem[] = response.data;
+                return history
+
+            })
+
+            .catch(error => {
+                console.log("Error on API request (getHistoryDevices()): " + error.message)
+                return []
+            });
+    }
+
+    getHistoryRooms(): Promise<HistoryItem[]> {
+
+        const endpointURI = `/history/ROOMS`
+        const requestURI = this._publicAPIBaseURI + endpointURI;
+
+        return axios.get(requestURI, {headers: authHeader()})
+            .then((response) => {
+
+                const history: HistoryItem[] = response.data;
+                return history
+
+            })
+
+            .catch(error => {
+                console.log("Error on API request (getHistoryRooms()): " + error.message)
                 return []
             });
     }

@@ -37,7 +37,7 @@ export class Login extends React.Component {
                     <Col className="col-3 mx-5 shadow-sm boxShadow border rounded">
                         <Row className="text-center mt-5">
                             <h3>Login</h3>
-                            <span>(Add text for Sign Up option)</span>
+                            <span>You're a new user? <a href="/register">Sign Up!</a></span>
                         </Row>
                         <Form className="p-4" {...props} error={params.get('error')} />
                     </Col>

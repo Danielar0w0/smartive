@@ -35,4 +35,12 @@ public class AvailableDeviceService {
 
     }
 
+    public AvailableDevice getAvailableDevice(ObjectId deviceId) {
+        return availableDeviceRepository.findByDeviceId(deviceId);
+    }
+
+    public boolean exists(ObjectId objectId) {
+        return availableDeviceRepository.existsByDeviceId(objectId);
+    }
+
 }

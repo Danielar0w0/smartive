@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import pt.ua.deti.ies.smartive.api.smartive_api.model.User;
 
 @Component
 public class JwtTokenUtil implements Serializable {

@@ -28,18 +28,34 @@ export class Profile extends React.Component {
 
         this.apiHandler = new RestAPIHandler();
         this.state = {
+            user_name: '',
+            user_email: '',
             roomsCount: 0,
-            devicesCount: 0
+            devicesCount: 0,
         }
 
     }
 
     componentDidMount() {
 
-        this.apiHandler.getUserStats()
-            .then(userStats => {
-                this.setState({roomsCount: userStats.roomsCount, devicesCount: userStats.devicesCount})
-            });
+        let userStats;
+        let userDetails;
+        let shouldRefresh = 0;
+
+        let requests = [
+            this.apiHandler.getUserStats(),
+            this.apiHandler.getUserDetails()
+        ]
+
+        Promise.allSettled(requests).then(values => {
+            console.log(values)
+            this.setState({
+                roomsCount: values[0].value.roomsCount,
+                devicesCount: values[0].value.devicesCount,
+                user_name: values[1].value.username,
+                user_email: values[1].value.email
+            })
+        })
 
     }
 
@@ -52,7 +68,7 @@ export class Profile extends React.Component {
 
                 <Row className="mt-5 justify-content-center d-flex">
                     <Col className='col-4'>
-                        <ProfilePanel/>
+                        <ProfilePanel user_name={this.state.user_name} user_email={this.state.user_email}/>
                     </Col>
                     <Col className="col-3">
                         <Row>

@@ -274,4 +274,21 @@ export class RestAPIHandler {
 
     }
 
+    getUserDetails(): Promise<User | null> {
+
+        const endpointURI = '/user';
+        const requestURI = this._publicAPIBaseURI + endpointURI;
+
+        return axios.get(requestURI, {headers: authHeader()})
+            .then((response) => {
+                const user: User = response.data;
+                return user
+            })
+            .catch(error => {
+                console.log("Error on API request (getUserDetails()): " + error.message)
+                return null
+            });
+
+    }
+
 }

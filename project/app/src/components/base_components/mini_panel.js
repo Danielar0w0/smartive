@@ -73,7 +73,7 @@ export class MiniPanel extends React.Component {
                     <Col className="col-md-4 col-lg-3 offset-lg-1 text-center mx-3">
                         {icon}
                     </Col>
-                    <Col className="col-md-6 col-lg-5 mx-4">
+                    <Col className="col-md col-lg mx-4" >
                         <p className="fs-8 fw-bolder mt-3 mb-0">{this.props.title}</p>
                         <p className="fs-6 fw-normal mb-2">{this.props.subtitle}</p>
                         <p className="fs-7 fw-light text-secondary">{this.props.info}</p>

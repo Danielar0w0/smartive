@@ -96,6 +96,11 @@ public class PublicAPIController {
 
     }
 
+    @GetMapping("/user")
+    public User getCurrentUserDetails() {
+        return userService.getByUsername(authManager.getUserName());
+    }
+
     @GetMapping("/rooms")
     public List<Room> getAllRooms() {
 

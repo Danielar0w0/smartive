@@ -24,12 +24,16 @@ import {CreateRoom} from "./components/create_room";
 import {AddTrigger} from "./components/triggers/add_trigger";
 import {Triggers} from "./components/triggers/triggers";
 import { Login } from "./components/login";
-import {Register} from "./components/register";
+// import {Register} from "./components/register";
 
 export default function AppRouting () {
 
     const customHistory = createBrowserHistory();
-    const notify = (text) => toast(text);
+    const notify = (text) => toast(text, {
+        autoClose: 2500,
+        pauseOnHover: true,
+        hideProgressBar: true
+    });
 
     store.subscribe(() => {
 
@@ -40,7 +44,6 @@ export default function AppRouting () {
             store.dispatch({ type: 'toasts/clearToast' })
         }
 
-
     });
 
     const token = localStorage.getItem('user');
@@ -49,10 +52,10 @@ export default function AppRouting () {
 
         return (
         <Router history={ customHistory }>
-            <ToastContainer />
+            <ToastContainer/>
             <Routes>
                 <Route path="/login" element={<Login/>} />
-                <Route path="/register" element={<Register/>} />
+                {/*<Route path="/register" element={<Register/>} />*/}
                 <Route path="*" element={<Login/>} />
             </Routes>
         </Router>
@@ -61,9 +64,10 @@ export default function AppRouting () {
 
     return (
         <Router history={ customHistory }>
+            <ToastContainer />
             <Routes>
                 <Route path="/login" element={<Login/>} />
-                <Route path="/register" element={<Register/>} />
+                {/*<Route path="/register" element={<Register/>} />*/}
                 <Route path="/control_device" element={<ControlDevice/>} />
                 <Route path="/devices" element={<Devices/>} />
                 <Route path="/add_device" element={<AddDevice/>} />

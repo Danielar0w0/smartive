@@ -7,6 +7,7 @@ import {RoomStats} from "./entities/RoomStats";
 import { User } from "./entities/User";
 import {Event} from "./entities/Event";
 import { authHeader } from "./AuthHeader";
+import {UserStats} from "./entities/UserStats";
 
 export class RestAPIHandler {
 
@@ -255,4 +256,22 @@ export class RestAPIHandler {
                 return false;
             });
     }
+
+    getUserStats(): Promise<UserStats | null> {
+
+        const endpointURI = '/user/stats';
+        const requestURI = this._publicAPIBaseURI + endpointURI;
+
+        return axios.get(requestURI, {headers: authHeader()})
+            .then((response) => {
+                const userStats: UserStats = response.data;
+                return userStats
+            })
+            .catch(error => {
+                console.log("Error on API request (getUserStats()): " + error.message)
+                return null
+            });
+
+    }
+
 }

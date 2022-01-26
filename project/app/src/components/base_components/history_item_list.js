@@ -12,6 +12,7 @@ import {HistoryItem} from "./history_item";
 import {faHome} from "@fortawesome/free-solid-svg-icons/faHome";
 import Row from "react-bootstrap/Row";
 import Container from "react-bootstrap/Container";
+import {faArrowRight, faTv} from "@fortawesome/free-solid-svg-icons";
 
 export class HistoryItemList extends React.Component {
 
@@ -37,6 +38,11 @@ export class HistoryItemList extends React.Component {
             });
         });
 
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (prevState !== this.state) return;
+        this.updateItems();
     }
 
     updateItems() {
@@ -95,8 +101,6 @@ export class HistoryItemList extends React.Component {
 
     render() {
 
-        this.updateItems();
-
         let historyItems = this.state.historyItems;
         historyItems.sort((i1, i2) => {
             if (i1.date > i2.date)
@@ -111,20 +115,35 @@ export class HistoryItemList extends React.Component {
         for (let itemIdx in historyItems) {
 
             let item = historyItems[itemIdx];
-            itemPanels.push(
-                <HistoryItem
-                    key={item.itemId}
-                    icon={faHome}
-                    description={item.description}
-                    date={item.date}
-                />
-            )
+            let thisIcon = faHome;
+
+            if (this.state.selectedHistoryType === 0)
+                thisIcon = faTv
+            else if (this.state.selectedHistoryType === 2)
+                thisIcon = faArrowRight
+
+                itemPanels.push(
+                    <HistoryItem
+                        key={item.itemId}
+                        icon={thisIcon}
+                        description={item.description}
+                        date={item.date}
+                    />
+                )
         }
+
+        if (itemPanels.length === 0)
+            return (
+                <Container>
+                    <p className="fw-normal fs-5 my-5">History</p>
+                    <p>Loading...</p>
+                </Container>
+            )
 
         return (
 
             <Container>
-                <p className="fw-normal fs-5">History</p>
+                <p className="fw-normal fs-5 my-5">History</p>
                 <Row>{itemPanels}</Row>
             </Container>
 

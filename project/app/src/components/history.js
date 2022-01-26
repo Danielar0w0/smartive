@@ -29,7 +29,6 @@ export class History extends React.Component {
                 </div>
 
                 <TypePanelsList on_type_changed={this.typeChangedHandler.bind(this)}></TypePanelsList>
-
                 <HistoryItemList type_selected={this.state.historyType}></HistoryItemList>
 
             </Container>

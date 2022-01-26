@@ -1,14 +1,13 @@
 import { ScrollMenu } from 'react-horizontal-scrolling-menu';
 import { MiniPanel } from "./mini_panel";
 import React from 'react';
-import { RestAPIHandler } from "../../utils/RestAPIHandler";
+import {faArrowRight, faTv} from "@fortawesome/free-solid-svg-icons";
 
 export class TypePanelsList extends React.Component {
 
     constructor(props) {
 
         super(props);
-        this.apiHandler = new RestAPIHandler();
         this.state = {
             selectedType: undefined
         };
@@ -26,25 +25,33 @@ export class TypePanelsList extends React.Component {
         return (
             <ScrollMenu>
                 <MiniPanel
-                    title={"Devices"}
-                    subtitle={"History"}
+                    key={0}
+                    icon={faTv}
+                    title={"History"}
+                    subtitle={"Devices"}
                     info={"Actions with devices"}
                     on_click={this.typePanelClicked.bind(this, 0)}
-                    selected={true}
+                    selected={this.state.selectedType === 0}
+                    isCloseable={false}
                 />
                 <MiniPanel
-                    title={"Rooms"}
-                    subtitle={"History"}
+                    key={1}
+                    title={"History"}
+                    subtitle={"Rooms"}
                     info={"Actions with rooms"}
                     on_click={this.typePanelClicked.bind(this, 1)}
-                    selected={true}
+                    selected={this.state.selectedType === 1}
+                    isCloseable={false}
                 />
                 <MiniPanel
-                    title={"Trigger"}
-                    subtitle={"History"}
+                    key={2}
+                    icon={faArrowRight}
+                    title={"History"}
+                    subtitle={"Trigger"}
                     info={"Actions with triggers"}
                     on_click={this.typePanelClicked.bind(this, 2)}
-                    selected={true}
+                    selected={this.state.selectedType === 2}
+                    isCloseable={false}
                 />
             </ScrollMenu>
         );

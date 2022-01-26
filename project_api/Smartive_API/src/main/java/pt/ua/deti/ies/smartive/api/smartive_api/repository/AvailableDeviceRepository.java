@@ -6,6 +6,7 @@ import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.AvailableDevice;
 
 public interface AvailableDeviceRepository extends MongoRepository<AvailableDevice, Long> {
 
+    AvailableDevice findByDeviceId(ObjectId objectId);
     boolean existsByDeviceId(ObjectId objectId);
     void deleteByDeviceId(ObjectId objectId);
 

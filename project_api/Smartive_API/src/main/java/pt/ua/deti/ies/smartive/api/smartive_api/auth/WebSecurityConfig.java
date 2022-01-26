@@ -40,11 +40,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		this.corsConfiguration = corsConfiguration;
 	}
 
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
-
 	@Override
 	@Bean
 	public AuthenticationManager authenticationManagerBean() throws Exception {
@@ -58,7 +53,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		// httpSecurity.cors().configurationSource(corsConfiguration);
 
 		httpSecurity.cors().and().csrf().disable()
-				.authorizeRequests().antMatchers("/api/login", "/api/register").permitAll()
+				.authorizeRequests().antMatchers("/public/**").permitAll()
 				.anyRequest().authenticated()
 				.and()
 				.exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)

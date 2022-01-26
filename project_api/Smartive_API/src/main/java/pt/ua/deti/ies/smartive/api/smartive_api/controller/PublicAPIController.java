@@ -18,6 +18,8 @@ import pt.ua.deti.ies.smartive.api.smartive_api.middleware.rabbitmq.notification
 import pt.ua.deti.ies.smartive.api.smartive_api.middleware.rabbitmq.notifications.react.ReactNotificationType;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.MessageResponse;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.Room;
+import pt.ua.deti.ies.smartive.api.smartive_api.model.history.HistoryItem;
+import pt.ua.deti.ies.smartive.api.smartive_api.model.history.HistoryType;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.users.User;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.AvailableDevice;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.Device;
@@ -30,7 +32,9 @@ import pt.ua.deti.ies.smartive.api.smartive_api.tokens.JwtResponse;
 import pt.ua.deti.ies.smartive.api.smartive_api.tokens.JwtTokenUtil;
 import pt.ua.deti.ies.smartive.api.smartive_api.tokens.JwtUserDetailsService;
 
+import java.sql.Timestamp;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -48,6 +52,7 @@ public class PublicAPIController {
     private final ReactNotificationFactory reactNotificationFactory;
     private final SensorEventService sensorEventService;
     private final UserService userService;
+    private final HistoryService historyService;
 
     // Auth
     private final AuthenticationManager authenticationManager;
@@ -58,7 +63,7 @@ public class PublicAPIController {
     @Autowired
     public PublicAPIController(SensorService sensorService, RoomService roomService, DeviceService deviceService,
                                AvailableDeviceService availableDeviceService, ReactNotificationFactory reactNotificationFactory, SensorEventService sensorEventService,
-                               UserService userService, AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, JwtUserDetailsService userDetailsService, AuthManager authManager) {
+                               UserService userService, HistoryService historyService, AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, JwtUserDetailsService userDetailsService, AuthManager authManager) {
         this.sensorService = sensorService;
         this.roomService = roomService;
         this.deviceService = deviceService;
@@ -66,10 +71,25 @@ public class PublicAPIController {
         this.reactNotificationFactory = reactNotificationFactory;
         this.sensorEventService = sensorEventService;
         this.userService = userService;
+        this.historyService = historyService;
         this.authenticationManager = authenticationManager;
         this.jwtTokenUtil = jwtTokenUtil;
         this.userDetailsService = userDetailsService;
         this.authManager = authManager;
+    }
+
+    @GetMapping("/history")
+    public List<HistoryItem> getAllHistory() {
+        return historyService.getAllHistory().stream()
+                .filter(historyItem -> historyItem.getUsername().equals(authManager.getUserName()))
+                .collect(Collectors.toList());
+    }
+
+    @GetMapping("/history/{historyType}")
+    public List<HistoryItem> getAllHistory(@PathVariable HistoryType historyType) {
+        return historyService.getAllHistory(historyType).stream()
+                .filter(historyItem -> historyItem.getUsername().equals(authManager.getUserName()))
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/users/{username}")
@@ -127,6 +147,16 @@ public class PublicAPIController {
         Room registeredRoom = roomService.registerRoom(room);
         reactNotificationFactory.generateNotification(ReactNotificationType.ROOM_ADDED, registeredRoom).sendNotification();
 
+        HistoryItem historyItem = HistoryItem.builder()
+                .id(null)
+                .username(authManager.getUserName())
+                .type(HistoryType.ROOMS)
+                .date(new Date())
+                .description(String.format("Room %s was registered by %s.", room.getName(), authManager.getUserName()))
+                .build();
+
+        historyService.saveHistory(historyItem);
+
         return new MessageResponse("The room was successfully registered.");
 
     }
@@ -150,6 +180,16 @@ public class PublicAPIController {
         roomService.deleteRoom(room);
         reactNotificationFactory.generateNotification(ReactNotificationType.ROOM_DELETED, room).sendNotification();
 
+        HistoryItem historyItem = HistoryItem.builder()
+                .id(null)
+                .username(authManager.getUserName())
+                .type(HistoryType.ROOMS)
+                .date(new Date())
+                .description(String.format("Room %s was deleted by %s.", room.getName(), authManager.getUserName()))
+                .build();
+
+        historyService.saveHistory(historyItem);
+
         return new MessageResponse("The room was successfully removed.");
 
     }
@@ -159,6 +199,16 @@ public class PublicAPIController {
 
         sensorService.registerSensor(sensor);
         reactNotificationFactory.generateNotification(ReactNotificationType.DEVICE_ADDED).sendNotification();
+
+        HistoryItem historyItem = HistoryItem.builder()
+                .id(null)
+                .username(authManager.getUserName())
+                .type(HistoryType.DEVICES)
+                .date(new Date())
+                .description(String.format("Device %s was registered by %s.", sensor.getName(), authManager.getUserName()))
+                .build();
+
+        historyService.saveHistory(historyItem);
 
         return new MessageResponse("The sensor was successfully registered.");
 
@@ -254,7 +304,19 @@ public class PublicAPIController {
         if (!room.getUsers().contains(authManager.getUserName()))
             throw new InvalidPermissionsException();
 
-        return sensorEventService.registerEvent(event);
+        SensorEvent registeredEvent = sensorEventService.registerEvent(event);
+
+        HistoryItem historyItem = HistoryItem.builder()
+                .id(null)
+                .username(authManager.getUserName())
+                .type(HistoryType.TRIGGERS)
+                .date(new Date())
+                .description(String.format("Trigger %s added for device %s by %s.", registeredEvent.getId().toString(), sensor.getName(), authManager.getUserName()))
+                .build();
+
+        historyService.saveHistory(historyItem);
+
+        return registeredEvent;
 
     }
 

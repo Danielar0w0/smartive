@@ -238,9 +238,9 @@ export class RestAPIHandler {
             });
     }
 
-    getDevicesHistory(): Promise<HistoryItem[]> {
+    getHistoryTriggers(): Promise<HistoryItem[]> {
 
-        const endpointURI = `/history/devices`
+        const endpointURI = `/history/TRIGGERS`
         const requestURI = this._publicAPIBaseURI + endpointURI;
 
         return axios.get(requestURI, {headers: authHeader()})
@@ -252,14 +252,14 @@ export class RestAPIHandler {
             })
 
             .catch(error => {
-                console.log("Error on API request (getDevicesHistory()): " + error.message)
+                console.log("Error on API request (getHistoryTriggers()): " + error.message)
                 return []
             });
     }
 
-    getDeviceHistory(deviceId: string): Promise<HistoryItem[]>  {
+    getHistoryDevices(): Promise<HistoryItem[]> {
 
-        const endpointURI = `/history/devices/${deviceId}`
+        const endpointURI = `/history/DEVICES`
         const requestURI = this._publicAPIBaseURI + endpointURI;
 
         return axios.get(requestURI, {headers: authHeader()})
@@ -268,10 +268,31 @@ export class RestAPIHandler {
                 const history: HistoryItem[] = response.data;
                 return history
 
-            }).catch(error => {
-                console.log("Error on API request (getDevicesHistory()): " + error.message)
-                return []
             })
+
+            .catch(error => {
+                console.log("Error on API request (getHistoryDevices()): " + error.message)
+                return []
+            });
+    }
+
+    getHistoryRooms(): Promise<HistoryItem[]> {
+
+        const endpointURI = `/history/ROOMS`
+        const requestURI = this._publicAPIBaseURI + endpointURI;
+
+        return axios.get(requestURI, {headers: authHeader()})
+            .then((response) => {
+
+                const history: HistoryItem[] = response.data;
+                return history
+
+            })
+
+            .catch(error => {
+                console.log("Error on API request (getHistoryRooms()): " + error.message)
+                return []
+            });
     }
 
     login(user: User): Promise<boolean> {

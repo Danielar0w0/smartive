@@ -3,7 +3,7 @@ package pt.ua.deti.ies.smartive.api.smartive_api.controller;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import pt.ua.deti.ies.smartive.api.smartive_api.auth.AuthManager;
+import pt.ua.deti.ies.smartive.api.smartive_api.auth.AuthHandler;
 import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.DeviceNotFoundException;
 import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.InvalidDeviceException;
 import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.InvalidPermissionsException;
@@ -15,11 +15,15 @@ import pt.ua.deti.ies.smartive.api.smartive_api.middleware.rabbitmq.notification
 import pt.ua.deti.ies.smartive.api.smartive_api.model.MessageResponse;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.Room;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.RoomStats;
+import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.AvailableDevice;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.Sensor;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.SensorState;
+import pt.ua.deti.ies.smartive.api.smartive_api.services.AvailableDeviceService;
 import pt.ua.deti.ies.smartive.api.smartive_api.services.RoomService;
 import pt.ua.deti.ies.smartive.api.smartive_api.services.SensorService;
 import pt.ua.deti.ies.smartive.api.smartive_api.utils.RequestType;
+
+import java.util.List;
 
 
 @RestController
@@ -31,20 +35,32 @@ public class MiddlewareController {
     private final MiddlewareHandler middlewareHandler;
     private final MiddlewareInterceptor middlewareInterceptor;
     private final ReactNotificationFactory reactNotificationFactory;
-    private final AuthManager authManager;
+    private final AuthHandler authHandler;
+    private final AvailableDeviceService availableDeviceService;
 
     @Autowired
-    public MiddlewareController(SensorService sensorService, RoomService roomService, MiddlewareHandler middlewareHandler, MiddlewareInterceptor middlewareInterceptor, ReactNotificationFactory reactNotificationFactory, AuthManager authManager) {
+    public MiddlewareController(SensorService sensorService, RoomService roomService, MiddlewareHandler middlewareHandler, MiddlewareInterceptor middlewareInterceptor, ReactNotificationFactory reactNotificationFactory, AuthHandler authHandler, AvailableDeviceService availableDeviceService) {
         this.sensorService = sensorService;
         this.roomService = roomService;
         this.middlewareHandler = middlewareHandler;
         this.middlewareInterceptor = middlewareInterceptor;
         this.reactNotificationFactory = reactNotificationFactory;
-        this.authManager = authManager;
+        this.authHandler = authHandler;
+        this.availableDeviceService = availableDeviceService;
+    }
+
+    @GetMapping("/devices/sensors")
+    public List<Sensor> getAllRegisteredSensors() {
+        if (!authHandler.isAdmin())
+            throw new InvalidPermissionsException();
+        return sensorService.getAllSensors();
     }
 
     @PutMapping("/devices/sensor")
     public MessageResponse updateState(@RequestBody Sensor sensor) {
+
+        if (!authHandler.isAdmin())
+            throw new InvalidPermissionsException();
 
         if (sensor.getDeviceId() == null)
             throw new InvalidDeviceException("Please provide a valid sensor id.");
@@ -74,6 +90,9 @@ public class MiddlewareController {
     @GetMapping("/devices/sensor/{sensorId}")
     public SensorState getSensorState(@PathVariable ObjectId sensorId) {
 
+        if (!authHandler.isAdmin())
+            throw new InvalidPermissionsException();
+
         if (sensorId == null)
             throw new InvalidDeviceException("Please provide a valid sensor id.");
 
@@ -81,15 +100,6 @@ public class MiddlewareController {
             throw new DeviceNotFoundException("Unable to find a device with that ID.");
 
         Sensor sensor = sensorService.getSensorById(sensorId);
-
-        if (sensor.getRoomId() == null || !roomService.exists(sensor.getRoomId()))
-            throw new InvalidRoomException(String.format("Unable to find a room with the id %s.", sensor.getRoomId()));
-
-        Room room = roomService.getRoom(sensor.getRoomId());
-
-        if (!room.getUsers().contains(authManager.getUserName()))
-            throw new InvalidPermissionsException();
-
         return sensor.getState();
 
     }
@@ -99,14 +109,26 @@ public class MiddlewareController {
 
         if (!roomService.exists(roomId))
             throw new InvalidRoomException("Unable to find a room with this Id.");
-
-        Room room = roomService.getRoom(roomId);
-
-        if (room.getUsers().contains(authManager.getUserName()))
-            throw new InvalidPermissionsException();
-
         return middlewareHandler.calculateRoomStats(roomId);
 
     }
+
+    @PostMapping(value = "/devices/available")
+    public MessageResponse getAllAvailableDevices(@RequestBody AvailableDevice availableDevice) {
+
+        if (!authHandler.isAdmin())
+            throw new InvalidPermissionsException();
+
+        availableDeviceService.save(availableDevice);
+        return new MessageResponse("Successfully registered available device.");
+
+    }
+
+    @DeleteMapping(value = "/devices/available/{deviceId}")
+    public MessageResponse removeAvailableDevice(@PathVariable ObjectId deviceId) {
+        availableDeviceService.delete(deviceId);
+        return new MessageResponse("Successfully removed available device.");
+    }
+
 
 }

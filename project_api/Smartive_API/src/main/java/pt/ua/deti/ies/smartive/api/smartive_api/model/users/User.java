@@ -28,8 +28,6 @@ public class User implements UserDetails {
     private String username;
     @Indexed(unique = true)
     private String email;
-
-    @JsonIgnore
     private String password;
 
     @JsonIgnore

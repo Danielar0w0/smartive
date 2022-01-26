@@ -9,7 +9,14 @@ process_list = []
 id_list = []
 
 def main_func():
-    request = requests.get("http://172.18.0.3:8080/api/devices/sensors")
+    
+    api_address = os.environ.get('API_ADDRESS', 'http://172.18.0.3')
+    api_port = os.environ.get('API_PORT', 8080)
+    api_url = "{}:{}".format(api_address, api_port)
+
+    request_headers = { 'Authorization': 'Bearer ' + os.environ.get('ADMIN_AUTH_TOKEN'), 'Content-Type': 'application/json' }
+
+    request = requests.get("{}/middleware/devices/sensors".format(api_url), request_headers)
     
     for item in request.json():
         if item["category"] == "TEMPERATURE":
@@ -37,7 +44,7 @@ def main_func():
 
     while(True):
         time.sleep(30)
-        request = requests.get("http://172.18.0.3:8080/api/devices/sensors")
+        request = requests.get("{}/middleware/devices/sensors".format(api_url), request_headers)
         for item in request.json():
             if item["deviceId"] not in id_list:
                 if item["category"] == "TEMPERATURE":

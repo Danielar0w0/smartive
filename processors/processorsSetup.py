@@ -6,9 +6,14 @@ from math import ceil
 
 queues = ['humidity_queue', 'temperature_queue']
 
-credentials = pika.PlainCredentials('test', 'test')
+rabbitmq_address = os.environ.get('RABBITMQ_ADDRESS')
+rabbitmq_port = os.environ.get('RABBITMQ_PORT')
+rabbitmq_user = os.environ.get('RABBITMQ_USER')
+rabbitmq_pass = os.environ.get('RABBITMQ_PASS')
+
+credentials = pika.PlainCredentials(rabbitmq_user, rabbitmq_pass)
 connection = pika.BlockingConnection(
-    pika.ConnectionParameters(host='172.18.0.7', port=5672, credentials=credentials))
+    pika.ConnectionParameters(host=rabbitmq_address, port=rabbitmq_port, credentials=credentials))
 channel = connection.channel()
 
 process_list = {'humidity_queue': [], 'temperature_queue': []}

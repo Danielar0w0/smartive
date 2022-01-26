@@ -192,7 +192,7 @@ public class UsersApiController {
 
         Room room = roomService.getRoom(roomId);
 
-        if (room.getUsers().contains(authHandler.getUserName()))
+        if (!room.getUsers().contains(authHandler.getUserName()))
             throw new InvalidPermissionsException();
 
         return middlewareHandler.calculateRoomStats(roomId);

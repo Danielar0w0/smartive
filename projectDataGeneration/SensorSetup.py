@@ -7,19 +7,16 @@ import requests
 
 process_list = []
 id_list = []
-token = None
 
 def main_func():
-    # fazer login para api, receber resposta, retirar token de resposta, guardar token em variavel global?, meter token no header sempre que faço call ao api
-    #authHeader = { 'Authorization': 'Bearer ' + token }
-    login_account = {"username":"PLACEHOLDER", "password": "PLACEHOLDER"}
-    login = requests.post("http://172.18.0.3:8080/public/login", json=login_account, headers={ 'Authorization': ''}, timeout=5)
+    
+    api_address = os.environ.get('API_ADDRESS', 'http://172.18.0.3')
+    api_port = os.environ.get('API_PORT', 8080)
+    api_url = "{}:{}".format(api_address, api_port)
 
-    response = login.json()                             #confirmar se resposta vem em json
-    token_not_trimmed = response["token"]                           #confirmar se o token tem como nome token ou outra cena tipo authToken
-    token = str(token_not_trimmed).replace('"', '').replace('\"','').strip()
+    request_headers = { 'Authorization': 'Bearer ' + os.environ.get('ADMIN_AUTH_TOKEN'), 'Content-Type': 'application/json' }
 
-    request = requests.get("http://172.18.0.3:8080/middleware/devices/sensors", headers={ 'Authorization': 'Bearer ' + token })
+    request = requests.get("{}/middleware/devices/sensors".format(api_url), request_headers)
     
     for item in request.json():
         if item["category"] == "TEMPERATURE":
@@ -47,7 +44,7 @@ def main_func():
 
     while(True):
         time.sleep(30)
-        request = requests.get("http://172.18.0.3:8080/middleware/devices/sensors", headers={ 'Authorization': 'Bearer ' + token })
+        request = requests.get("{}/middleware/devices/sensors".format(api_url), request_headers)
         for item in request.json():
             if item["deviceId"] not in id_list:
                 if item["category"] == "TEMPERATURE":

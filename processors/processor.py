@@ -11,12 +11,25 @@ import pika
 import requests
 import json
 import sys
+import os
 
 categories = {'humidity_queue': 'HUMIDITY', 'temperature_queue': 'TEMPERATURE'}
 units = {'humidity_queue': '%', 'temperature_queue': 'ºC'}
 token = None
 
+api_address = os.environ.get('API_ADDRESS', 'http://172.18.0.3')
+api_port = os.environ.get('API_PORT', 8080)
+api_url = "{}:{}".format(api_address, api_port)
+
+request_headers = { 'Authorization': 'Bearer ' + os.environ.get('ADMIN_AUTH_TOKEN'), 'Content-Type': 'application/json' }
+
+
 def main():
+
+    rabbitmq_address = os.environ.get('RABBITMQ_ADDRESS')
+    rabbitmq_port = os.environ.get('RABBITMQ_PORT')
+    rabbitmq_user = os.environ.get('RABBITMQ_USER')
+    rabbitmq_pass = os.environ.get('RABBITMQ_PASS')
 
     # Check if the user has provided the correct number of arguments
     if len(sys.argv) < 2:
@@ -24,8 +37,8 @@ def main():
         return
     queue = sys.argv[1]    
 
-    credentials = pika.PlainCredentials('test', 'test')
-    connection = pika.BlockingConnection(pika.ConnectionParameters(host='172.18.0.7', credentials=credentials))
+    credentials = pika.PlainCredentials(rabbitmq_user, rabbitmq_pass)
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host=rabbitmq_address, port=rabbitmq_port, credentials=credentials))
     #connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost',port=5672, credentials=credentials))
     channel = connection.channel()
 
@@ -96,19 +109,12 @@ def callback(ch, method, properties, body):
 
 def obtain_sensor(sensor_id, device_type = "registered"):
 
-    login_account = {"username":"PLACEHOLDER", "password": "PLACEHOLDER"}
-    login = requests.post("http://172.18.0.3:8080/public/login", json=login_account, headers={ 'Authorization': ''}, timeout=5)
-
-    response = login.json()                             #confirmar se resposta vem em json
-    token_not_trimmed = response["token"]                           #confirmar se o token tem como nome token ou outra cena tipo authToken
-    token = str(token_not_trimmed).replace('"', '').replace('\"','').strip()
-
 
     if device_type == "registered":
-        response = requests.get("http://172.18.0.3:8080/middleware/devices/sensors", timeout=5, headers={ 'Authorization': 'Bearer ' + token })
+        response = requests.get("{}/middleware/devices/sensors".format(api_url), timeout=5, headers=request_headers)
     
     elif device_type == "available":
-        response = requests.get("http://172.18.0.3:8080/middleware/devices/available", timeout=5, headers={ 'Authorization': 'Bearer ' + token })
+        response = requests.get("{}/middleware/devices/available".format(api_url), timeout=5, headers=request_headers)
 
     else:
         print(" [-] Unable to get list of '{device_type}' sensors!")
@@ -146,7 +152,7 @@ def register_sensor(sensor_id, category=None):
     sensor = {'deviceId': sensor_id, 'name': f'Sensor {sensor_id}', 'category': category}
         
     # Register available sensor
-    response = requests.post("http://172.18.0.3:8080/middleware/devices/available", json=sensor, timeout=5, headers={ 'Authorization': 'Bearer ' + token })
+    response = requests.post("{}/middleware/devices/available".format(api_url), json=sensor, timeout=5, headers=request_headers)
     
     # Check if request was successful
     if response.status_code != 200: 
@@ -163,7 +169,7 @@ def updateState(sensor, state_value, power_consumption, unit):
     sensor = {"deviceId": sensor["deviceId"], "state": {"value": state_value, "unit": unit, "powerConsumption": power_consumption}}
     
     # The keyword json automatically sets the request’s HTTP header Content-Type to application/json
-    response = requests.put("http://172.18.0.3:8080/middleware/devices/sensor", json=sensor, timeout=5, headers={ 'Authorization': 'Bearer ' + token })
+    response = requests.put("{}/middleware/devices/sensor".format(api_url), json=sensor, timeout=5, headers=request_headers)
     
     # Check if request was successful
     if response.status_code != 200: 

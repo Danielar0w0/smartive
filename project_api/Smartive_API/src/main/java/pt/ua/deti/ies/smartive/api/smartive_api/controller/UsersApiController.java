@@ -11,6 +11,7 @@ import pt.ua.deti.ies.smartive.api.smartive_api.middleware.rabbitmq.notification
 import pt.ua.deti.ies.smartive.api.smartive_api.model.MessageResponse;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.Room;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.RoomStats;
+import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.AvailableDevice;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.Device;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.Sensor;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.SensorState;
@@ -161,8 +162,9 @@ public class UsersApiController {
             throw new InvalidPermissionsException();
 
         for (Device currentDevice : room.getDevices()) {
-            currentDevice.setRoomId(null);
-            deviceService.update(currentDevice);
+            deviceService.deleteByDeviceId(currentDevice.getDeviceId());
+            AvailableDevice newAvailableDevice = new AvailableDevice(currentDevice.getDeviceId(), "Device " + currentDevice.getDeviceId(), currentDevice.getCategory());
+            availableDeviceService.save(newAvailableDevice);
         }
 
         roomService.deleteRoom(room);

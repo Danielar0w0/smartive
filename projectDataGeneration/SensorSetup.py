@@ -7,9 +7,19 @@ import requests
 
 process_list = []
 id_list = []
+token = None
 
 def main_func():
-    request = requests.get("http://172.18.0.3:8080/api/devices/sensors")
+    # fazer login para api, receber resposta, retirar token de resposta, guardar token em variavel global?, meter token no header sempre que faço call ao api
+    #authHeader = { 'Authorization': 'Bearer ' + token }
+    login_account = {"username":"PLACEHOLDER", "password": "PLACEHOLDER"}
+    login = requests.post("http://172.18.0.3:8080/public/login", json=login_account, headers={ 'Authorization': ''}, timeout=5)
+
+    response = login.json()                             #confirmar se resposta vem em json
+    token_not_trimmed = response["token"]                           #confirmar se o token tem como nome token ou outra cena tipo authToken
+    token = str(token_not_trimmed).replace('"', '').replace('\"','').strip()
+
+    request = requests.get("http://172.18.0.3:8080/middleware/devices/sensors", headers={ 'Authorization': 'Bearer ' + token })
     
     for item in request.json():
         if item["category"] == "TEMPERATURE":
@@ -37,7 +47,7 @@ def main_func():
 
     while(True):
         time.sleep(30)
-        request = requests.get("http://172.18.0.3:8080/api/devices/sensors")
+        request = requests.get("http://172.18.0.3:8080/middleware/devices/sensors", headers={ 'Authorization': 'Bearer ' + token })
         for item in request.json():
             if item["deviceId"] not in id_list:
                 if item["category"] == "TEMPERATURE":

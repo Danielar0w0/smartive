@@ -40,6 +40,12 @@ public class ExceptionHandler {
         return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
     }
 
+    @org.springframework.web.bind.annotation.ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<?> userNotFoundException(UserNotFoundException userNotFoundException, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails(new Date(), userNotFoundException.getMessage(), request.getDescription(false));
+        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+    }
+
     @org.springframework.web.bind.annotation.ExceptionHandler(InvalidRoomException.class)
     public ResponseEntity<?> invalidRoomException(InvalidRoomException invalidRoomException, WebRequest request) {
         ErrorDetails errorDetails = new ErrorDetails(new Date(), invalidRoomException.getMessage(), request.getDescription(false));

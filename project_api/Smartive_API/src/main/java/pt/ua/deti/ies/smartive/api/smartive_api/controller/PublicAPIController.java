@@ -18,11 +18,12 @@ import pt.ua.deti.ies.smartive.api.smartive_api.middleware.rabbitmq.notification
 import pt.ua.deti.ies.smartive.api.smartive_api.middleware.rabbitmq.notifications.react.ReactNotificationType;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.MessageResponse;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.Room;
-import pt.ua.deti.ies.smartive.api.smartive_api.model.User;
+import pt.ua.deti.ies.smartive.api.smartive_api.model.users.User;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.AvailableDevice;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.Device;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.Sensor;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.events.SensorEvent;
+import pt.ua.deti.ies.smartive.api.smartive_api.model.users.UserStats;
 import pt.ua.deti.ies.smartive.api.smartive_api.services.*;
 import pt.ua.deti.ies.smartive.api.smartive_api.tokens.JwtRequest;
 import pt.ua.deti.ies.smartive.api.smartive_api.tokens.JwtResponse;
@@ -31,6 +32,7 @@ import pt.ua.deti.ies.smartive.api.smartive_api.tokens.JwtUserDetailsService;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @RestController
@@ -45,6 +47,7 @@ public class PublicAPIController {
     private final AvailableDeviceService availableDeviceService;
     private final ReactNotificationFactory reactNotificationFactory;
     private final SensorEventService sensorEventService;
+    private final UserService userService;
 
     // Auth
     private final AuthenticationManager authenticationManager;
@@ -55,17 +58,42 @@ public class PublicAPIController {
     @Autowired
     public PublicAPIController(SensorService sensorService, RoomService roomService, DeviceService deviceService,
                                AvailableDeviceService availableDeviceService, ReactNotificationFactory reactNotificationFactory, SensorEventService sensorEventService,
-                               AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, JwtUserDetailsService userDetailsService, AuthManager authManager) {
+                               UserService userService, AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, JwtUserDetailsService userDetailsService, AuthManager authManager) {
         this.sensorService = sensorService;
         this.roomService = roomService;
         this.deviceService = deviceService;
         this.availableDeviceService = availableDeviceService;
         this.reactNotificationFactory = reactNotificationFactory;
         this.sensorEventService = sensorEventService;
+        this.userService = userService;
         this.authenticationManager = authenticationManager;
         this.jwtTokenUtil = jwtTokenUtil;
         this.userDetailsService = userDetailsService;
         this.authManager = authManager;
+    }
+
+    @GetMapping("/users/{username}")
+    public User getUser(@PathVariable String username) {
+        if (!userService.exists(username))
+            throw new UserNotFoundException(String.format("Unable to find user %s.", username));
+        return userService.getByUsername(username);
+    }
+
+    @GetMapping("/user/stats")
+    public UserStats getUserStats() {
+
+        int roomCount = (int) roomService.getAllRooms().stream()
+                .filter(room -> room.getUsers().contains(authManager.getUserName()))
+                .count();
+
+        AtomicInteger devicesCount = new AtomicInteger();
+
+        roomService.getAllRooms().stream()
+                .filter(room -> room.getUsers().contains(authManager.getUserName()))
+                .forEach(room -> devicesCount.addAndGet(room.getDevices().size()));
+
+        return new UserStats(roomCount, devicesCount.get());
+
     }
 
     @GetMapping("/rooms")

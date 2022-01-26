@@ -1,5 +1,8 @@
-package pt.ua.deti.ies.smartive.api.smartive_api.model;
+package pt.ua.deti.ies.smartive.api.smartive_api.model.users;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.bson.types.ObjectId;
@@ -19,37 +22,47 @@ public class User implements UserDetails {
 
     @Id
     @Field(value = "_id")
+    @JsonSerialize(using= ToStringSerializer.class)
     private ObjectId userId;
+    @Indexed(unique = true)
     private String username;
     @Indexed(unique = true)
     private String email;
+
+    @JsonIgnore
     private String password;
 
+    @JsonIgnore
     public boolean isValid() {
         return username != null && email != null && password != null;
     }
 
     @Override
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;
     }
 
     @Override
+    @JsonIgnore
     public boolean isAccountNonExpired() {
         return false;
     }
 
     @Override
+    @JsonIgnore
     public boolean isAccountNonLocked() {
         return false;
     }
 
     @Override
+    @JsonIgnore
     public boolean isCredentialsNonExpired() {
         return false;
     }
 
     @Override
+    @JsonIgnore
     public boolean isEnabled() {
         return false;
     }

@@ -18,6 +18,8 @@ def main_func():
 
     request = requests.get("{}/middleware/devices/sensors".format(api_url), headers=request_headers)
 
+    print(request)
+
     for item in request.json():
         if item["category"] == "TEMPERATURE":
             sensor = "temp"
@@ -44,7 +46,10 @@ def main_func():
 
     while(True):
         time.sleep(30)
-        request = requests.get("{}/middleware/devices/sensors".format(api_url), request_headers)
+        request = requests.get("{}/middleware/devices/sensors".format(api_url), headers=request_headers)
+        
+        print(request)
+        
         for item in request.json():
             if item["deviceId"] not in id_list:
                 if item["category"] == "TEMPERATURE":

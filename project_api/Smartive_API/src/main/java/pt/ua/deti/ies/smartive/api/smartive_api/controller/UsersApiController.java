@@ -199,6 +199,27 @@ public class UsersApiController {
 
     }
 
+    @PatchMapping("/rooms/{roomId}/users")
+    public MessageResponse addUserToRoom(@PathVariable ObjectId roomId, @RequestBody User user) {
+
+        if (!roomService.exists(roomId))
+            throw new InvalidRoomException("Unable to find a room with this Id.");
+
+        Room room = roomService.getRoom(roomId);
+
+        if (!room.getUsers().contains(authHandler.getUserName()))
+            throw new InvalidPermissionsException();
+
+        List<String> roomUsers = room.getUsers();
+        roomUsers.add(user.getUsername());
+        room.setUsers(roomUsers);
+
+        roomService.updateRoom(room);
+
+        return new MessageResponse(String.format("User %s added to room %s.", user.getUsername(), room.getName()));
+
+    }
+
     // --------------------------------------------------------------------------------------
     // Devices
     // --------------------------------------------------------------------------------------

@@ -1,5 +1,6 @@
 package pt.ua.deti.ies.smartive.api.smartive_api.middleware.actions.implementations;
 
+import pt.ua.deti.ies.smartive.api.smartive_api.auth.AuthHandler;
 import pt.ua.deti.ies.smartive.api.smartive_api.middleware.actions.MiddlewareAction;
 import pt.ua.deti.ies.smartive.api.smartive_api.middleware.actions.MiddlewareActionDependencyInjector;
 import pt.ua.deti.ies.smartive.api.smartive_api.middleware.rabbitmq.notifications.react.ReactNotificationType;
@@ -7,6 +8,7 @@ import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.Sensor;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.events.ActionType;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.events.SensorEvent;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.events.Trigger;
+import pt.ua.deti.ies.smartive.api.smartive_api.services.RoomService;
 import pt.ua.deti.ies.smartive.api.smartive_api.services.SensorEventService;
 import pt.ua.deti.ies.smartive.api.smartive_api.services.SensorService;
 

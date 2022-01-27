@@ -119,6 +119,9 @@ public class MiddlewareController {
         if (!authHandler.isAdmin())
             throw new InvalidPermissionsException();
 
+        if (availableDeviceService.exists(availableDevice.getDeviceId()))
+            availableDeviceService.delete(availableDevice.getDeviceId());
+
         availableDeviceService.save(availableDevice);
         return new MessageResponse("Successfully registered available device.");
 

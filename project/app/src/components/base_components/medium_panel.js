@@ -51,10 +51,6 @@ export class MediumPanel extends React.Component {
                             <p className="fs-7 fw-light text-secondary">{this.props.info}</p>
                         </Col>
                     </Row>
-                    <Row className="mt-4">
-                        <p className="fw-light text-center">Not Implemented</p>
-                        <span style={{height: "14rem"}}/>
-                    </Row>
                 </Container>
 
             </Card>

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -15,15 +16,16 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @Builder
+@NoArgsConstructor
 public class HistoryItem {
 
     @Id
     @JsonSerialize(using= ToStringSerializer.class)
-    private final ObjectId id;
+    private ObjectId id;
 
-    private final String username;
-    private final HistoryType type;
-    private final Date date;
-    private final String description;
+    private String username;
+    private HistoryType type;
+    private Date date;
+    private String description;
 
 }

@@ -50,6 +50,8 @@ public final class MiddlewareHandler {
                     break;
             }
 
+            roomPowerConsumptionSum += sensorState.getPowerConsumption();
+
         }
 
         temperatureSensorsCount = (int) room.getDevices().stream().filter(abstractDevice -> abstractDevice.getCategory() == DeviceCategory.TEMPERATURE).count();

@@ -2,6 +2,11 @@ import React from 'react';
 
 export class Navbar extends React.Component {
 
+    handleLogout() {
+        localStorage.removeItem("user");
+        window.location.replace("/");
+    }
+
     render() {
         return (
             <nav className="navbar navbar-expand-lg navbar-light rounded my-4">
@@ -20,20 +25,29 @@ export class Navbar extends React.Component {
                             <a className="nav-link fw-bolder text-black" href="/devices">YOUR DEVICES</a>
                         </li>
                         <li className="nav-item mx-3">
-                            <a className="nav-link fw-bolder text-black" href="/history">HISTORY</a>
+                            <a className="nav-link fw-bolder text-black" href="/rooms">YOUR ROOMS</a>
                         </li>
                         <li className="nav-item mx-3">
-                            <a className="nav-link fw-bolder text-black" href="/users">USERS</a>
+                            <a className="nav-link fw-bolder text-black" href="/history">HISTORY</a>
                         </li>
                     </ul>
                     <ul className="navbar-nav fs-7 ms-auto my-auto">
                         <li className="nav-item mx-3">
                             <a className="nav-link fw-bolder" href="/profile" style={{color: "#f76540"}}>PROFILE</a>
                         </li>
+                        <li className="nav-item mx-3">
+                            <button className="btn nav-link fw-bolder" onClick={this.handleLogout}>LOGOUT</button>
+                        </li>
                     </ul>
                 </div>
             </nav>
         );
+
+        /*
+            <li className="nav-item mx-3">
+                <a className="nav-link fw-bolder text-black" href="/users">USERS</a>
+            </li>
+         */
 
     }
 

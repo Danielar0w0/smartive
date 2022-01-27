@@ -1,3 +1,4 @@
+from apiHandler import ApiHandler
 import pika
 from multiprocessing import Process
 import os
@@ -8,20 +9,25 @@ import requests
 process_list = []
 id_list = []
 
+api_handler = ApiHandler()
+
 def main_func():
-    request = requests.get("http://172.18.0.3:8080/api/devices/sensors")
     
-    for item in request.json():
-        if item["category"] == "TEMPERATURE":
-            sensor = "temp"
-            p = Process(target=createProcessor, args=(item["deviceId"], sensor))
-        elif item["category"] == "HUMIDITY":
-            sensor = "humi"
-            p = Process(target=createProcessor, args=(item["deviceId"], sensor))
-        p.start()
-        process_list.append(p)
-        id_list.append(item["deviceId"])
-        print(item["deviceId"])
+    middleware_devices = api_handler.getMiddlewareSensors()
+
+    if middleware_devices is not None:
+
+        for item in middleware_devices:
+            if item["category"] == "TEMPERATURE":
+                sensor = "temp"
+                p = Process(target=createProcessor, args=(item["deviceId"], sensor))
+            elif item["category"] == "HUMIDITY":
+                sensor = "humi"
+                p = Process(target=createProcessor, args=(item["deviceId"], sensor))
+            p.start()
+            process_list.append(p)
+            id_list.append(item["deviceId"])
+            print(item["deviceId"])
     
     #Processos extra que podem ser adicionados
     sensor = "temp"
@@ -37,19 +43,23 @@ def main_func():
 
     while(True):
         time.sleep(30)
-        request = requests.get("http://172.18.0.3:8080/api/devices/sensors")
-        for item in request.json():
-            if item["deviceId"] not in id_list:
-                if item["category"] == "TEMPERATURE":
-                    sensor = "temp"
-                    p = Process(target=createProcessor, args=(item["deviceId"], sensor))
-                elif item["category"] == "HUMIDITY":
-                    sensor = "humi"
-                    p = Process(target=createProcessor, args=(item["deviceId"], sensor))
-                p.start()
-                process_list.append(p)
-                id_list.append(item["deviceId"])
-                print(item["deviceId"])
+
+        middleware_devices = api_handler.getMiddlewareSensors()
+
+        if middleware_devices is not None:
+
+            for item in middleware_devices:
+                if item["deviceId"] not in id_list:
+                    if item["category"] == "TEMPERATURE":
+                        sensor = "temp"
+                        p = Process(target=createProcessor, args=(item["deviceId"], sensor))
+                    elif item["category"] == "HUMIDITY":
+                        sensor = "humi"
+                        p = Process(target=createProcessor, args=(item["deviceId"], sensor))
+                    p.start()
+                    process_list.append(p)
+                    id_list.append(item["deviceId"])
+                    print(item["deviceId"])
 
 def createProcessor(processorID, sensor):
     print('python3 ' + sensor +  'Sensor.py ' + str(processorID))

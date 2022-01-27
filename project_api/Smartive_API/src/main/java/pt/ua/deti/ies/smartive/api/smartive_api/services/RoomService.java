@@ -30,7 +30,7 @@ public class RoomService {
 
         roomRepository.save(room);
 
-        return roomRepository.findByName(room.getName());
+        return roomRepository.findByRoomId(room.getRoomId());
 
     }
 

@@ -38,11 +38,8 @@ public class SensorService {
                 roomService.updateRoom(room);
 
             }
-
         }
-
         sensorRepository.save(sensor);
-
     }
 
     public List<Sensor> getAllSensors() {

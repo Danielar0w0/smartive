@@ -3,8 +3,10 @@ package pt.ua.deti.ies.smartive.api.smartive_api.controller;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import pt.ua.deti.ies.smartive.api.smartive_api.auth.AuthHandler;
 import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.DeviceNotFoundException;
 import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.InvalidDeviceException;
+import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.InvalidPermissionsException;
 import pt.ua.deti.ies.smartive.api.smartive_api.exceptions.InvalidRoomException;
 import pt.ua.deti.ies.smartive.api.smartive_api.middleware.MiddlewareHandler;
 import pt.ua.deti.ies.smartive.api.smartive_api.middleware.MiddlewareInterceptor;
@@ -12,11 +14,16 @@ import pt.ua.deti.ies.smartive.api.smartive_api.middleware.rabbitmq.notification
 import pt.ua.deti.ies.smartive.api.smartive_api.middleware.rabbitmq.notifications.react.ReactNotificationType;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.MessageResponse;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.RoomStats;
+import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.AvailableDevice;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.Sensor;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.SensorState;
-import pt.ua.deti.ies.smartive.api.smartive_api.services.RoomService;
-import pt.ua.deti.ies.smartive.api.smartive_api.services.SensorService;
+import pt.ua.deti.ies.smartive.api.smartive_api.model.history.HistorySensorItem;
+import pt.ua.deti.ies.smartive.api.smartive_api.model.history.HistoryType;
+import pt.ua.deti.ies.smartive.api.smartive_api.services.*;
 import pt.ua.deti.ies.smartive.api.smartive_api.utils.RequestType;
+
+import java.util.Date;
+import java.util.List;
 
 
 @RestController
@@ -28,18 +35,36 @@ public class MiddlewareController {
     private final MiddlewareHandler middlewareHandler;
     private final MiddlewareInterceptor middlewareInterceptor;
     private final ReactNotificationFactory reactNotificationFactory;
+    private final AuthHandler authHandler;
+    private final AvailableDeviceService availableDeviceService;
+    private final HistoryService historyService;
+    private final HistorySensorService historySensorService;
 
     @Autowired
-    public MiddlewareController(SensorService sensorService, RoomService roomService, MiddlewareHandler middlewareHandler, MiddlewareInterceptor middlewareInterceptor, ReactNotificationFactory reactNotificationFactory) {
+    public MiddlewareController(SensorService sensorService, RoomService roomService, MiddlewareHandler middlewareHandler, MiddlewareInterceptor middlewareInterceptor, ReactNotificationFactory reactNotificationFactory, AuthHandler authHandler, AvailableDeviceService availableDeviceService, HistoryService historyService, HistorySensorService historySensorService) {
         this.sensorService = sensorService;
         this.roomService = roomService;
         this.middlewareHandler = middlewareHandler;
         this.middlewareInterceptor = middlewareInterceptor;
         this.reactNotificationFactory = reactNotificationFactory;
+        this.authHandler = authHandler;
+        this.availableDeviceService = availableDeviceService;
+        this.historyService = historyService;
+        this.historySensorService = historySensorService;
+    }
+
+    @GetMapping("/devices/sensors")
+    public List<Sensor> getAllRegisteredSensors() {
+        if (!authHandler.isAdmin())
+            throw new InvalidPermissionsException();
+        return sensorService.getAllSensors();
     }
 
     @PutMapping("/devices/sensor")
     public MessageResponse updateState(@RequestBody Sensor sensor) {
+
+        if (!authHandler.isAdmin())
+            throw new InvalidPermissionsException();
 
         if (sensor.getDeviceId() == null)
             throw new InvalidDeviceException("Please provide a valid sensor id.");
@@ -59,6 +84,9 @@ public class MiddlewareController {
         if (registeredSensor.getRoomId() != null)
             reactNotificationFactory.generateNotification(ReactNotificationType.ROOM_STATS_CHANGED, registeredSensor.getRoomId().toString()).sendNotification();
 
+        HistorySensorItem historySensorItem = new HistorySensorItem(null, authHandler.getUserName(), HistoryType.DEVICES, new Date(), String.format("Device %s new temperature is %f.", sensor.getDeviceId(), newSensorState.getValue()), sensor.getDeviceId(), newSensorState.getValue(), newSensorState.getPowerConsumption());
+        historySensorService.save(historySensorItem);
+
         middlewareInterceptor.interceptRequest("/middleware/devices/sensor", RequestType.PUT, sensor);
         reactNotificationFactory.generateNotification(ReactNotificationType.DEVICE_STATS_CHANGED, registeredSensor.getDeviceId().toString()).sendNotification();
 
@@ -68,6 +96,9 @@ public class MiddlewareController {
 
     @GetMapping("/devices/sensor/{sensorId}")
     public SensorState getSensorState(@PathVariable ObjectId sensorId) {
+
+        if (!authHandler.isAdmin())
+            throw new InvalidPermissionsException();
 
         if (sensorId == null)
             throw new InvalidDeviceException("Please provide a valid sensor id.");
@@ -88,5 +119,26 @@ public class MiddlewareController {
         return middlewareHandler.calculateRoomStats(roomId);
 
     }
+
+    @PostMapping(value = "/devices/available")
+    public MessageResponse getAllAvailableDevices(@RequestBody AvailableDevice availableDevice) {
+
+        if (!authHandler.isAdmin())
+            throw new InvalidPermissionsException();
+
+        if (availableDeviceService.exists(availableDevice.getDeviceId()))
+            availableDeviceService.delete(availableDevice.getDeviceId());
+
+        availableDeviceService.save(availableDevice);
+        return new MessageResponse("Successfully registered available device.");
+
+    }
+
+    @DeleteMapping(value = "/devices/available/{deviceId}")
+    public MessageResponse removeAvailableDevice(@PathVariable ObjectId deviceId) {
+        availableDeviceService.delete(deviceId);
+        return new MessageResponse("Successfully removed available device.");
+    }
+
 
 }

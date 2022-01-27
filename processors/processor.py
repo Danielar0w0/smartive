@@ -7,15 +7,26 @@
 
 # docker run -it --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3.9-management
 
+from apiHandler import ApiHandler
 import pika
 import requests
 import json
 import sys
+import os
 
 categories = {'humidity_queue': 'HUMIDITY', 'temperature_queue': 'TEMPERATURE'}
 units = {'humidity_queue': '%', 'temperature_queue': 'ºC'}
+token = None
+
+apiHandler = ApiHandler()
+
 
 def main():
+
+    rabbitmq_address = os.environ.get('RABBITMQ_ADDRESS')
+    rabbitmq_port = os.environ.get('RABBITMQ_PORT')
+    rabbitmq_user = os.environ.get('RABBITMQ_USER')
+    rabbitmq_pass = os.environ.get('RABBITMQ_PASS')
 
     # Check if the user has provided the correct number of arguments
     if len(sys.argv) < 2:
@@ -23,8 +34,8 @@ def main():
         return
     queue = sys.argv[1]    
 
-    credentials = pika.PlainCredentials('test', 'test')
-    connection = pika.BlockingConnection(pika.ConnectionParameters(host='172.18.0.7', credentials=credentials))
+    credentials = pika.PlainCredentials(rabbitmq_user, rabbitmq_pass)
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host=rabbitmq_address, port=rabbitmq_port, credentials=credentials))
     #connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost',port=5672, credentials=credentials))
     channel = connection.channel()
 
@@ -55,13 +66,15 @@ def callback(ch, method, properties, body):
     # Obtain sensor data
     data = json.loads(body.decode())
 
-    if "id" not in data and "value" not in data and "power" not in data:
+    if "id" not in data and "value" not in data and "power" not in data and "unit" not in data:
         print(" [-] Data is not in the correct format!")
         return
     
     sensor_id = data["id"]
     state_value = data["value"]
     power_consumption = data["power"]
+    unit = data["unit"]
+    
 
 
     # Obtain sensor from registered devices
@@ -71,7 +84,7 @@ def callback(ch, method, properties, body):
     if sensor:
 
         # Update sensor state
-        updateState(sensor, state_value, power_consumption)
+        updateState(sensor, state_value, power_consumption, unit)
 
     # If the sensor isn't registered
     else:
@@ -93,20 +106,19 @@ def callback(ch, method, properties, body):
 
 def obtain_sensor(sensor_id, device_type = "registered"):
 
-    if device_type == "registered":
-        response = requests.get("http://172.18.0.3:8080/api/devices/sensors", timeout=5)
-    
-    elif device_type == "available":
-        response = requests.get("http://172.18.0.3:8080/api/devices/available", timeout=5)
 
+    if device_type == "registered":
+        response = apiHandler.getMiddlewareSensors()
+    elif device_type == "available":
+        response = apiHandler.getAvailableDevices()
     else:
         print(" [-] Unable to get list of '{device_type}' sensors!")
         return
     
     # Check if request was successful
-    if response.status_code != 200: 
+    if response is None or response.status_code != 200: 
         print(" [-] Unable to get sensors!")
-        print(" [-] Error", response.status_code)
+        print(" [-] Error", response.status_code if response is not None else 'Unknown')
         return
     
     # Obtain all sensors (response content is in bytes)
@@ -135,29 +147,29 @@ def register_sensor(sensor_id, category=None):
     sensor = {'deviceId': sensor_id, 'name': f'Sensor {sensor_id}', 'category': category}
         
     # Register available sensor
-    response = requests.post("http://172.18.0.3:8080/api/devices/available", json=sensor, timeout=5)
+    response = apiHandler.addAvailableDevices(sensor)
     
     # Check if request was successful
-    if response.status_code != 200: 
+    if response is None or response.status_code != 200: 
         print(" [-] Unable to register sensor!")
-        print(" [-] Error", response.status_code)
+        print(" [-] Error", response.status_code if response is not None else 'Unknown')
         return
 
     return sensor
 
     
-def updateState(sensor, state_value, power_consumption):
+def updateState(sensor, state_value, power_consumption, unit):
 
     # Create sensor state
-    sensor = {"deviceId": sensor["deviceId"], "state": {"value": state_value, "unit": "%", "powerConsumption": power_consumption}}
+    sensor = {"deviceId": sensor["deviceId"], "state": {"value": state_value, "unit": unit, "powerConsumption": power_consumption}}
     
     # The keyword json automatically sets the request’s HTTP header Content-Type to application/json
-    response = requests.put("http://172.18.0.3:8080/middleware/devices/sensor", json=sensor, timeout=5)
+    response = apiHandler.putDeviceState(sensor)
     
     # Check if request was successful
-    if response.status_code != 200: 
-        print(" [-] Unable to get sensors!")
-        print(" [-] Error", response.status_code)
+    if response is None or response.status_code != 200: 
+        print(" [-] Unable to update sensors!")
+        print(" [-] Error", response.status_code if response is not None else 'Unknown')
         return
     
     print(" [+] Sensor state updated")

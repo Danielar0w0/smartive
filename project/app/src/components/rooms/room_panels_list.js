@@ -1,11 +1,10 @@
 import { ScrollMenu } from 'react-horizontal-scrolling-menu';
-import { MiniPanel } from "./mini_panel";
+import { MiniPanel } from "../base_components/mini_panel";
 
 import React from 'react';
 import { RestAPIHandler } from "../../utils/RestAPIHandler";
 import store from "../../store";
-import {MiniPanelInfo, RegisterButton} from "./mini_panel_info";
-import {Modal} from "@mui/material";
+import {MiniPanelInfo} from "../base_components/mini_panel_info";
 
 export class RoomPanelsList extends React.Component {
 
@@ -67,7 +66,7 @@ export class RoomPanelsList extends React.Component {
                         key={room.roomId}
                         title={"Room"}
                         subtitle={room.name}
-                        info={room.stats !== null && room.stats !== undefined ? room.stats.powerConsumption + ' kWh' : '0 kWh'}
+                        info={room.stats !== null && room.stats !== undefined ? room.stats.powerConsumption.toFixed(4) + ' kWh' : '0 kWh'}
                         on_click={this.roomPanelClicked.bind(this, room)}
                         selected={true}
                         isCloseable={true}
@@ -80,7 +79,7 @@ export class RoomPanelsList extends React.Component {
                         key={room.roomId}
                         title={"Room"}
                         subtitle={room.name}
-                        info={room.stats !== null && room.stats !== undefined ? room.stats.powerConsumption + ' kWh' : '0 kWh'}
+                        info={room.stats !== null && room.stats !== undefined ? room.stats.powerConsumption.toFixed(4) + ' kWh' : '0 kWh'}
                         on_click={this.roomPanelClicked.bind(this, room)}
                         selected={false}
                         isCloseable={true}

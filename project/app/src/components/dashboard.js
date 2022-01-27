@@ -15,7 +15,7 @@ import {
     faLightbulb,
     faTemperatureHigh
 } from "@fortawesome/free-solid-svg-icons";
-import {RoomPanelsList} from "./base_components/room_panels_list";
+import {RoomPanelsList} from "./rooms/room_panels_list";
 import {RestAPIHandler} from "../utils/RestAPIHandler";
 import store from "../store";
 import {fetchRoomStats} from "../features/rooms/roomsReducer";
@@ -34,6 +34,15 @@ export class Dashboard extends React.Component {
     }
 
     roomChangedHandler(room) {
+
+        this.apiHandler.getRoomSensors(room.roomId)
+            .then(sensors => {
+                this.setState({
+                    devices: sensors
+                });
+                console.log('Devices')
+                console.log(this.state.devices)
+            });
 
         store.dispatch(fetchRoomStats(room.roomId));
 
@@ -73,7 +82,7 @@ export class Dashboard extends React.Component {
                             icon={faPlug}
                             title={'Devices'}
                             subtitle={'Energy'}
-                            info={'No Data'}
+                            info={roomStats !== null && roomStats.powerConsumption !== undefined ? roomStats.powerConsumption.toFixed(4) + " kWh" : 'No Data'}
                         />
                     </Col>
                     <Col className="col-3">
@@ -105,7 +114,7 @@ export class Dashboard extends React.Component {
                         </Row>
                     </Col>
                     <Col className="col-6">
-                        <BigPanel/>
+                        <BigPanel title={"Room Overview"} subtitle={"Devices average value and combined power consumption"} devices={this.state.devices} columns={['Sensor Name', 'Total Power Consumption', 'Average Value']} />
                     </Col>
                 </Row>
 

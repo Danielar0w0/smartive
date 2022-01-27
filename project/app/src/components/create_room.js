@@ -24,6 +24,7 @@ export class CreateRoom extends React.Component {
     }
 
     registerRoom(roomName) {
+        
         this.apiHandler.registerRoom(roomName)
             .then(result => {
                 if (result) {
@@ -32,6 +33,7 @@ export class CreateRoom extends React.Component {
                         if (window.location.pathname+window.location.search === "/create_room")
                             window.location.replace("/");
                     }, 5000);
+                    store.dispatch({ type: 'toasts/setToast', payload: { text: "Added room successfully." } });
 
                 } else {
                     store.dispatch({ type: 'toasts/setToast', payload: { text: "Error adding room." } });

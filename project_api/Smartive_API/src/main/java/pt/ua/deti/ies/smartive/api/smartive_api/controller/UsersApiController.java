@@ -165,8 +165,8 @@ public class UsersApiController {
         if (!room.isValid())
             throw new InvalidRoomException("Invalid Room. Please provide all the mandatory fields.");
 
-        if (roomService.exists(room.getName()))
-            throw new InvalidRoomException("A room with that name already exists. Please use a different name.");
+        if (room.getRoomId() == null)
+            room.setRoomId(new ObjectId());
 
         if (room.getUsers() == null)
             room.setUsers(Collections.singletonList(authHandler.getUserName()));
@@ -249,10 +249,12 @@ public class UsersApiController {
             throw new InvalidPermissionsException();
 
         List<String> roomUsers = room.getUsers();
-        roomUsers.add(user.getUsername());
-        room.setUsers(roomUsers);
 
-        roomService.updateRoom(room);
+        if (!roomUsers.contains(user.getUsername())) {
+            roomUsers.add(user.getUsername());
+            room.setUsers(roomUsers);
+            roomService.updateRoom(room);
+        }
 
         return new MessageResponse(String.format("User %s added to room %s.", user.getUsername(), room.getName()));
 

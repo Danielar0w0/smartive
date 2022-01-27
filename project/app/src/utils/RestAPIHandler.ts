@@ -372,8 +372,8 @@ export class RestAPIHandler {
 
     getUser(username: String): Promise<User | null> {
 
-        const endpointURI = `/username/${username}`;
-        const requestURI = this._usersAPIBaseURI + endpointURI;
+        const endpointURI = `/users/${username}`;
+        const requestURI = this._publicAPIBaseURI + endpointURI;
 
         return axios.get(requestURI, {headers: authHeader()})
             .then((response) => {

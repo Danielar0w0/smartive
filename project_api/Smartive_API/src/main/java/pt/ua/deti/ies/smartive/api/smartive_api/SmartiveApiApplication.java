@@ -29,7 +29,7 @@ public class SmartiveApiApplication {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
                         .allowedOrigins("http://171.8.0.3:3000", "http://project_react_1:3000", "http://localhost:3000")
-                        .allowedMethods("GET", "POST","PUT", "DELETE");
+                        .allowedMethods("GET", "POST","PUT", "DELETE", "PATCH");
             }
         };
     }

@@ -168,7 +168,7 @@ def updateState(sensor, state_value, power_consumption, unit):
     
     # Check if request was successful
     if response is None or response.status_code != 200: 
-        print(" [-] Unable to get sensors!")
+        print(" [-] Unable to update sensors!")
         print(" [-] Error", response.status_code if response is not None else 'Unknown')
         return
     

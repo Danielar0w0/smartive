@@ -23,7 +23,7 @@ class ApiHandler:
 
     def getAvailableDevices(self):
 
-        response = requests.get("{}/middleware/devices/available".format(self.api_url), headers=self.request_headers)
+        response = requests.get("{}/public/devices/available".format(self.api_url), headers=self.request_headers)
 
         if response.status_code == 200:
             return response

@@ -4,6 +4,7 @@ import {RabbitMQNotificationType} from "./RabbitMQNotificationType";
 import store from "../store";
 import {fetchRooms, fetchRoomStats} from "../features/rooms/roomsReducer";
 import {fetchDevices} from "../features/devices/devicesReducer";
+import {RestAPIHandler} from "./RestAPIHandler";
 
 export class RabbitMQHandler {
 
@@ -11,6 +12,7 @@ export class RabbitMQHandler {
     private readonly _password: string;
     private readonly _websocket: WebSocket;
     private readonly _client: Client;
+    private readonly _apiHandler: RestAPIHandler;
 
     private readonly _subscriptions: Array<Subscription>;
 
@@ -20,6 +22,7 @@ export class RabbitMQHandler {
         this._websocket = new WebSocket(webSocketAddress);
         this._client = Stomp.over(this._websocket)
         this._subscriptions = [];
+        this._apiHandler = new RestAPIHandler();
     }
 
     public connect(): void {
@@ -57,9 +60,23 @@ export class RabbitMQHandler {
                         store.dispatch({ type: 'toasts/setToast', payload: { text: "Device Removed" } });
                         break;
                     case RabbitMQNotificationType[RabbitMQNotificationType.EVENT_TRIGGERED]:
+
                         const event = notification['event'];
                         const deviceName = notification['targetName'];
-                        store.dispatch({ type: 'toasts/setToast', payload: { text: "Event " + event + " triggered in " + deviceName + "." } });
+                        const targetId = notification['targetId'];
+
+                        this._apiHandler.getAllSensors()
+                            .then(sensors => {
+                                sensors.forEach(sensor => {
+                                    if (sensor.deviceId === targetId) {
+                                        store.dispatch({
+                                            type: 'toasts/setToast',
+                                            payload: {text: "Event " + event + " triggered in " + deviceName + "."}
+                                        });
+                                    }
+                                });
+                            });
+
                         break;
                 }
 

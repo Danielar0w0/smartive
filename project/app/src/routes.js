@@ -16,7 +16,7 @@ import {Profile} from "./components/profile/profile";
 import { Users } from './components/users/users';
 import { ViewUsers } from './components/users/view_user';
 import { AddUser } from './components/users/add_user';
-import { History } from './components/history';
+import { History } from './components/history/history';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import store from "./store";
@@ -24,7 +24,8 @@ import {CreateRoom} from "./components/create_room";
 import {AddTrigger} from "./components/triggers/add_trigger";
 import {Triggers} from "./components/triggers/triggers";
 import { Login } from "./components/login";
-// import {Register} from "./components/register";
+import {Register} from "./components/register";
+import {Rooms} from "./components/rooms";
 
 export default function AppRouting () {
 
@@ -55,7 +56,7 @@ export default function AppRouting () {
             <ToastContainer/>
             <Routes>
                 <Route path="/login" element={<Login/>} />
-                {/*<Route path="/register" element={<Register/>} />*/}
+                <Route path="/register" element={<Register/>} />
                 <Route path="*" element={<Login/>} />
             </Routes>
         </Router>
@@ -67,7 +68,7 @@ export default function AppRouting () {
             <ToastContainer />
             <Routes>
                 <Route path="/login" element={<Login/>} />
-                {/*<Route path="/register" element={<Register/>} />*/}
+                <Route path="/register" element={<Register/>} />
                 <Route path="/control_device" element={<ControlDevice/>} />
                 <Route path="/devices" element={<Devices/>} />
                 <Route path="/add_device" element={<AddDevice/>} />
@@ -80,6 +81,7 @@ export default function AppRouting () {
                 <Route path="/create_room" element={<CreateRoom/>} />
                 <Route path="/add_trigger" element={<AddTrigger/>} />
                 <Route path="/triggers" element={<Triggers/>} />
+                <Route path="/rooms" element={<Rooms/>} />
             </Routes>
         </Router>
     )

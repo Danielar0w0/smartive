@@ -25,10 +25,10 @@ export class Navbar extends React.Component {
                             <a className="nav-link fw-bolder text-black" href="/devices">YOUR DEVICES</a>
                         </li>
                         <li className="nav-item mx-3">
-                            <a className="nav-link fw-bolder text-black" href="/history">HISTORY</a>
+                            <a className="nav-link fw-bolder text-black" href="/rooms">YOUR ROOMS</a>
                         </li>
                         <li className="nav-item mx-3">
-                            <a className="nav-link fw-bolder text-black" href="/users">USERS</a>
+                            <a className="nav-link fw-bolder text-black" href="/history">HISTORY</a>
                         </li>
                     </ul>
                     <ul className="navbar-nav fs-7 ms-auto my-auto">
@@ -42,6 +42,12 @@ export class Navbar extends React.Component {
                 </div>
             </nav>
         );
+
+        /*
+            <li className="nav-item mx-3">
+                <a className="nav-link fw-bolder text-black" href="/users">USERS</a>
+            </li>
+         */
 
     }
 

@@ -4,8 +4,7 @@ import { MiniPanel } from "./mini_panel";
 import React from 'react';
 import { RestAPIHandler } from "../../utils/RestAPIHandler";
 import store from "../../store";
-import {MiniPanelInfo, RegisterButton} from "./mini_panel_info";
-import {Modal} from "@mui/material";
+import {MiniPanelInfo} from "./mini_panel_info";
 
 export class RoomPanelsList extends React.Component {
 

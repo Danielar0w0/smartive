@@ -226,7 +226,7 @@ export class RestAPIHandler {
     getHistory(): Promise<HistoryItem[]> {
 
         const endpointURI = '/history'
-        const requestURI = this._publicAPIBaseURI + endpointURI;
+        const requestURI = this._usersAPIBaseURI + endpointURI;
 
         return axios.get(requestURI, {headers: authHeader()})
             .then((response) => {
@@ -245,7 +245,7 @@ export class RestAPIHandler {
     getHistoryTriggers(): Promise<HistoryItem[]> {
 
         const endpointURI = `/history/TRIGGERS`
-        const requestURI = this._publicAPIBaseURI + endpointURI;
+        const requestURI = this._usersAPIBaseURI + endpointURI;
 
         return axios.get(requestURI, {headers: authHeader()})
             .then((response) => {
@@ -264,7 +264,7 @@ export class RestAPIHandler {
     getHistoryDevices(): Promise<HistoryItem[]> {
 
         const endpointURI = `/history/DEVICES`
-        const requestURI = this._publicAPIBaseURI + endpointURI;
+        const requestURI = this._usersAPIBaseURI + endpointURI;
 
         return axios.get(requestURI, {headers: authHeader()})
             .then((response) => {
@@ -283,7 +283,7 @@ export class RestAPIHandler {
     getHistoryRooms(): Promise<HistoryItem[]> {
 
         const endpointURI = `/history/ROOMS`
-        const requestURI = this._publicAPIBaseURI + endpointURI;
+        const requestURI = this._usersAPIBaseURI + endpointURI;
 
         return axios.get(requestURI, {headers: authHeader()})
             .then((response) => {
@@ -367,6 +367,37 @@ export class RestAPIHandler {
             .catch(error => {
                 console.log("Error on API request (getUserDetails()): " + error.message)
                 return null
+            });
+    }
+
+    getUser(username: String): Promise<User | null> {
+
+        const endpointURI = `/username/${username}`;
+        const requestURI = this._usersAPIBaseURI + endpointURI;
+
+        return axios.get(requestURI, {headers: authHeader()})
+            .then((response) => {
+                const user: User = response.data;
+                return user
+            })
+            .catch(error => {
+                console.log("Error on API request (getUser()): " + error.message)
+                return null
+            });
+    }
+
+    addUserToRoom(user: User, roomId: String): Promise<boolean | null> {
+
+        const endpointURI = `/rooms/${roomId}/users`
+        const requestURI = this._usersAPIBaseURI + endpointURI;
+
+        return axios.patch(requestURI, user, {headers: authHeader()})
+            .then((response) => {
+                return response.status === 200;
+            })
+            .catch(error => {
+                console.log("Error on API request (addUserToRoom()): " + error.message);
+                return false;
             });
 
     }

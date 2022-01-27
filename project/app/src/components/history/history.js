@@ -1,9 +1,9 @@
 import React from 'react';
 import Container from "react-bootstrap/Container";
-import { Navbar } from "./base_components/navbar";
-import {HistoryItemList} from "./base_components/history_item_list";
-import {TypePanelsList} from "./base_components/type_panels_list";
-import {HistoryType} from "../utils/entities/HistoryType";
+import { Navbar } from "../base_components/navbar";
+import {HistoryItemList} from "./history_item_list";
+import {TypePanelsList} from "../base_components/type_panels_list";
+import {HistoryType} from "../../utils/entities/HistoryType";
 
 export class History extends React.Component {
 

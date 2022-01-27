@@ -8,11 +8,11 @@ import {
     fetchHistoryTriggers
 } from "../../features/history/historyReducer";
 import {HistoryType} from "../../utils/entities/HistoryType";
-import {HistoryItem} from "./history_item";
 import {faHome} from "@fortawesome/free-solid-svg-icons/faHome";
 import Row from "react-bootstrap/Row";
 import Container from "react-bootstrap/Container";
 import {faArrowRight, faTv} from "@fortawesome/free-solid-svg-icons";
+import {Item} from "../base_components/item";
 
 export class HistoryItemList extends React.Component {
 
@@ -102,9 +102,9 @@ export class HistoryItemList extends React.Component {
 
         let historyItems = this.state.historyItems;
         historyItems.sort((i1, i2) => {
-            if (i1.date > i2.date)
-                return -1;
             if (i1.date < i2.date)
+                return -1;
+            if (i1.date > i2.date)
                 return 1;
             return 0;
         })
@@ -122,11 +122,12 @@ export class HistoryItemList extends React.Component {
                 thisIcon = faArrowRight
 
                 itemPanels.push(
-                    <HistoryItem
+                    <Item
                         key={item.itemId}
                         icon={thisIcon}
-                        description={item.description}
-                        date={item.date}
+                        main={item.description}
+                        secondary={item.date}
+                        type={"history"}
                     />
                 )
         }

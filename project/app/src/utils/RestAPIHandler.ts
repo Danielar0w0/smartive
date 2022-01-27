@@ -368,6 +368,37 @@ export class RestAPIHandler {
                 console.log("Error on API request (getUserDetails()): " + error.message)
                 return null
             });
+    }
+
+    getUser(username: String): Promise<User | null> {
+
+        const endpointURI = `/username/${username}`;
+        const requestURI = this._usersAPIBaseURI + endpointURI;
+
+        return axios.get(requestURI, {headers: authHeader()})
+            .then((response) => {
+                const user: User = response.data;
+                return user
+            })
+            .catch(error => {
+                console.log("Error on API request (getUser()): " + error.message)
+                return null
+            });
+    }
+
+    addUserToRoom(user: User, roomId: String): Promise<boolean | null> {
+
+        const endpointURI = `/rooms/${roomId}/users`
+        const requestURI = this._usersAPIBaseURI + endpointURI;
+
+        return axios.patch(requestURI, user, {headers: authHeader()})
+            .then((response) => {
+                return response.status === 200;
+            })
+            .catch(error => {
+                console.log("Error on API request (addUserToRoom()): " + error.message);
+                return false;
+            });
 
     }
 

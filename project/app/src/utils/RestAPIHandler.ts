@@ -9,6 +9,7 @@ import {Event} from "./entities/Event";
 import { authHeader } from "./AuthHeader";
 import {UserStats} from "./entities/UserStats";
 import {HistoryItem} from "./entities/HistoryItem";
+import {HistoryAggregationResult} from "./entities/HistoryAggregationResult";
 
 
 export class RestAPIHandler {
@@ -365,6 +366,23 @@ export class RestAPIHandler {
             })
             .catch(error => {
                 console.log("Error on API request (getUserDetails()): " + error.message)
+                return null
+            });
+
+    }
+
+    getHistoryAggregation(sensorId: number) {
+
+        const endpointURI = `/history/sensor/${sensorId}/aggregation`;
+        const requestURI = this._usersAPIBaseURI + endpointURI;
+
+        return axios.get(requestURI, {headers: authHeader()})
+            .then((response) => {
+                const aggregationResult: HistoryAggregationResult = response.data;
+                return aggregationResult
+            })
+            .catch(error => {
+                console.log("Error on API request (getHistoryAggregation()): " + error.message)
                 return null
             });
 

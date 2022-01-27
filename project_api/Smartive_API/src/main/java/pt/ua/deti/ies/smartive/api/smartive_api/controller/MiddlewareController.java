@@ -13,16 +13,16 @@ import pt.ua.deti.ies.smartive.api.smartive_api.middleware.MiddlewareInterceptor
 import pt.ua.deti.ies.smartive.api.smartive_api.middleware.rabbitmq.notifications.react.ReactNotificationFactory;
 import pt.ua.deti.ies.smartive.api.smartive_api.middleware.rabbitmq.notifications.react.ReactNotificationType;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.MessageResponse;
-import pt.ua.deti.ies.smartive.api.smartive_api.model.Room;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.RoomStats;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.AvailableDevice;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.Sensor;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.SensorState;
-import pt.ua.deti.ies.smartive.api.smartive_api.services.AvailableDeviceService;
-import pt.ua.deti.ies.smartive.api.smartive_api.services.RoomService;
-import pt.ua.deti.ies.smartive.api.smartive_api.services.SensorService;
+import pt.ua.deti.ies.smartive.api.smartive_api.model.history.HistorySensorItem;
+import pt.ua.deti.ies.smartive.api.smartive_api.model.history.HistoryType;
+import pt.ua.deti.ies.smartive.api.smartive_api.services.*;
 import pt.ua.deti.ies.smartive.api.smartive_api.utils.RequestType;
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -37,9 +37,11 @@ public class MiddlewareController {
     private final ReactNotificationFactory reactNotificationFactory;
     private final AuthHandler authHandler;
     private final AvailableDeviceService availableDeviceService;
+    private final HistoryService historyService;
+    private final HistorySensorService historySensorService;
 
     @Autowired
-    public MiddlewareController(SensorService sensorService, RoomService roomService, MiddlewareHandler middlewareHandler, MiddlewareInterceptor middlewareInterceptor, ReactNotificationFactory reactNotificationFactory, AuthHandler authHandler, AvailableDeviceService availableDeviceService) {
+    public MiddlewareController(SensorService sensorService, RoomService roomService, MiddlewareHandler middlewareHandler, MiddlewareInterceptor middlewareInterceptor, ReactNotificationFactory reactNotificationFactory, AuthHandler authHandler, AvailableDeviceService availableDeviceService, HistoryService historyService, HistorySensorService historySensorService) {
         this.sensorService = sensorService;
         this.roomService = roomService;
         this.middlewareHandler = middlewareHandler;
@@ -47,6 +49,8 @@ public class MiddlewareController {
         this.reactNotificationFactory = reactNotificationFactory;
         this.authHandler = authHandler;
         this.availableDeviceService = availableDeviceService;
+        this.historyService = historyService;
+        this.historySensorService = historySensorService;
     }
 
     @GetMapping("/devices/sensors")
@@ -79,6 +83,9 @@ public class MiddlewareController {
 
         if (registeredSensor.getRoomId() != null)
             reactNotificationFactory.generateNotification(ReactNotificationType.ROOM_STATS_CHANGED, registeredSensor.getRoomId().toString()).sendNotification();
+
+        HistorySensorItem historySensorItem = new HistorySensorItem(null, authHandler.getUserName(), HistoryType.DEVICES, new Date(), String.format("Device %s new temperature is %f.", sensor.getDeviceId(), newSensorState.getValue()), sensor.getDeviceId(), newSensorState.getValue(), newSensorState.getPowerConsumption());
+        historySensorService.save(historySensorItem);
 
         middlewareInterceptor.interceptRequest("/middleware/devices/sensor", RequestType.PUT, sensor);
         reactNotificationFactory.generateNotification(ReactNotificationType.DEVICE_STATS_CHANGED, registeredSensor.getDeviceId().toString()).sendNotification();

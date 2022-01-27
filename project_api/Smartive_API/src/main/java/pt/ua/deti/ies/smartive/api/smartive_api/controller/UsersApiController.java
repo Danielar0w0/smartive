@@ -16,7 +16,9 @@ import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.Device;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.Sensor;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.SensorState;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.devices.events.SensorEvent;
+import pt.ua.deti.ies.smartive.api.smartive_api.model.history.HistoryAggregationResult;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.history.HistoryItem;
+import pt.ua.deti.ies.smartive.api.smartive_api.model.history.HistorySensorItem;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.history.HistoryType;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.users.User;
 import pt.ua.deti.ies.smartive.api.smartive_api.model.users.UserStats;
@@ -36,6 +38,7 @@ public class UsersApiController {
     private final UserService userService;
     private final RoomService roomService;
     private final HistoryService historyService;
+    private final HistorySensorService historySensorService;
     private final DeviceService deviceService;
     private final SensorService sensorService;
     private final SensorEventService sensorEventService;
@@ -49,10 +52,11 @@ public class UsersApiController {
     private final MiddlewareHandler middlewareHandler;
 
     @Autowired
-    public UsersApiController(UserService userService, RoomService roomService, HistoryService historyService, DeviceService deviceService, SensorService sensorService, SensorEventService sensorEventService, AvailableDeviceService availableDeviceService, AuthHandler authHandler, ReactNotificationFactory reactNotificationFactory, MiddlewareHandler middlewareHandler) {
+    public UsersApiController(UserService userService, RoomService roomService, HistoryService historyService, HistorySensorService historySensorService, DeviceService deviceService, SensorService sensorService, SensorEventService sensorEventService, AvailableDeviceService availableDeviceService, AuthHandler authHandler, ReactNotificationFactory reactNotificationFactory, MiddlewareHandler middlewareHandler) {
         this.userService = userService;
         this.roomService = roomService;
         this.historyService = historyService;
+        this.historySensorService = historySensorService;
         this.deviceService = deviceService;
         this.sensorService = sensorService;
         this.sensorEventService = sensorEventService;
@@ -78,6 +82,40 @@ public class UsersApiController {
         return historyService.getAllHistory(historyType).stream()
                 .filter(historyItem -> historyItem.getUsername().equals(authHandler.getUserName()))
                 .collect(Collectors.toList());
+    }
+
+    @GetMapping("/history/sensor/{sensorId}/aggregation")
+    public HistoryAggregationResult getHistoryPowerConsumption(@PathVariable ObjectId sensorId) {
+
+        if (!sensorService.sensorExists(sensorId))
+            throw new DeviceNotFoundException(String.format("Unable to find device %s.", sensorId));
+
+        Sensor sensor = sensorService.getSensorById(sensorId);
+
+        if (sensor.getRoomId() == null)
+            throw new InvalidPermissionsException();
+
+        Room room = roomService.getRoom(sensor.getRoomId());
+
+        if (!room.getUsers().contains(authHandler.getUserName()))
+            throw new InvalidPermissionsException();
+
+        List<HistorySensorItem> historySensorItems = historySensorService.getAllHistoryItems();
+
+        int historySamples = historySensorItems.size();
+
+        double totalPowerConsumption = historySensorItems.stream()
+                .filter(historySensorItem -> historySensorItem.getSensorId() == sensorId)
+                .mapToDouble(HistorySensorItem::getPowerConsumption)
+                .sum();
+
+        double combinedValues = historySensorItems.stream()
+                .filter(historySensorItem -> historySensorItem.getSensorId() == sensorId)
+                .mapToDouble(HistorySensorItem::getPowerConsumption)
+                .sum();
+
+        return new HistoryAggregationResult(sensorId, totalPowerConsumption, combinedValues/historySamples);
+
     }
 
     // --------------------------------------------------------------------------------------

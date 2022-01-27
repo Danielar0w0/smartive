@@ -98,11 +98,10 @@ export class AddUser extends React.Component {
         this.apiHandler.addUserToRoom(user, room)
             .then(result => {
                 if (result) {
-
                     setTimeout(() => {
-                        if (window.location.pathname + window.location.search === "/add_user")
-                            window.location.replace("/");
-                    }, 5000);
+                        window.location.replace("/rooms");
+                    }, 4000);
+                    store.dispatch({ type: 'toasts/setToast', payload: { text: "Added user to room." } });
 
                 } else {
                     store.dispatch({type: 'toasts/setToast', payload: {text: "Error adding user."}});
@@ -141,8 +140,8 @@ export class AddUser extends React.Component {
                         <Row className="justify-content-center d-flex">
                             <h5 className='mt-4'>Select Room:</h5>
                             <Row className="justify-content-end d-flex mb-2">
-                                <Button style={{color: "white", backgroundColor: "white", border:"none", width: "4vw"}} onClick={evt => window.location.reload()}>
-                                    <FontAwesomeIcon icon={faRedo} onClick={evt => window.location.reload()}
+                                <Button style={{color: "white", backgroundColor: "white", border:"none", width: "4vw"}} onClick={() => window.location.reload()}>
+                                    <FontAwesomeIcon icon={faRedo} onClick={() => window.location.reload()}
                                                      style={{fontSize: "115%", color: "grey", minWidth: "45px"}}/>
                                 </Button>
                             </Row>
@@ -162,10 +161,9 @@ export class AddUser extends React.Component {
                                 </Button>
                             </Col>
 
-                            <Button disabled={this.state.user === undefined} className="py-3 mt-4 rounded"
-                                    style={{width: "90%", backgroundColor: "#f76540", border: "none"}}>Add User
-                                <FontAwesomeIcon icon={faEnvelope} onClick={evt => this.sendInvite()}
-                                                 style={{fontSize: "115%", color: "white", minWidth: "45px"}}/>
+                            <Button disabled={this.state.user === undefined || this.state.selectedRoom === undefined} className="py-3 mt-4 rounded"
+                                    style={{width: "90%", backgroundColor: "#f76540", border: "none"}} onClick={() => this.sendInvite()}>Add User
+                                <FontAwesomeIcon icon={faEnvelope} style={{fontSize: "115%", color: "white", minWidth: "45px"}}/>
                             </Button>
                         </Row>
                     </Col>

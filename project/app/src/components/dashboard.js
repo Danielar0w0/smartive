@@ -15,10 +15,10 @@ import {
     faLightbulb,
     faTemperatureHigh
 } from "@fortawesome/free-solid-svg-icons";
-import {RoomPanelsList} from "./base_components/room_panels_list";
+import {RoomPanelsList} from "./rooms/room_panels_list";
 import {RestAPIHandler} from "../utils/RestAPIHandler";
 import store from "../store";
-import roomsReducer, {fetchRoomStats} from "../features/rooms/roomsReducer";
+import {fetchRoomStats} from "../features/rooms/roomsReducer";
 
 export class Dashboard extends React.Component {
 

@@ -25,7 +25,7 @@ import {AddTrigger} from "./components/triggers/add_trigger";
 import {Triggers} from "./components/triggers/triggers";
 import { Login } from "./components/login";
 import {Register} from "./components/register";
-import {Rooms} from "./components/rooms";
+import {Rooms} from "./components/rooms/rooms";
 
 export default function AppRouting () {
 

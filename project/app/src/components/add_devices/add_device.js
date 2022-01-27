@@ -8,7 +8,7 @@ import {Navbar} from "../base_components/navbar";
 import {ProgressBar} from "react-bootstrap";
 import {DeviceName} from "./device_name";
 import {ConfigurationStep} from "./configuration_step";
-import {RoomItemsList} from "../base_components/room_items_list";
+import {RoomItemsList} from "../rooms/room_items_list";
 import {AvailableDevicesList} from "../base_components/available_devices_list";
 import {AvailableTypesList} from "../base_components/available_types_list";
 import {RestAPIHandler} from "../../utils/RestAPIHandler";

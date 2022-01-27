@@ -8,7 +8,7 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import {DevicesList} from "./base_components/devices_list";
-import {RoomPanelsList} from './base_components/room_panels_list';
+import {RoomPanelsList} from './rooms/room_panels_list';
 import store from "../store";
 import {fetchRoomDevices} from "../features/rooms/roomsReducer";
 import {fetchDevices} from "../features/devices/devicesReducer";

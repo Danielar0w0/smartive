@@ -42,12 +42,11 @@ export class HistoryItemList extends React.Component {
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (prevState !== this.state) return;
-        this.updateItems();
+        this.updateItems(this.props.type_selected);
     }
 
-    updateItems() {
+    updateItems(type) {
 
-        let type = this.state.selectedHistoryType;
         switch (type) {
 
             case (0):
@@ -136,7 +135,7 @@ export class HistoryItemList extends React.Component {
             return (
                 <Container>
                     <p className="fw-normal fs-5 my-5">History</p>
-                    <p>Loading...</p>
+                    <p className="text-center">No Data.</p>
                 </Container>
             )
 

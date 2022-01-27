@@ -18,9 +18,9 @@ export class RestAPIHandler {
     private readonly _usersAPIBaseURI;
 
     constructor() {
-        this._middlewareBaseURI = 'http://localhost:8080/middleware';
-        this._publicAPIBaseURI = 'http://localhost:8080/public';
-        this._usersAPIBaseURI = 'http://localhost:8080/api'
+        this._middlewareBaseURI = 'http://' + process.env.REACT_APP_API_ADDRESS + ':8080/middleware';
+        this._publicAPIBaseURI = 'http://' + process.env.REACT_APP_API_ADDRESS + ':8080/public';
+        this._usersAPIBaseURI = 'http://' + process.env.REACT_APP_API_ADDRESS + ':8080/api'
     }
 
     getAllRooms(): Promise<Room[]> {
@@ -35,7 +35,6 @@ export class RestAPIHandler {
                 return rooms
 
             })
-
             .catch(error => {
                 console.log("Error on API request (getAllRooms()): " + error.message)
                 return []
@@ -226,7 +225,7 @@ export class RestAPIHandler {
     getHistory(): Promise<HistoryItem[]> {
 
         const endpointURI = '/history'
-        const requestURI = this._publicAPIBaseURI + endpointURI;
+        const requestURI = this._usersAPIBaseURI + endpointURI;
 
         return axios.get(requestURI, {headers: authHeader()})
             .then((response) => {
@@ -245,7 +244,7 @@ export class RestAPIHandler {
     getHistoryTriggers(): Promise<HistoryItem[]> {
 
         const endpointURI = `/history/TRIGGERS`
-        const requestURI = this._publicAPIBaseURI + endpointURI;
+        const requestURI = this._usersAPIBaseURI + endpointURI;
 
         return axios.get(requestURI, {headers: authHeader()})
             .then((response) => {
@@ -264,7 +263,7 @@ export class RestAPIHandler {
     getHistoryDevices(): Promise<HistoryItem[]> {
 
         const endpointURI = `/history/DEVICES`
-        const requestURI = this._publicAPIBaseURI + endpointURI;
+        const requestURI = this._usersAPIBaseURI + endpointURI;
 
         return axios.get(requestURI, {headers: authHeader()})
             .then((response) => {
@@ -283,7 +282,7 @@ export class RestAPIHandler {
     getHistoryRooms(): Promise<HistoryItem[]> {
 
         const endpointURI = `/history/ROOMS`
-        const requestURI = this._publicAPIBaseURI + endpointURI;
+        const requestURI = this._usersAPIBaseURI + endpointURI;
 
         return axios.get(requestURI, {headers: authHeader()})
             .then((response) => {

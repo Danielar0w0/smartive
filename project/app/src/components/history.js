@@ -16,7 +16,7 @@ export class History extends React.Component {
 
     typeChangedHandler(type) {
         if (type !== undefined && type >= 0 && type <= 2)
-            this.setState({ historyType: HistoryType[type] })
+            this.setState({ historyType: type })
         else
             this.setState({ historyType: undefined })
     }
@@ -28,8 +28,8 @@ export class History extends React.Component {
                     <Navbar/>
                 </div>
 
-                <TypePanelsList on_type_changed={this.typeChangedHandler.bind(this)}></TypePanelsList>
-                <HistoryItemList type_selected={this.state.historyType}></HistoryItemList>
+                <TypePanelsList on_type_changed={this.typeChangedHandler.bind(this)}/>
+                <HistoryItemList type_selected={this.state.historyType}/>
 
             </Container>
         );

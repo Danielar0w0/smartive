@@ -1,6 +1,8 @@
 package pt.ua.deti.ies.smartive.api.smartive_api.controller;
 
 import org.bson.types.ObjectId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import pt.ua.deti.ies.smartive.api.smartive_api.auth.AuthHandler;
@@ -33,6 +35,8 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api")
 public class UsersApiController {
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     // Services
     private final UserService userService;
@@ -105,13 +109,15 @@ public class UsersApiController {
         int historySamples = historySensorItems.size();
 
         double totalPowerConsumption = historySensorItems.stream()
-                .filter(historySensorItem -> historySensorItem.getSensorId() == sensorId)
+                .filter(historySensorItem -> historySensorItem.getSensorId() != null && historySensorItem.getSensorId().equals(sensorId))
+                .filter(historySensorItem -> historySensorItem.getPowerConsumption() != null)
                 .mapToDouble(HistorySensorItem::getPowerConsumption)
                 .sum();
 
         double combinedValues = historySensorItems.stream()
-                .filter(historySensorItem -> historySensorItem.getSensorId() == sensorId)
-                .mapToDouble(HistorySensorItem::getPowerConsumption)
+                .filter(historySensorItem -> historySensorItem.getSensorId() != null && historySensorItem.getSensorId().equals(sensorId))
+                .filter(historySensorItem -> historySensorItem.getValue() != null)
+                .mapToDouble(HistorySensorItem::getValue)
                 .sum();
 
         return new HistoryAggregationResult(sensorId, totalPowerConsumption, combinedValues/historySamples);

@@ -37,10 +37,11 @@ export class Dashboard extends React.Component {
 
         this.apiHandler.getRoomSensors(room.roomId)
             .then(sensors => {
-                console.log(sensors);
                 this.setState({
                     devices: sensors
                 });
+                console.log('Devices')
+                console.log(this.state.devices)
             });
 
         store.dispatch(fetchRoomStats(room.roomId));

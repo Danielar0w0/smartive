@@ -22,9 +22,9 @@ export class BigPanel extends React.Component {
 
     componentDidMount() {
 
-        let devicesOverview = [];
-
         store.subscribe(() => {
+
+            let devicesOverview = [];
 
             if (this.props.devices) {
 

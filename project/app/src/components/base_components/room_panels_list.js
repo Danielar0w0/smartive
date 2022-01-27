@@ -67,7 +67,7 @@ export class RoomPanelsList extends React.Component {
                         key={room.roomId}
                         title={"Room"}
                         subtitle={room.name}
-                        info={room.stats !== null && room.stats !== undefined ? room.stats.powerConsumption + ' kWh' : '0 kWh'}
+                        info={room.stats !== null && room.stats !== undefined ? room.stats.powerConsumption.toFixed(4) + ' kWh' : '0 kWh'}
                         on_click={this.roomPanelClicked.bind(this, room)}
                         selected={true}
                         isCloseable={true}
@@ -80,7 +80,7 @@ export class RoomPanelsList extends React.Component {
                         key={room.roomId}
                         title={"Room"}
                         subtitle={room.name}
-                        info={room.stats !== null && room.stats !== undefined ? room.stats.powerConsumption + ' kWh' : '0 kWh'}
+                        info={room.stats !== null && room.stats !== undefined ? room.stats.powerConsumption.toFixed(4) + ' kWh' : '0 kWh'}
                         on_click={this.roomPanelClicked.bind(this, room)}
                         selected={false}
                         isCloseable={true}

@@ -81,7 +81,7 @@ export class Dashboard extends React.Component {
                             icon={faPlug}
                             title={'Devices'}
                             subtitle={'Energy'}
-                            info={roomStats !== null && roomStats.powerConsumption !== undefined ? roomStats.powerConsumption + " kWh" : 'No Data'}
+                            info={roomStats !== null && roomStats.powerConsumption !== undefined ? roomStats.powerConsumption.toFixed(4) + " kWh" : 'No Data'}
                         />
                     </Col>
                     <Col className="col-3">

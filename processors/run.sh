@@ -1,4 +1,4 @@
 #!/bin/bash
 
-sleep 23
+sleep 33
 exec python3 processorsSetup.py

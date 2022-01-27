@@ -16,8 +16,8 @@ def main_func():
 
     request_headers = { 'Authorization': 'Bearer ' + os.environ.get('ADMIN_AUTH_TOKEN'), 'Content-Type': 'application/json' }
 
-    request = requests.get("{}/middleware/devices/sensors".format(api_url), request_headers)
-    
+    request = requests.get("{}/middleware/devices/sensors".format(api_url), headers=request_headers)
+
     for item in request.json():
         if item["category"] == "TEMPERATURE":
             sensor = "temp"

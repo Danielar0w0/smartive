@@ -15,12 +15,16 @@ DevOps: [José Trigo](https://github.com/zepedrotrigo)
 * Reports
 * [API documentation](https://documenter.getpostman.com/view/16743908/UVR5sVHN)
 
-# Run the app
+# Run the app locally
 
-To run the Smartive application, follow these steps:
+To run the Smartive application locally, follow these steps:
 
 * Navigate to the /project directory;
-* Run docker-compose build --no-cache
-* Run docker-compose up
+* Run ```docker-compose build --no-cache```
+* Run ```docker-compose up```
+* Wait until all containers have started
+* In order to enable the WebSockets support for RabbitMQ:
+    * Open the RabbitMQ container using: ```docker exec -it project_rabbitmq_1 /bin/bash```
+    * Execute the command: ```rabbitmq-plugins enable rabbitmq_web_stomp```
 * Open the browser in the following url:
-  * http://172.18.0.1:3000
+  * http://172.18.0.2:3000 or http://localhost:3000

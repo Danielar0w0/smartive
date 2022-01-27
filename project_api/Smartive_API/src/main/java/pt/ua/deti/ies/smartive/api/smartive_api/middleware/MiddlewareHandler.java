@@ -35,8 +35,10 @@ public final class MiddlewareHandler {
 
         for (Device device : room.getDevices()) {
 
+            if (!sensorService.sensorExists(device.getDeviceId())) continue;
+
             Sensor sensor = sensorService.getSensorById(device.getDeviceId());
-            SensorState sensorState =  sensor.getState();
+            SensorState sensorState = sensor.getState();
 
             if (sensorState == null) continue;
 

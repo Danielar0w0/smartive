@@ -30,7 +30,10 @@ export class AvailableDevicesList extends React.Component {
 
         this.apiHandler.getAvailableDevices()
             .then(availableDevices => {
-                this.setState({isLoading: false, availableDevices: availableDevices});
+                if (availableDevices.length > 5)
+                    this.setState({isLoading: false, availableDevices: availableDevices.slice(0, 4)});
+                else
+                    this.setState({isLoading: false, availableDevices: availableDevices});
             });
 
     }

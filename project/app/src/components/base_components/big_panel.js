@@ -28,6 +28,8 @@ export class BigPanel extends React.Component {
 
             if (this.props.devices) {
 
+                devicesOverview = [];
+
                 this.props.devices.forEach(device => {
 
                     this.apiHandler.getHistoryAggregation(device.deviceId)
@@ -39,19 +41,20 @@ export class BigPanel extends React.Component {
                                         <p className="fs-8 fw-light text-center">{device.name}</p>
                                     </div>
                                     <div className="col">
-                                        <p className="fs-8 fw-light text-center">{historyAggregationResult.combinedPowerConsumption} kWh</p>
+                                        <p className="fs-8 fw-light text-center">{historyAggregationResult.combinedPowerConsumption.toFixed(3)} kWh</p>
                                     </div>
                                     <div className="col">
-                                        <p className="fs-8 fw-light text-center">{historyAggregationResult.averageValue} Unit</p>
+                                        <p className="fs-8 fw-light text-center">{historyAggregationResult.averageValue.toFixed(3)} </p>
                                     </div>
                                 </div>
                             );
 
+                        })
+                        .then(() => {
                             this.setState({
                                 devicesPanels: devicesOverview
                             });
-
-                        })
+                        });
 
                 });
 

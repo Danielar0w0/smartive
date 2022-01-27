@@ -28,8 +28,8 @@ public class SmartiveApiApplication {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://171.8.0.3:3000", "http://project_react_1:3000", "http://localhost:3000")
-                        .allowedMethods("GET", "POST","PUT", "DELETE", "PATCH");
+                        .allowedOrigins("http://deti-engsoft-06.ua.pt:3000", "http://171.8.0.3:3000", "http://project_react_1:3000", "http://localhost:3000")
+                        .allowedMethods("GET", "POST","PUT", "DELETE");
             }
         };
     }
